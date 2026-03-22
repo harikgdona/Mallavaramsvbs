@@ -1,26 +1,55 @@
+# GitHub Pages deployment for Next.js static export (output: "export")
+# Repo Settings → Pages → Source: GitHub Actions
+
 name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [main]
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
-      - run: npm ci --legacy-peer-deps
-      - run: npm run build
-      - uses: actions/upload-pages-artifact@v3
+          node-version: "20"
+          cache: npm
+
+      # Requires package-lock.json in the repo (run npm install locally and commit the lockfile)
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build static site
+        run: npm run build
+
+      # Must match basePath in next.config.mjs (no leading slash in folder name)
+      # If basePath is "/Mallavaramsvbs", static files live under out/Mallavaramsvbs/
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: ./out
-      - uses: actions/deploy-pages@v4
+          path: ./out/Mallavaramsvbs
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
