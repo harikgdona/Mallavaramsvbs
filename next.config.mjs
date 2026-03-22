@@ -1,7 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "export",
+  basePath: "/Mallavaramsvbs",
   reactStrictMode: true,
   images: {
+    unoptimized: true,
     qualities: [75, 95],
     remotePatterns: [
       {
@@ -11,6 +14,4 @@ const nextConfig = {
     ]
   }
 };
-
 export default nextConfig;
-
