@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 80" aria-hidden="true">
+  <!-- Mango leaves (Thoranam) - simplified garland -->
+  <g fill="#166534" stroke="none">
+    <!-- Left side leaves -->
+    <path d="M0 40 Q80 20 120 40 Q80 60 0 40" opacity="0.95"/>
+    <path d="M40 35 Q120 15 180 40 Q120 65 40 35" opacity="0.9"/>
+    <path d="M80 38 Q160 18 220 42 Q160 62 80 38" opacity="0.95"/>
+    <path d="M120 36 Q200 16 260 40 Q200 64 120 36" opacity="0.9"/>
+    <!-- Center leaves -->
+    <path d="M260 40 Q340 18 400 40 Q340 62 260 40" opacity="0.95"/>
+    <path d="M320 38 Q400 16 480 40 Q400 64 320 38" opacity="0.9"/>
+    <path d="M380 36 Q460 14 540 40 Q460 66 380 36" opacity="0.95"/>
+    <!-- Right side leaves -->
+    <path d="M540 40 Q620 18 680 40 Q620 62 540 40" opacity="0.9"/>
+    <path d="M600 38 Q680 16 760 40 Q680 64 600 38" opacity="0.95"/>
+    <path d="M660 36 Q720 20 800 40 Q720 60 660 36" opacity="0.9"/>
+  </g>
+</svg>

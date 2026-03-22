@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+  <!-- Simple temple gopuram + figure silhouette in maroon -->
+  <rect width="48" height="48" rx="4" fill="#7B1E1E"/>
+  <!-- Tower tiers -->
+  <rect x="14" y="28" width="20" height="4" fill="#D4AF37"/>
+  <rect x="16" y="24" width="16" height="4" fill="#D4AF37"/>
+  <rect x="18" y="20" width="12" height="4" fill="#D4AF37"/>
+  <rect x="20" y="14" width="8" height="6" fill="#D4AF37"/>
+  <!-- Peak -->
+  <path d="M24 4 L28 14 L20 14 Z" fill="#D4AF37"/>
+  <!-- Figure (Brahmin silhouette) -->
+  <ellipse cx="24" cy="36" rx="4" ry="2" fill="#F8F1E5"/>
+  <rect x="22" y="30" width="4" height="6" fill="#F8F1E5"/>
+</svg>

@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: theme("fontFamily.body");
+  background-color: #FF9933 !important;
+  color: #2b2113;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.section-heading {
+  @apply font-heading text-3xl md:text-4xl text-maroon mb-4;
+}
+
+.section-subtitle {
+  @apply text-base md:text-lg text-text-dark/80;
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center px-6 py-3 rounded-full bg-maroon text-white font-semibold text-sm md:text-base shadow-lg hover:bg-maroon/90 transition focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-sandal;
+}
+
+.btn-outline {
+  @apply inline-flex items-center justify-center px-6 py-3 rounded-full border border-maroon text-maroon font-semibold text-sm md:text-base hover:bg-maroon hover:text-white transition focus:outline-none focus:ring-2 focus:ring-maroon focus:ring-offset-2 focus:ring-offset-sandal;
+}
+
+.btn-whatsapp {
+  @apply inline-flex items-center justify-center px-5 py-3 rounded-full bg-green-600 text-white font-semibold text-sm md:text-base shadow-lg hover:bg-green-700 transition focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-sandal;
+}
+
+/* Bevel effect for menu and header text */
+.text-bevel {
+  text-shadow:
+    1px 1px 0 rgba(255, 255, 255, 0.6),
+    -1px -1px 0 rgba(0, 0, 0, 0.15);
+}
+

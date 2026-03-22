@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" aria-hidden="true">
+  <rect width="200" height="200" fill="#fff"/>
+  <rect x="10" y="10" width="180" height="180" fill="#F8F1E5" stroke="#D4AF37" stroke-width="3"/>
+  <!-- QR-like grid placeholder -->
+  <g fill="#2B2113">
+    <rect x="25" y="25" width="20" height="20"/>
+    <rect x="55" y="25" width="20" height="20"/>
+    <rect x="85" y="25" width="20" height="20"/>
+    <rect x="115" y="25" width="20" height="20"/>
+    <rect x="155" y="25" width="20" height="20"/>
+    <rect x="25" y="55" width="20" height="20"/>
+    <rect x="85" y="55" width="20" height="20"/>
+    <rect x="155" y="55" width="20" height="20"/>
+    <rect x="25" y="85" width="20" height="20"/>
+    <rect x="55" y="85" width="20" height="20"/>
+    <rect x="115" y="85" width="20" height="20"/>
+    <rect x="155" y="85" width="20" height="20"/>
+    <rect x="25" y="115" width="20" height="20"/>
+    <rect x="85" y="115" width="20" height="20"/>
+    <rect x="155" y="115" width="20" height="20"/>
+    <rect x="25" y="155" width="20" height="20"/>
+    <rect x="55" y="155" width="20" height="20"/>
+    <rect x="115" y="155" width="20" height="20"/>
+    <rect x="155" y="155" width="20" height="20"/>
+  </g>
+  <text x="100" y="195" text-anchor="middle" font-size="10" fill="#7B1E1E">UPI QR placeholder</text>
+</svg>
