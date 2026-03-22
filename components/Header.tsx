@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Great_Vibes } from "next/font/google";
 import { useTranslate } from "./ConfigProvider";
 import { withBasePath } from "@/lib/basePath";
+import { SIDEBAR_WIDTH_PX } from "@/lib/sidebarWidth";
 
 const greatVibes = Great_Vibes({ weight: "400", subsets: ["latin"] });
 
@@ -31,31 +32,29 @@ export function Header() {
 
   return (
     <>
-      {/* Desktop: left vertical sidebar, width 0.75x (195px) */}
+      {/* Desktop: left vertical sidebar — width matches TopHeader logo column */}
       <aside
-        className="hidden md:flex md:flex-col md:w-[195px] md:flex-shrink-0 md:sticky md:top-0 md:self-start md:h-screen md:max-h-screen bg-header-yellow border-r border-maroon/10 z-20"
-        style={{ minHeight: 0 }}
+        className="hidden md:flex md:flex-col md:flex-shrink-0 md:sticky md:top-0 md:self-start md:h-screen md:max-h-screen bg-gradient-to-b from-amber-50 via-sandal to-sandal border-r border-maroon/15 z-20 shadow-[inset_-1px_0_0_rgba(123,30,30,0.06)]"
+        style={{
+          minHeight: 0,
+          width: SIDEBAR_WIDTH_PX,
+          minWidth: SIDEBAR_WIDTH_PX,
+          maxWidth: SIDEBAR_WIDTH_PX
+        }}
       >
-        {/* Vertical menu: bold, bevel, opens new tab */}
-        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1 min-h-0 pt-6">
+        <nav className="flex-1 overflow-y-auto py-5 px-3 space-y-0.5 min-h-0">
           {navItems.map((item) => (
             <a
               key={item.id}
               href={withBasePath(`/#${item.id}`)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block text-xl font-bold italic text-text-dark/90 hover:text-maroon hover:bg-yellow-200/60 py-2 px-3 rounded-lg transition text-bevel text-center"
+              className="block font-heading text-[0.95rem] font-semibold not-italic text-maroon/85 hover:text-maroon hover:bg-white/70 py-2.5 px-3 rounded-xl transition-colors text-center border border-transparent hover:border-maroon/10 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon/35 focus-visible:ring-offset-2 focus-visible:ring-offset-sandal"
             >
               {t(item.key)}
             </a>
           ))}
         </nav>
 
-        {/* Built and hosted by — exactly 2 cm below last menu item (Configure) */}
-        <div
-          className="flex-shrink-0 px-3 pb-3 text-center"
-          style={{ marginTop: "2cm" }}
-        >
+        <div className="flex-shrink-0 px-3 pb-4 pt-6 text-center border-t border-maroon/10 mt-auto">
           <p className="text-xs text-text-dark/80 mb-1.5">Built and hosted by</p>
           <p className={`text-2xl ${greatVibes.className} text-maroon`}>
             Hari Krishna
@@ -93,20 +92,18 @@ export function Header() {
           </button>
         </div>
         {open && (
-          <div className="border-t border-maroon/10 px-3 pb-3 space-y-1">
+          <div className="border-t border-maroon/10 px-3 pb-3 space-y-0.5 bg-sandal/95">
             {navItems.map((item) => (
               <a
                 key={item.id}
                 href={withBasePath(`/#${item.id}`)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block text-base font-bold italic py-2 text-text-dark/90 hover:text-maroon text-bevel text-center"
+                className="block font-heading text-base font-semibold not-italic py-2.5 text-maroon/85 hover:text-maroon hover:bg-white/80 rounded-lg text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon/35 focus-visible:ring-offset-2 focus-visible:ring-offset-sandal"
                 onClick={() => setOpen(false)}
               >
                 {t(item.key)}
               </a>
             ))}
-            <div className="pt-2 border-t border-maroon/10 text-center" style={{ marginTop: "2cm" }}>
+            <div className="pt-4 mt-3 border-t border-maroon/10 text-center">
               <p className="text-xs text-text-dark/80 mb-1">Built and hosted by</p>
               <p className={`text-xl ${greatVibes.className} text-maroon`}>Hari Krishna</p>
             </div>

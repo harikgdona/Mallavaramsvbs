@@ -44,6 +44,19 @@ jobs:
           test -f out/index.html || (echo "::error::out/index.html missing — build did not export" && exit 1)
           ls -la out | head -20
 
+      # Fail the workflow if the static site folder is too large for your policy (adjust MAX_MB if needed).
+      - name: Check deploy bundle size (max 50 MB)
+        run: |
+          MAX_MB=50
+          BYTES=$(du -sb out | cut -f1)
+          MB=$((BYTES / 1024 / 1024))
+          echo "out/ size: ${MB} MB (${BYTES} bytes)"
+          MAX_BYTES=$((MAX_MB * 1024 * 1024))
+          if [ "$BYTES" -gt "$MAX_BYTES" ]; then
+            echo "::error::out/ is larger than ${MAX_MB} MB. Compress images in public/images, avoid huge binaries, or raise MAX_MB in deploy.yml."
+            exit 1
+          fi
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
