@@ -1,11 +1,15 @@
-# GitHub Pages deployment for Next.js static export (output: "export")
-# Repo Settings → Pages → Source: GitHub Actions
+# GitHub Pages — Next.js static export (output: "export")
+# Settings → Pages → Build: GitHub Actions
+#
+# Next.js 16 puts the site in ./out (index.html at out root). basePath only affects
+# URL prefixes in HTML, not a nested out/<basePath>/ folder.
 
 name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -35,12 +39,15 @@ jobs:
       - name: Build static site
         run: npm run build
 
-      # Must match basePath in next.config.mjs (no leading slash in folder name)
-      # If basePath is "/Mallavaramsvbs", static files live under out/Mallavaramsvbs/
+      - name: Verify export output
+        run: |
+          test -f out/index.html || (echo "::error::out/index.html missing — build did not export" && exit 1)
+          ls -la out | head -20
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./out/Mallavaramsvbs
+          path: ./out
 
   deploy:
     needs: build
