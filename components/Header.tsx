@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Great_Vibes } from "next/font/google";
 import { useTranslate } from "./ConfigProvider";
+import { withBasePath } from "@/lib/basePath";
 
 const greatVibes = Great_Vibes({ weight: "400", subsets: ["latin"] });
 
@@ -40,7 +41,7 @@ export function Header() {
           {navItems.map((item) => (
             <a
               key={item.id}
-              href={`/#${item.id}`}
+              href={withBasePath(`/#${item.id}`)}
               target="_blank"
               rel="noopener noreferrer"
               className="block text-xl font-bold italic text-text-dark/90 hover:text-maroon hover:bg-yellow-200/60 py-2 px-3 rounded-lg transition text-bevel text-center"
@@ -68,7 +69,7 @@ export function Header() {
           <Link href="/#home" className="flex-shrink-0 flex items-center">
             <div className="relative h-10 w-10">
               <Image
-                src="/images/logo.png"
+                src={withBasePath("/images/logo.png")}
                 alt=""
                 fill
                 sizes="40px"
@@ -96,7 +97,7 @@ export function Header() {
             {navItems.map((item) => (
               <a
                 key={item.id}
-                href={`/#${item.id}`}
+                href={withBasePath(`/#${item.id}`)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block text-base font-bold italic py-2 text-text-dark/90 hover:text-maroon text-bevel text-center"

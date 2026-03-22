@@ -5,6 +5,7 @@ import Image from "next/image";
 import { SectionContainer } from "@/components/SectionContainer";
 import { useTranslate } from "@/components/ConfigProvider";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
+import { withBasePath } from "@/lib/basePath";
 
 const UPI_ID = "YOUR_UPI_ID";
 
@@ -75,7 +76,7 @@ export function DonationSection() {
             <div className="bg-white rounded-3xl border-2 border-gold shadow-soft-gold p-4 md:p-5">
               <div className="relative h-48 w-48 md:h-56 md:w-56">
                 <Image
-                  src="/images/upi-qr.svg"
+                  src={withBasePath("/images/upi-qr.svg")}
                   alt="UPI QR code for Mallavaram Brahmana Satram"
                   fill
                   className="object-contain"

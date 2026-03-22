@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { SectionContainer } from "@/components/SectionContainer";
 import { useTranslate } from "@/components/ConfigProvider";
+import { withBasePath } from "@/lib/basePath";
 
 export function AnnadanamSection() {
   const t = useTranslate();
@@ -43,7 +44,7 @@ export function AnnadanamSection() {
         <div className="grid grid-cols-2 gap-3 md:gap-4">
           <div className="relative h-36 md:h-44 lg:h-52 rounded-3xl overflow-hidden shadow-md border border-maroon/15">
             <Image
-              src="/images/placeholder.svg"
+              src={withBasePath("/images/placeholder.svg")}
               alt="Annadanam serving"
               fill
               className="object-cover"
@@ -52,7 +53,7 @@ export function AnnadanamSection() {
           </div>
           <div className="relative h-36 md:h-44 lg:h-52 rounded-3xl overflow-hidden shadow-md border border-maroon/15">
             <Image
-              src="/images/placeholder.svg"
+              src={withBasePath("/images/placeholder.svg")}
               alt="Prasadam distribution"
               fill
               className="object-cover"
@@ -61,7 +62,7 @@ export function AnnadanamSection() {
           </div>
           <div className="relative h-36 md:h-44 lg:h-52 rounded-3xl overflow-hidden shadow-md border border-maroon/15 col-span-2">
             <Image
-              src="/images/placeholder.svg"
+              src={withBasePath("/images/placeholder.svg")}
               alt="Devotees at the satram"
               fill
               className="object-cover"

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { SectionContainer } from "@/components/SectionContainer";
 import { useTranslate } from "@/components/ConfigProvider";
+import { withBasePath } from "@/lib/basePath";
 
 const galleryItems = [
   { src: "/images/placeholder.svg", alt: "Annadanam serving hall" },
@@ -30,7 +31,7 @@ export function GallerySection() {
             key={i}
             className="relative h-32 sm:h-36 md:h-40 lg:h-44 rounded-2xl overflow-hidden border border-maroon/15 shadow-sm"
           >
-            <Image src={item.src} alt={item.alt} fill className="object-cover" unoptimized />
+            <Image src={withBasePath(item.src)} alt={item.alt} fill className="object-cover" unoptimized />
           </div>
         ))}
       </div>

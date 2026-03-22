@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { withBasePath } from "@/lib/basePath";
 
 const SIDEBAR_WIDTH_PX = 195;
 
@@ -16,7 +17,7 @@ export function TopHeader() {
         <Link href="/#home" className="h-full w-full flex items-center justify-center" aria-label="Home">
           <div className="relative h-full w-full">
             <Image
-              src="/images/logo.png"
+              src={withBasePath("/images/logo.png")}
               alt=""
               fill
               sizes={`${SIDEBAR_WIDTH_PX}px`}
@@ -31,7 +32,7 @@ export function TopHeader() {
       <div className="absolute right-0 top-0 bottom-0 w-[390px] min-w-[390px] flex items-center justify-end">
         <div className="relative w-full h-full">
           <Image
-            src="/images/moola-virat.png"
+            src={withBasePath("/images/moola-virat.png")}
             alt="Moola-virat"
             fill
             sizes="390px"

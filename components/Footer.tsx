@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { withBasePath } from "@/lib/basePath";
 
 export function Footer() {
   return (
@@ -7,7 +8,7 @@ export function Footer() {
         <div className="flex items-center gap-3">
           <div className="relative h-10 w-10 md:h-12 md:w-12">
             <Image
-              src="/images/logo.png"
+              src={withBasePath("/images/logo.png")}
               alt="Trust logo"
               fill
               sizes="48px"

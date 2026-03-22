@@ -1,9 +1,13 @@
 /** @type {import('next').NextConfig} */
+const basePath = "/Mallavaramsvbs";
+
 const nextConfig = {
   output: "export",
-  basePath: "/Mallavaramsvbs",
-  // Required for GitHub Pages project sites so /_next and /images resolve under the repo path
-  assetPrefix: "/Mallavaramsvbs",
+  basePath,
+  assetPrefix: basePath,
+  env: {
+    NEXT_PUBLIC_BASE_PATH: basePath
+  },
   reactStrictMode: true,
   images: {
     unoptimized: true,

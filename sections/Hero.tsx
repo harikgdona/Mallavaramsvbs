@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { DonationButton } from "@/components/DonationButton";
 import { useTranslate } from "@/components/ConfigProvider";
+import { withBasePath } from "@/lib/basePath";
 
 export function Hero() {
   const t = useTranslate();
@@ -17,7 +18,7 @@ export function Hero() {
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-50">
         <div className="w-full max-w-4xl h-[60vh] relative">
           <Image
-            src="/images/Satram-illuminated.jpeg"
+            src={withBasePath("/images/Satram-illuminated.jpeg")}
             alt="Mallavaram Brahmana Satram"
             fill
             className="object-contain object-center"
