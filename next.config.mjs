@@ -4,12 +4,21 @@
 const PROD_BASE_PATH = "/Mallavaramsvbs";
 const basePath = process.env.NODE_ENV === "production" ? PROD_BASE_PATH : "";
 
+// Hostnames you use in the browser bar for `next dev` (HMR WebSocket is blocked if missing).
+const extraDevOrigins =
+  process.env.NEXT_DEV_EXTRA_ORIGINS?.split(/[\s,]+/).filter(Boolean) ?? [];
+
 const nextConfig = {
   output: "export",
   basePath,
   assetPrefix: basePath,
-  // Allow accessing dev server via LAN IP (HMR/assets otherwise blocked).
-  allowedDevOrigins: ["192.168.0.3"],
+  allowedDevOrigins: [
+    "localhost",
+    "127.0.0.1",
+    "192.168.0.3",
+    "192.168.0.6",
+    ...extraDevOrigins
+  ],
   env: {
     NEXT_PUBLIC_BASE_PATH: basePath
   },

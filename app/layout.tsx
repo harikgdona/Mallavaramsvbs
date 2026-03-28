@@ -1,8 +1,8 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import Image from "next/image";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import { ConfigProvider } from "@/components/ConfigProvider";
+import { MainContentColumn } from "@/components/MainContentColumn";
 import { TopHeader } from "@/components/TopHeader";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -37,10 +37,10 @@ export default function RootLayout({
           <TopHeader />
           <div className="flex min-h-screen">
             <Header />
-            <div className="flex-1 flex flex-col relative min-w-0 bg-beige">
+            <MainContentColumn>
               <main className="relative flex-1 flex flex-col min-h-0">{children}</main>
               <Footer />
-            </div>
+            </MainContentColumn>
           </div>
           <BottomRightActions />
           </ConfigProvider>

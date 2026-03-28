@@ -4,9 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Great_Vibes } from "next/font/google";
-import { useTranslate } from "./ConfigProvider";
+import { useSiteManual, useTranslate } from "./ConfigProvider";
 import { withBasePath } from "@/lib/basePath";
-import { SIDEBAR_WIDTH_PX } from "@/lib/sidebarWidth";
+import { siteLeftMenuBackgroundFromConfig } from "@/lib/siteManualConfig";
 
 const greatVibes = Great_Vibes({ weight: "400", subsets: ["latin"] });
 
@@ -28,18 +28,22 @@ const navItems = navKeys.map((key) => ({
 
 export function Header() {
   const t = useTranslate();
+  const { siteManual: c } = useSiteManual();
   const [open, setOpen] = useState(false);
+  const SIDEBAR_WIDTH_PX = c.sidebarWidthPx;
+  const leftMenuBg = siteLeftMenuBackgroundFromConfig(c);
 
   return (
     <>
       {/* Desktop: left vertical sidebar — width matches TopHeader logo column */}
       <aside
-        className="hidden md:flex md:flex-col md:flex-shrink-0 md:sticky md:top-0 md:self-start md:h-screen md:max-h-screen bg-gradient-to-b from-amber-50 via-sandal to-sandal border-r border-maroon/15 z-20 shadow-[inset_-1px_0_0_rgba(123,30,30,0.06)]"
+        className="hidden md:flex md:flex-col md:flex-shrink-0 md:sticky md:top-0 md:self-start md:h-screen md:max-h-screen border-r border-maroon/15 z-20 shadow-[inset_-1px_0_0_rgba(123,30,30,0.06)]"
         style={{
           minHeight: 0,
           width: SIDEBAR_WIDTH_PX,
           minWidth: SIDEBAR_WIDTH_PX,
-          maxWidth: SIDEBAR_WIDTH_PX
+          maxWidth: SIDEBAR_WIDTH_PX,
+          background: leftMenuBg
         }}
       >
         <nav className="flex-1 overflow-y-auto py-5 px-3 space-y-0.5 min-h-0">
@@ -63,7 +67,10 @@ export function Header() {
       </aside>
 
       {/* Mobile: compact top bar + hamburger menu */}
-      <header className="md:hidden sticky top-0 z-30 bg-header-yellow border-b border-maroon/10">
+      <header
+        className="md:hidden sticky top-0 z-30 border-b border-maroon/10"
+        style={{ backgroundColor: c.siteMobileNavBarBackground }}
+      >
         <div className="flex items-center justify-between px-3 py-2 gap-2">
           <Link href="/#home" className="flex-shrink-0 flex items-center">
             <div className="relative h-10 w-10">
@@ -92,7 +99,10 @@ export function Header() {
           </button>
         </div>
         {open && (
-          <div className="border-t border-maroon/10 px-3 pb-3 space-y-0.5 bg-sandal/95">
+          <div
+            className="border-t border-maroon/10 px-3 pb-3 space-y-0.5"
+            style={{ backgroundColor: c.siteMobileNavMenuBackground }}
+          >
             {navItems.map((item) => (
               <a
                 key={item.id}

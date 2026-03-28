@@ -39,6 +39,10 @@ coverage/
 *.tsbuildinfo
 next-env.d.ts.bak
 
+# ——— Local / backup component copies (not for main branch) ———
+components/TopHeader.before-reset.tsx
+components/topHeader_26032001.tsx
+
 # ——— IDE / OS ———
 .DS_Store
 Thumbs.db
