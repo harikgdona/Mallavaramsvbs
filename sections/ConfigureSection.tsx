@@ -514,6 +514,26 @@ export function ConfigureSection() {
                   className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-white"
                 />
               </label>
+              <label className="grid gap-1 text-xs font-medium text-text-dark/70 md:col-span-2 lg:col-span-3">
+                Shift toranam strip up (px)
+                <input
+                  type="number"
+                  min={0}
+                  max={120}
+                  value={siteManualDraft.headerToranamShiftUpPx}
+                  onChange={(e) =>
+                    patchLayoutDraft((p) => ({
+                      ...p,
+                      headerToranamShiftUpPx: Number(e.target.value) || 0
+                    }))
+                  }
+                  className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-white"
+                />
+                <span className="font-normal text-text-dark/60">
+                  Moves the whole toranam row toward the top of the banner (clipped by the header). Title band
+                  stays put.
+                </span>
+              </label>
             </div>
 
             <div className="flex flex-wrap gap-3 mt-6 pt-4 border-t border-maroon/10">

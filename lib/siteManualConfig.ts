@@ -74,3 +74,4 @@ export const HEADER_TORANAM_GAP_PX = D.headerToranamGapPx;
 export const HEADER_TORANAM_OBJECT_FIT = D.headerToranamObjectFit;
 export const HEADER_TORANAM_TILE_COUNT = D.headerToranamTileCount;
 export const HEADER_TORANAM_LEFT_PULL_PX = D.headerToranamLeftPullPx;
+export const HEADER_TORANAM_SHIFT_UP_PX = D.headerToranamShiftUpPx;

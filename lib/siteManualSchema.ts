@@ -38,6 +38,8 @@ export type SiteManualConfig = {
   headerToranamObjectFit: "contain" | "cover";
   headerToranamTileCount: number;
   headerToranamLeftPullPx: number;
+  /** Move entire toranam row upward (px). Does not affect title band position. */
+  headerToranamShiftUpPx: number;
 };
 
 export const SITE_MANUAL_DEFAULTS: SiteManualConfig = {
@@ -63,7 +65,7 @@ export const SITE_MANUAL_DEFAULTS: SiteManualConfig = {
   topHeaderAddressFontMaxRem: 1.05,
   topHeaderMiddleTextAlignLeft: true,
   topHeaderMiddleTextShiftPx: -45,
-  topHeaderMiddleTextPushDownPx: 40,
+  topHeaderMiddleTextPushDownPx: 10,
   topHeaderTitleToAddressGapPx: 30,
   toranamImagePaths: [
     "/images/toranam-1.jpeg",
@@ -77,8 +79,9 @@ export const SITE_MANUAL_DEFAULTS: SiteManualConfig = {
   headerToranamTileWidthPx: 250,
   headerToranamGapPx: 0,
   headerToranamObjectFit: "cover",
-  headerToranamTileCount: 3,
-  headerToranamLeftPullPx: 47
+  headerToranamTileCount: 4,
+  headerToranamLeftPullPx: 60,
+  headerToranamShiftUpPx: 10
 };
 
 function isRecord(v: unknown): v is Record<string, unknown> {
@@ -145,6 +148,7 @@ export function mergeSiteManual(overrides: unknown): SiteManualConfig {
   next.headerToranamObjectFit = fit === "contain" || fit === "cover" ? fit : next.headerToranamObjectFit;
   next.headerToranamTileCount = Math.max(0, Math.min(20, Math.round(num("headerToranamTileCount"))));
   next.headerToranamLeftPullPx = Math.max(0, Math.round(num("headerToranamLeftPullPx")));
+  next.headerToranamShiftUpPx = Math.max(0, Math.min(120, Math.round(num("headerToranamShiftUpPx"))));
 
   return next;
 }

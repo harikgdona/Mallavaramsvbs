@@ -31,6 +31,7 @@ export function TopHeader() {
   const HEADER_TORANAM_OBJECT_FIT = c.headerToranamObjectFit;
   const HEADER_TORANAM_TILE_COUNT = c.headerToranamTileCount;
   const HEADER_TORANAM_LEFT_PULL_PX = c.headerToranamLeftPullPx;
+  const HEADER_TORANAM_SHIFT_UP_PX = c.headerToranamShiftUpPx;
   const TORANAM_IMAGE_PATHS = c.toranamImagePaths;
 
   // --- Middle band horizontal insets (px). Title + toranams live in this rectangle. ---
@@ -187,7 +188,8 @@ export function TopHeader() {
           style={{
             height: toranamRowHeightPx,
             left: -HEADER_TORANAM_LEFT_PULL_PX,
-            width: `calc(100% + ${HEADER_TORANAM_LEFT_PULL_PX}px)`
+            width: `calc(100% + ${HEADER_TORANAM_LEFT_PULL_PX}px)`,
+            transform: `translateY(-${HEADER_TORANAM_SHIFT_UP_PX}px)`
           }}
           aria-hidden
         >
