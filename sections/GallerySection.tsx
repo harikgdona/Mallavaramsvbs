@@ -2,18 +2,16 @@
 
 import Image from "next/image";
 import { SectionContainer } from "@/components/SectionContainer";
-import { useTranslate } from "@/components/ConfigProvider";
+import { useConfig, useTranslate } from "@/components/ConfigProvider";
+import { useLanguage } from "@/components/LanguageProvider";
+import { resolveGalleryImageSrc } from "@/lib/galleryConfig";
 import { withBasePath } from "@/lib/basePath";
-
-const galleryItems = [
-  { src: "/images/placeholder.svg", alt: "Annadanam serving hall" },
-  { src: "/images/placeholder.svg", alt: "Devotees receiving prasadam" },
-  { src: "/images/placeholder.svg", alt: "Temple and satram view" },
-  { src: "/images/placeholder.svg", alt: "Veda pandits performing parayanam" }
-];
 
 export function GallerySection() {
   const t = useTranslate();
+  const { language } = useLanguage();
+  const { gallerySlots } = useConfig();
+  const placeholder = withBasePath("/images/placeholder.svg");
 
   return (
     <SectionContainer id="gallery">
@@ -25,17 +23,30 @@ export function GallerySection() {
         at Mallavaram.
       </p>
 
-      <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-        {galleryItems.map((item, i) => (
-          <div
-            key={i}
-            className="relative h-32 sm:h-36 md:h-40 lg:h-44 rounded-2xl overflow-hidden border border-maroon/15 shadow-sm"
-          >
-            <Image src={withBasePath(item.src)} alt={item.alt} fill className="object-cover" unoptimized />
-          </div>
-        ))}
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
+        {gallerySlots.map((slot, i) => {
+          const { src, unoptimized } = resolveGalleryImageSrc(slot.src, placeholder);
+          const alt =
+            language === "te" && slot.altTe.trim()
+              ? slot.altTe.trim()
+              : slot.altEn.trim() || `Gallery photo ${i + 1}`;
+          return (
+            <div
+              key={i}
+              className="relative aspect-square sm:aspect-[5/4] md:aspect-square max-h-52 sm:max-h-none rounded-2xl overflow-hidden border border-maroon/15 shadow-sm"
+            >
+              <Image
+                src={src}
+                alt={alt}
+                fill
+                className="object-cover"
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                unoptimized={unoptimized}
+              />
+            </div>
+          );
+        })}
       </div>
     </SectionContainer>
   );
 }
-
