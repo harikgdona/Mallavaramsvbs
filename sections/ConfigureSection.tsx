@@ -13,7 +13,11 @@ import {
   type GallerySlotConfig
 } from "@/lib/galleryConfig";
 import { withBasePath } from "@/lib/basePath";
-import { SITE_MANUAL_DEFAULTS, type SiteManualConfig } from "@/lib/siteManualSchema";
+import {
+  SITE_MANUAL_DEFAULTS,
+  resolveSiteManualForUi,
+  type SiteManualConfig
+} from "@/lib/siteManualSchema";
 import { ConfigureColorField } from "@/components/ConfigureColorField";
 
 type Overrides = Record<string, { en: string; te: string }>;
@@ -370,6 +374,27 @@ export function ConfigureSection() {
               Colors, sidebar width, top banner height classes, toranam strip, and title or address typography.
             </p>
 
+            <label className="flex items-start gap-3 rounded-xl border border-maroon/15 bg-sandal/20 p-3 md:p-4 mb-5 cursor-pointer">
+              <input
+                type="checkbox"
+                className="mt-1 h-4 w-4 shrink-0 rounded border-maroon/40 text-maroon focus:ring-maroon/40"
+                checked={siteManualDraft.mirrorMobileColorsFromDesktop}
+                onChange={(e) =>
+                  patchLayoutDraft((p) => ({ ...p, mirrorMobileColorsFromDesktop: e.target.checked }))
+                }
+              />
+              <span>
+                <span className="font-semibold text-sm text-maroon block">
+                  Use desktop colors on the phone layout
+                </span>
+                <span className="text-xs text-text-dark/70 mt-1 block leading-relaxed">
+                  When checked, the mobile top bar matches <strong>Top header background</strong> and the slide-down
+                  menu matches <strong>Main column background</strong>. Gallery, text, and header images already apply
+                  everywhere. Uncheck to set mobile bar and menu colors separately.
+                </span>
+              </span>
+            </label>
+
             <div className="grid gap-5 md:grid-cols-2">
               <ConfigureColorField
                 label="Top header background"
@@ -398,13 +423,23 @@ export function ConfigureSection() {
               />
               <ConfigureColorField
                 label="Mobile nav bar background"
-                value={siteManualDraft.siteMobileNavBarBackground}
+                disabled={siteManualDraft.mirrorMobileColorsFromDesktop}
+                value={
+                  siteManualDraft.mirrorMobileColorsFromDesktop
+                    ? resolveSiteManualForUi(siteManualDraft).siteMobileNavBarBackground
+                    : siteManualDraft.siteMobileNavBarBackground
+                }
                 onChange={(v) => patchLayoutDraft((p) => ({ ...p, siteMobileNavBarBackground: v }))}
               />
               <div className="md:col-span-2">
                 <ConfigureColorField
                   label="Mobile menu panel background"
-                  value={siteManualDraft.siteMobileNavMenuBackground}
+                  disabled={siteManualDraft.mirrorMobileColorsFromDesktop}
+                  value={
+                    siteManualDraft.mirrorMobileColorsFromDesktop
+                      ? resolveSiteManualForUi(siteManualDraft).siteMobileNavMenuBackground
+                      : siteManualDraft.siteMobileNavMenuBackground
+                  }
                   onChange={(v) => patchLayoutDraft((p) => ({ ...p, siteMobileNavMenuBackground: v }))}
                 />
               </div>

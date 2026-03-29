@@ -13,6 +13,8 @@ export type SiteManualConfig = {
   siteLeftMenuGradientTo: string;
   siteMobileNavBarBackground: string;
   siteMobileNavMenuBackground: string;
+  /** When true, mobile nav bar uses `siteTopHeaderBackground` and menu panel uses `siteMainColumnBackground`. */
+  mirrorMobileColorsFromDesktop: boolean;
   sidebarWidthPx: number;
   topHeaderHeightClasses: string;
   topHeaderMoolaColumnWidthPx: number;
@@ -59,6 +61,7 @@ export const SITE_MANUAL_DEFAULTS: SiteManualConfig = {
   siteLeftMenuGradientTo: "#F8F1E5",
   siteMobileNavBarBackground: "#FDE047",
   siteMobileNavMenuBackground: "rgba(248, 241, 229, 0.95)",
+  mirrorMobileColorsFromDesktop: true,
   sidebarWidthPx: 175,
   topHeaderHeightClasses: "h-[8.7rem] md:h-[9.9rem]",
   topHeaderMoolaColumnWidthPx: 112,
@@ -133,6 +136,7 @@ export function mergeSiteManual(overrides: unknown): SiteManualConfig {
   next.siteLeftMenuGradientTo = str("siteLeftMenuGradientTo");
   next.siteMobileNavBarBackground = str("siteMobileNavBarBackground");
   next.siteMobileNavMenuBackground = str("siteMobileNavMenuBackground");
+  next.mirrorMobileColorsFromDesktop = bool("mirrorMobileColorsFromDesktop");
   next.sidebarWidthPx = Math.max(40, Math.round(num("sidebarWidthPx")));
   next.topHeaderHeightClasses = str("topHeaderHeightClasses");
   next.topHeaderMoolaColumnWidthPx = Math.max(20, Math.round(num("topHeaderMoolaColumnWidthPx")));
@@ -175,6 +179,16 @@ export function mergeSiteManual(overrides: unknown): SiteManualConfig {
   next.homeHeroBackgroundSrc = str("homeHeroBackgroundSrc");
 
   return next;
+}
+
+/** Effective config for rendering: applies mobile color mirror when enabled. */
+export function resolveSiteManualForUi(cfg: SiteManualConfig): SiteManualConfig {
+  if (!cfg.mirrorMobileColorsFromDesktop) return cfg;
+  return {
+    ...cfg,
+    siteMobileNavBarBackground: cfg.siteTopHeaderBackground,
+    siteMobileNavMenuBackground: cfg.siteMainColumnBackground
+  };
 }
 
 export function siteLeftMenuBackgroundFromConfig(cfg: SiteManualConfig): string {

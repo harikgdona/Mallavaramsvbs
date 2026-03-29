@@ -41,13 +41,14 @@ type Props = {
   label: string;
   value: string;
   onChange: (next: string) => void;
+  disabled?: boolean;
 };
 
-export function ConfigureColorField({ label, value, onChange }: Props) {
+export function ConfigureColorField({ label, value, onChange, disabled }: Props) {
   const pickerHex = cssColorToHexForPicker(value);
 
   return (
-    <div className="grid gap-2">
+    <div className={disabled ? "grid gap-2 opacity-65" : "grid gap-2"}>
       <span className="text-xs font-medium text-text-dark/70">{label}</span>
       <div className="flex flex-wrap gap-1.5" role="group" aria-label={`${label} palette`}>
         {PALETTE.map((p) => (
@@ -55,29 +56,34 @@ export function ConfigureColorField({ label, value, onChange }: Props) {
             key={p.name}
             type="button"
             title={p.name}
+            disabled={disabled}
             onClick={() => onChange(p.value)}
-            className="h-7 w-7 rounded-md border border-maroon/25 shadow-sm shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-maroon/50 ring-offset-1"
+            className="h-7 w-7 rounded-md border border-maroon/25 shadow-sm shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-maroon/50 ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
             style={{ background: p.value }}
           />
         ))}
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        <label className="flex items-center gap-2 text-xs text-text-dark/65 cursor-pointer shrink-0">
+        <label
+          className={`flex items-center gap-2 text-xs text-text-dark/65 shrink-0 ${disabled ? "cursor-default" : "cursor-pointer"}`}
+        >
           <span className="sr-only">Pick {label}</span>
           <input
             type="color"
             value={pickerHex}
+            disabled={disabled}
             onChange={(e) => onChange(e.target.value)}
-            className="h-9 w-14 cursor-pointer rounded-lg border border-maroon/25 bg-white p-0.5"
+            className="h-9 w-14 rounded-lg border border-maroon/25 bg-white p-0.5 disabled:cursor-not-allowed"
           />
           Custom
         </label>
         <input
           type="text"
           value={value}
+          readOnly={disabled}
           onChange={(e) => onChange(e.target.value)}
           placeholder="#hex or rgba(...)"
-          className="min-w-[10rem] flex-1 rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-sandal/40 font-mono"
+          className="min-w-[10rem] flex-1 rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-sandal/40 font-mono read-only:bg-sandal/25"
         />
       </div>
     </div>

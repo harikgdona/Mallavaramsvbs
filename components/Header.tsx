@@ -8,6 +8,7 @@ import { useSiteManual, useTranslate } from "./ConfigProvider";
 import { withBasePath } from "@/lib/basePath";
 import { resolveGalleryImageSrc } from "@/lib/galleryConfig";
 import { siteLeftMenuBackgroundFromConfig } from "@/lib/siteManualConfig";
+import { resolveSiteManualForUi } from "@/lib/siteManualSchema";
 
 const greatVibes = Great_Vibes({ weight: "400", subsets: ["latin"] });
 
@@ -29,7 +30,8 @@ const navItems = navKeys.map((key) => ({
 
 export function Header() {
   const t = useTranslate();
-  const { siteManual: c } = useSiteManual();
+  const { siteManual: raw } = useSiteManual();
+  const c = resolveSiteManualForUi(raw);
   const [open, setOpen] = useState(false);
   const SIDEBAR_WIDTH_PX = c.sidebarWidthPx;
   const leftMenuBg = siteLeftMenuBackgroundFromConfig(c);
