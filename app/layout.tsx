@@ -11,6 +11,7 @@ import { Footer } from "@/components/Footer";
 import { BottomRightActions } from "@/components/BottomRightActions";
 import { LayoutViewportOffsets } from "@/components/LayoutViewportOffsets";
 import { TypographyTheme } from "@/components/TypographyTheme";
+import { TYPOGRAPHY_PRESET_GOOGLE_FONTS_STYLESHEET } from "@/lib/typographyFontPresets";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-site-body" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-site-heading" });
@@ -38,6 +39,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href={TYPOGRAPHY_PRESET_GOOGLE_FONTS_STYLESHEET} rel="stylesheet" />
+      </head>
       <body>
         <LanguageProvider>
           <ConfigProvider>

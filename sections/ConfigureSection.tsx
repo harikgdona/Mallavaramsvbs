@@ -24,6 +24,8 @@ import {
   type SiteManualConfig
 } from "@/lib/siteManualSchema";
 import { ConfigureColorField } from "@/components/ConfigureColorField";
+import { ConfigureFontPresetPicker } from "@/components/ConfigureFontPresetPicker";
+import { POPULAR_BODY_FONTS, POPULAR_HEADING_FONTS } from "@/lib/typographyFontPresets";
 
 type Overrides = Record<string, { en: string; te: string }>;
 
@@ -686,6 +688,20 @@ export function ConfigureSection() {
               Font stacks use CSS, e.g. <code className="bg-sandal/60 px-1 rounded">var(--font-site-body), system-ui</code> or{" "}
               <code className="bg-sandal/60 px-1 rounded">&apos;Georgia&apos;, serif</code>. Root px scales rem-based Tailwind text.
             </p>
+            <ConfigureFontPresetPicker
+              title="Popular body fonts (click a card to set main text)"
+              presets={POPULAR_BODY_FONTS}
+              value={siteManualDraft.typographyBodyFontFamily}
+              variant="body"
+              onSelect={(familyCss) => patchLayoutDraft((p) => ({ ...p, typographyBodyFontFamily: familyCss }))}
+            />
+            <ConfigureFontPresetPicker
+              title="Popular heading fonts (click a card to set titles)"
+              presets={POPULAR_HEADING_FONTS}
+              value={siteManualDraft.typographyHeadingFontFamily}
+              variant="heading"
+              onSelect={(familyCss) => patchLayoutDraft((p) => ({ ...p, typographyHeadingFontFamily: familyCss }))}
+            />
             <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
               <label className="grid gap-1 text-xs font-medium text-text-dark/70">
                 Root HTML font size (px)
