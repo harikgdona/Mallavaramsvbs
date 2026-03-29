@@ -37,6 +37,9 @@ jobs:
         run: npm ci
 
       - name: Build static site
+        env:
+          # Empty = site at domain root (e.g. Mallavaramsvbs.org). Use /repo-name only for default github.io/repo URLs.
+          SITE_BASE_PATH: ""
         run: npm run build
 
       - name: Verify export output

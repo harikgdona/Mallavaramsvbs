@@ -51,6 +51,24 @@ export type SiteManualConfig = {
   headerToranamShiftUpPx: number;
   /** Full-bleed background on the home hero (#home) — path, URL, or data URL. */
   homeHeroBackgroundSrc: string;
+
+  /** Root rem basis (browser default ~16px). Scales most Tailwind rem-based text. */
+  typographyHtmlFontPx: number;
+  /** CSS font-family stacks (e.g. var(--font-site-body), system-ui or 'Georgia', serif). */
+  typographyBodyFontFamily: string;
+  typographyHeadingFontFamily: string;
+  typographyNavFontFamily: string;
+  typographyBodyFontWeight: number;
+  typographyHeadingFontWeight: number;
+  typographyNavFontWeight: number;
+  typographyBodyFontStyle: "normal" | "italic";
+  typographyHeadingFontStyle: "normal" | "italic";
+  typographyNavFontStyle: "normal" | "italic";
+  /** Section panel titles (.section-heading) — clamp(min, vw, max). */
+  typographySectionTitleMinRem: number;
+  typographySectionTitlePrefVw: number;
+  typographySectionTitleMaxRem: number;
+  typographySectionSubtitleRem: number;
 };
 
 export const SITE_MANUAL_DEFAULTS: SiteManualConfig = {
@@ -99,7 +117,22 @@ export const SITE_MANUAL_DEFAULTS: SiteManualConfig = {
   headerToranamTileCount: 4,
   headerToranamLeftPullPx: 60,
   headerToranamShiftUpPx: 10,
-  homeHeroBackgroundSrc: "/images/Satram-illuminated.jpeg"
+  homeHeroBackgroundSrc: "/images/Satram-illuminated.jpeg",
+
+  typographyHtmlFontPx: 16,
+  typographyBodyFontFamily: "var(--font-site-body), system-ui, sans-serif",
+  typographyHeadingFontFamily: "var(--font-site-heading), Georgia, serif",
+  typographyNavFontFamily: "var(--font-site-body), system-ui, sans-serif",
+  typographyBodyFontWeight: 400,
+  typographyHeadingFontWeight: 700,
+  typographyNavFontWeight: 600,
+  typographyBodyFontStyle: "normal",
+  typographyHeadingFontStyle: "normal",
+  typographyNavFontStyle: "normal",
+  typographySectionTitleMinRem: 1.75,
+  typographySectionTitlePrefVw: 4.5,
+  typographySectionTitleMaxRem: 2.35,
+  typographySectionSubtitleRem: 1.125
 };
 
 function isRecord(v: unknown): v is Record<string, unknown> {
@@ -178,6 +211,28 @@ export function mergeSiteManual(overrides: unknown): SiteManualConfig {
   next.headerToranamShiftUpPx = Math.max(0, Math.min(120, Math.round(num("headerToranamShiftUpPx"))));
   next.homeHeroBackgroundSrc = str("homeHeroBackgroundSrc");
 
+  next.typographyHtmlFontPx = Math.max(12, Math.min(24, Math.round(num("typographyHtmlFontPx"))));
+  next.typographyBodyFontFamily = str("typographyBodyFontFamily");
+  next.typographyHeadingFontFamily = str("typographyHeadingFontFamily");
+  next.typographyNavFontFamily = str("typographyNavFontFamily");
+  const wClamp = (k: keyof SiteManualConfig) =>
+    Math.max(100, Math.min(900, Math.round(num(k) / 100) * 100));
+  next.typographyBodyFontWeight = wClamp("typographyBodyFontWeight");
+  next.typographyHeadingFontWeight = wClamp("typographyHeadingFontWeight");
+  next.typographyNavFontWeight = wClamp("typographyNavFontWeight");
+  const fs = (k: keyof SiteManualConfig): "normal" | "italic" => {
+    const v = o[k as string];
+    if (v === "italic" || v === "normal") return v;
+    return next[k] as "normal" | "italic";
+  };
+  next.typographyBodyFontStyle = fs("typographyBodyFontStyle");
+  next.typographyHeadingFontStyle = fs("typographyHeadingFontStyle");
+  next.typographyNavFontStyle = fs("typographyNavFontStyle");
+  next.typographySectionTitleMinRem = Math.max(0.5, num("typographySectionTitleMinRem"));
+  next.typographySectionTitlePrefVw = Math.max(0, num("typographySectionTitlePrefVw"));
+  next.typographySectionTitleMaxRem = Math.max(0.5, num("typographySectionTitleMaxRem"));
+  next.typographySectionSubtitleRem = Math.max(0.75, num("typographySectionSubtitleRem"));
+
   return next;
 }
 
@@ -211,4 +266,11 @@ export function topHeaderAddressFontSizeCss(cfg: SiteManualConfig): string {
   const lo = Math.min(cfg.topHeaderAddressFontMinRem, cfg.topHeaderAddressFontMaxRem);
   const hi = Math.max(cfg.topHeaderAddressFontMinRem, cfg.topHeaderAddressFontMaxRem);
   return `clamp(${lo}rem, ${cfg.topHeaderAddressFontPrefVw}vw, ${hi}rem)`;
+}
+
+/** Main section panel titles (.section-heading). */
+export function sectionHeadingFontSizeCss(cfg: SiteManualConfig): string {
+  const lo = Math.min(cfg.typographySectionTitleMinRem, cfg.typographySectionTitleMaxRem);
+  const hi = Math.max(cfg.typographySectionTitleMinRem, cfg.typographySectionTitleMaxRem);
+  return `clamp(${lo}rem, ${cfg.typographySectionTitlePrefVw}vw, ${hi}rem)`;
 }

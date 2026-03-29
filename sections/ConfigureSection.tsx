@@ -12,6 +12,11 @@ import {
   resolveGalleryImageSrc,
   type GallerySlotConfig
 } from "@/lib/galleryConfig";
+import {
+  defaultCommitteeMembers,
+  MAX_COMMITTEE_MEMBERS,
+  type CommitteeMemberConfig
+} from "@/lib/committeeConfig";
 import { withBasePath } from "@/lib/basePath";
 import {
   SITE_MANUAL_DEFAULTS,
@@ -23,6 +28,9 @@ import { ConfigureColorField } from "@/components/ConfigureColorField";
 type Overrides = Record<string, { en: string; te: string }>;
 
 const MAX_IMAGE_FILE_MB = 1.5;
+
+/** Session-only: admins can reveal full layout / toranam / typography controls */
+const ADVANCED_LAYOUT_SESSION_KEY = "mallavaram-configure-advanced-layout";
 
 function getEffective(sectionOverrides: Overrides, key: string): { en: string; te: string } {
   return (
@@ -126,8 +134,16 @@ function HeaderImageField({
 
 export function ConfigureSection() {
   const { ready, authed, login, logout } = useAdminAuth();
-  const { overrides, saveOverrides, resetOverrides, gallerySlots, setGallerySlots, setSiteManual } =
-    useConfig();
+  const {
+    overrides,
+    saveOverrides,
+    resetOverrides,
+    gallerySlots,
+    setGallerySlots,
+    committeeMembers,
+    setCommitteeMembers,
+    setSiteManual
+  } = useConfig();
   const { siteManual } = useSiteManual();
   const [loginUser, setLoginUser] = useState("admin");
   const [loginPass, setLoginPass] = useState("");
@@ -135,12 +151,32 @@ export function ConfigureSection() {
   const [loginBusy, setLoginBusy] = useState(false);
   const [draft, setDraft] = useState<Overrides>(() => ({ ...overrides }));
   const [galleryDraft, setGalleryDraft] = useState<GallerySlotConfig[]>(() => defaultGallerySlots());
+  const [committeeDraft, setCommitteeDraft] = useState<CommitteeMemberConfig[]>(() =>
+    defaultCommitteeMembers()
+  );
   const [siteManualDraft, setSiteManualDraft] = useState<SiteManualConfig>(() =>
     cloneSiteManual(SITE_MANUAL_DEFAULTS)
   );
   /** When true, do not overwrite layout draft from context (avoids losing edits when localStorage hydrates). */
   const [siteLayoutDirty, setSiteLayoutDirty] = useState(false);
   const [saveFlash, setSaveFlash] = useState<string | null>(null);
+  const [showAdvancedSiteLayout, setShowAdvancedSiteLayout] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setShowAdvancedSiteLayout(sessionStorage.getItem(ADVANCED_LAYOUT_SESSION_KEY) === "1");
+  }, []);
+
+  const toggleAdvancedSiteLayout = useCallback(() => {
+    setShowAdvancedSiteLayout((prev) => {
+      const next = !prev;
+      if (typeof window !== "undefined") {
+        if (next) sessionStorage.setItem(ADVANCED_LAYOUT_SESSION_KEY, "1");
+        else sessionStorage.removeItem(ADVANCED_LAYOUT_SESSION_KEY);
+      }
+      return next;
+    });
+  }, []);
 
   const patchLayoutDraft = useCallback((updater: (p: SiteManualConfig) => SiteManualConfig) => {
     setSiteLayoutDirty(true);
@@ -154,6 +190,10 @@ export function ConfigureSection() {
   useEffect(() => {
     setGalleryDraft(gallerySlots);
   }, [gallerySlots]);
+
+  useEffect(() => {
+    setCommitteeDraft(committeeMembers);
+  }, [committeeMembers]);
 
   useEffect(() => {
     if (siteLayoutDirty) return;
@@ -188,6 +228,27 @@ export function ConfigureSection() {
     setGalleryDraft((prev) => prev.filter((_, j) => j !== index));
   }, []);
 
+  const updateCommitteeMember = useCallback((index: number, patch: Partial<CommitteeMemberConfig>) => {
+    setCommitteeDraft((prev) =>
+      prev.map((row, j) => (j === index ? { ...row, ...patch } : row))
+    );
+  }, []);
+
+  const addCommitteeMember = useCallback(() => {
+    setCommitteeDraft((prev) =>
+      prev.length >= MAX_COMMITTEE_MEMBERS
+        ? prev
+        : [
+            ...prev,
+            { src: "", nameEn: "", nameTe: "", designationEn: "", designationTe: "" }
+          ]
+    );
+  }, []);
+
+  const removeCommitteeMember = useCallback((index: number) => {
+    setCommitteeDraft((prev) => prev.filter((_, j) => j !== index));
+  }, []);
+
   const runFlash = useCallback((id: string) => {
     setSaveFlash(id);
     setTimeout(() => {
@@ -212,21 +273,25 @@ export function ConfigureSection() {
       if (headerName === "Gallery") {
         setGallerySlots(galleryDraft);
       }
+      if (headerName === "Committee") {
+        setCommitteeMembers(committeeDraft);
+      }
       runFlash(`section-${headerName}`);
     },
-    [draft, galleryDraft, saveOverrides, setGallerySlots, runFlash]
+    [draft, galleryDraft, committeeDraft, saveOverrides, setGallerySlots, setCommitteeMembers, runFlash]
   );
 
   const handleReset = useCallback(() => {
     if (
       typeof window !== "undefined" &&
       window.confirm(
-        "Reset all text, gallery photos, and site layout or header settings to defaults?"
+        "Reset all text, gallery, committee, and site layout or header settings to defaults?"
       )
     ) {
       resetOverrides();
       setDraft({});
       setGalleryDraft(defaultGallerySlots());
+      setCommitteeDraft(defaultCommitteeMembers());
       setSiteLayoutDirty(false);
       setSiteManualDraft(cloneSiteManual(SITE_MANUAL_DEFAULTS));
       setSaveFlash(null);
@@ -371,7 +436,9 @@ export function ConfigureSection() {
               Site layout and header
             </legend>
             <p className="text-sm text-text-dark/75 mt-2 mb-4">
-              Colors, sidebar width, top banner height classes, toranam strip, and title or address typography.
+              By default only <strong>colors</strong> (and matching mobile colors) are shown. Use{" "}
+              <strong>Show advanced layout &amp; header options</strong> for sidebar width, banner height, toranams,
+              and typography — admin session only (resets when the browser tab is closed).
             </p>
 
             <label className="flex items-start gap-3 rounded-xl border border-maroon/15 bg-sandal/20 p-3 md:p-4 mb-5 cursor-pointer">
@@ -445,7 +512,24 @@ export function ConfigureSection() {
               </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4 mt-6 pt-4 border-t border-maroon/10">
+            {!showAdvancedSiteLayout ? (
+              <div className="mt-5">
+                <button type="button" onClick={toggleAdvancedSiteLayout} className="btn-outline text-sm py-2 px-4">
+                  Show advanced layout &amp; header options (admin)
+                </button>
+              </div>
+            ) : null}
+
+            {showAdvancedSiteLayout ? (
+              <>
+                <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-maroon/10 pt-4">
+                  <p className="text-xs font-semibold text-maroon">Advanced — layout, toranam strip, typography</p>
+                  <button type="button" onClick={toggleAdvancedSiteLayout} className="text-sm text-maroon/90 underline">
+                    Hide advanced options
+                  </button>
+                </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4 mt-4">
               <label className="grid gap-1 text-xs font-medium text-text-dark/70">
                 Sidebar width (px)
                 <input
@@ -587,6 +671,141 @@ export function ConfigureSection() {
                       patchLayoutDraft((p) => ({
                         ...p,
                         [key]: Number(e.target.value) || 0
+                      }))
+                    }
+                    className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-white"
+                  />
+                </label>
+              ))}
+            </div>
+
+            <p className="text-xs font-semibold text-maroon mt-6 mb-2 border-t border-maroon/10 pt-4">
+              Site-wide typography (body, headings, nav, section titles)
+            </p>
+            <p className="text-xs text-text-dark/65 mb-3">
+              Font stacks use CSS, e.g. <code className="bg-sandal/60 px-1 rounded">var(--font-site-body), system-ui</code> or{" "}
+              <code className="bg-sandal/60 px-1 rounded">&apos;Georgia&apos;, serif</code>. Root px scales rem-based Tailwind text.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
+              <label className="grid gap-1 text-xs font-medium text-text-dark/70">
+                Root HTML font size (px)
+                <input
+                  type="number"
+                  min={12}
+                  max={24}
+                  value={siteManualDraft.typographyHtmlFontPx}
+                  onChange={(e) =>
+                    patchLayoutDraft((p) => ({
+                      ...p,
+                      typographyHtmlFontPx: Math.max(12, Math.min(24, Math.round(Number(e.target.value) || p.typographyHtmlFontPx)))
+                    }))
+                  }
+                  className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-white"
+                />
+              </label>
+            </div>
+            <div className="grid gap-3 md:grid-cols-3 mt-3">
+              <label className="grid gap-1 text-xs font-medium text-text-dark/70">
+                Body font family (CSS)
+                <input
+                  type="text"
+                  value={siteManualDraft.typographyBodyFontFamily}
+                  onChange={(e) => patchLayoutDraft((p) => ({ ...p, typographyBodyFontFamily: e.target.value }))}
+                  className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-white font-mono text-xs"
+                />
+              </label>
+              <label className="grid gap-1 text-xs font-medium text-text-dark/70">
+                Heading font family (CSS)
+                <input
+                  type="text"
+                  value={siteManualDraft.typographyHeadingFontFamily}
+                  onChange={(e) => patchLayoutDraft((p) => ({ ...p, typographyHeadingFontFamily: e.target.value }))}
+                  className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-white font-mono text-xs"
+                />
+              </label>
+              <label className="grid gap-1 text-xs font-medium text-text-dark/70">
+                Nav / menu font family (CSS)
+                <input
+                  type="text"
+                  value={siteManualDraft.typographyNavFontFamily}
+                  onChange={(e) => patchLayoutDraft((p) => ({ ...p, typographyNavFontFamily: e.target.value }))}
+                  className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-white font-mono text-xs"
+                />
+              </label>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 mt-3">
+              {(
+                [
+                  ["typographyBodyFontWeight", "Body weight (100–900)"] as const,
+                  ["typographyHeadingFontWeight", "Heading weight"] as const,
+                  ["typographyNavFontWeight", "Nav weight"] as const
+                ] as const
+              ).map(([key, label]) => (
+                <label key={key} className="grid gap-1 text-xs font-medium text-text-dark/70">
+                  {label}
+                  <input
+                    type="number"
+                    min={100}
+                    max={900}
+                    step={100}
+                    value={siteManualDraft[key]}
+                    onChange={(e) =>
+                      patchLayoutDraft((p) => ({
+                        ...p,
+                        [key]: Math.max(100, Math.min(900, Math.round(Number(e.target.value) / 100) * 100 || (p[key] as number)))
+                      }))
+                    }
+                    className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-white"
+                  />
+                </label>
+              ))}
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 mt-3">
+              {(
+                [
+                  ["typographyBodyFontStyle", "Body style"] as const,
+                  ["typographyHeadingFontStyle", "Heading style"] as const,
+                  ["typographyNavFontStyle", "Nav style"] as const
+                ] as const
+              ).map(([key, label]) => (
+                <label key={key} className="grid gap-1 text-xs font-medium text-text-dark/70">
+                  {label}
+                  <select
+                    value={siteManualDraft[key]}
+                    onChange={(e) =>
+                      patchLayoutDraft((p) => ({
+                        ...p,
+                        [key]: e.target.value as "normal" | "italic"
+                      }))
+                    }
+                    className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-white"
+                  >
+                    <option value="normal">Regular</option>
+                    <option value="italic">Italic</option>
+                  </select>
+                </label>
+              ))}
+            </div>
+            <p className="text-xs font-semibold text-maroon mt-4 mb-2">Section panel titles (.section-heading)</p>
+            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
+              {(
+                [
+                  ["typographySectionTitleMinRem", "Clamp min (rem)"] as const,
+                  ["typographySectionTitlePrefVw", "Preferred (vw)"] as const,
+                  ["typographySectionTitleMaxRem", "Clamp max (rem)"] as const,
+                  ["typographySectionSubtitleRem", "Subtitle size (rem)"] as const
+                ] as const
+              ).map(([key, label]) => (
+                <label key={key} className="grid gap-1 text-xs font-medium text-text-dark/70">
+                  {label}
+                  <input
+                    type="number"
+                    step={0.05}
+                    value={siteManualDraft[key]}
+                    onChange={(e) =>
+                      patchLayoutDraft((p) => ({
+                        ...p,
+                        [key]: Number(e.target.value) || (p[key] as number)
                       }))
                     }
                     className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-white"
@@ -802,6 +1021,8 @@ export function ConfigureSection() {
                 </span>
               </label>
             </div>
+              </>
+            ) : null}
 
             <div className="flex flex-wrap gap-3 mt-6 pt-4 border-t border-maroon/10">
               <button type="button" onClick={saveSiteLayout} className="btn-primary">
@@ -847,6 +1068,135 @@ export function ConfigureSection() {
                     </div>
                   );
                 })}
+
+                {headerName === "Committee" && (
+                  <div className="pt-4 mt-4 border-t border-maroon/15 space-y-5">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <p className="text-sm text-text-dark/80 font-medium">
+                        Members ({committeeDraft.length} / {MAX_COMMITTEE_MEMBERS})
+                      </p>
+                      <button
+                        type="button"
+                        onClick={addCommitteeMember}
+                        disabled={committeeDraft.length >= MAX_COMMITTEE_MEMBERS}
+                        className="btn-primary text-sm py-2 px-4 disabled:opacity-50 disabled:pointer-events-none"
+                      >
+                        Add member
+                      </button>
+                    </div>
+                    <p className="text-xs text-text-dark/65">
+                      Photo path, URL, or upload (this browser only; under ~{MAX_IMAGE_FILE_MB} MB). Name and
+                      designation in English and Telugu. Save with <strong>Save Committee</strong> below.
+                    </p>
+                    {committeeDraft.length === 0 ? (
+                      <p className="text-sm text-text-dark/60 italic">
+                        No members yet. Click Add member to start.
+                      </p>
+                    ) : (
+                      committeeDraft.map((row, i) => (
+                        <div
+                          key={i}
+                          className="rounded-xl border border-maroon/15 bg-sandal/30 p-3 md:p-4 space-y-3"
+                        >
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <p className="text-xs font-semibold text-maroon">Member {i + 1}</p>
+                            <button
+                              type="button"
+                              className="text-xs text-red-800 underline font-medium"
+                              onClick={() => removeCommitteeMember(i)}
+                            >
+                              Remove member
+                            </button>
+                          </div>
+                          <div className="grid md:grid-cols-[100px_1fr] gap-4 items-start">
+                            <div className="relative h-24 w-24 rounded-lg overflow-hidden border border-maroon/20 bg-white shrink-0 mx-auto md:mx-0">
+                              <GalleryThumb src={row.src} />
+                            </div>
+                            <div className="space-y-2 min-w-0">
+                              <label className="text-xs text-text-dark/70 block">Photo URL or path</label>
+                              <input
+                                type="text"
+                                value={row.src}
+                                onChange={(e) => updateCommitteeMember(i, { src: e.target.value })}
+                                placeholder="https://... or /images/member.jpg"
+                                className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-maroon bg-white"
+                              />
+                              <div className="flex flex-wrap items-center gap-2">
+                                <label className="text-xs text-maroon/90 cursor-pointer btn-outline py-1.5 px-3">
+                                  <input
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml"
+                                    className="hidden"
+                                    onChange={(e) => {
+                                      const file = e.target.files?.[0];
+                                      e.target.value = "";
+                                      if (!file) return;
+                                      if (file.size > MAX_IMAGE_FILE_MB * 1024 * 1024) {
+                                        window.alert(
+                                          `File is too large. Please use an image under ${MAX_IMAGE_FILE_MB} MB or host it online and paste the URL.`
+                                        );
+                                        return;
+                                      }
+                                      const reader = new FileReader();
+                                      reader.onload = () => {
+                                        const r = reader.result;
+                                        if (typeof r === "string") updateCommitteeMember(i, { src: r });
+                                      };
+                                      reader.readAsDataURL(file);
+                                    }}
+                                  />
+                                  Upload photo
+                                </label>
+                              </div>
+                              <div className="grid sm:grid-cols-2 gap-2 pt-1">
+                                <div>
+                                  <span className="text-xs text-maroon/80 block mb-1">Name (English)</span>
+                                  <input
+                                    type="text"
+                                    value={row.nameEn}
+                                    onChange={(e) => updateCommitteeMember(i, { nameEn: e.target.value })}
+                                    className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white"
+                                  />
+                                </div>
+                                <div>
+                                  <span className="text-xs text-maroon/80 block mb-1">Name (Telugu)</span>
+                                  <input
+                                    type="text"
+                                    value={row.nameTe}
+                                    onChange={(e) => updateCommitteeMember(i, { nameTe: e.target.value })}
+                                    className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white"
+                                  />
+                                </div>
+                                <div>
+                                  <span className="text-xs text-maroon/80 block mb-1">Designation (English)</span>
+                                  <input
+                                    type="text"
+                                    value={row.designationEn}
+                                    onChange={(e) =>
+                                      updateCommitteeMember(i, { designationEn: e.target.value })
+                                    }
+                                    className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white"
+                                  />
+                                </div>
+                                <div>
+                                  <span className="text-xs text-maroon/80 block mb-1">Designation (Telugu)</span>
+                                  <input
+                                    type="text"
+                                    value={row.designationTe}
+                                    onChange={(e) =>
+                                      updateCommitteeMember(i, { designationTe: e.target.value })
+                                    }
+                                    className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                )}
 
                 {headerName === "Gallery" && (
                   <div className="pt-4 mt-4 border-t border-maroon/15 space-y-5">
@@ -967,7 +1317,9 @@ export function ConfigureSection() {
                     ? "Saved"
                     : headerName === "Gallery"
                       ? "Save Gallery (text & photos)"
-                      : `Save ${headerName}`}
+                      : headerName === "Committee"
+                        ? "Save Committee (text & members)"
+                        : `Save ${headerName}`}
                 </button>
               </div>
             </fieldset>

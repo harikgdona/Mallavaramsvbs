@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 // In local dev, a non-empty basePath causes `http://localhost:3000/` to 404.
-// Keep the basePath only for production/static export (e.g. GitHub Pages).
-const PROD_BASE_PATH = "/Mallavaramsvbs";
+// Production: SITE_BASE_PATH="" (default) for a custom domain at the root, e.g. https://Mallavaramsvbs.org/
+// Set SITE_BASE_PATH=/repo-name only if you use https://<user>.github.io/<repo>/ without a custom domain.
+const PROD_BASE_PATH = process.env.SITE_BASE_PATH ?? "";
 const basePath = process.env.NODE_ENV === "production" ? PROD_BASE_PATH : "";
 
 // Hostnames you use in the browser bar for `next dev` (HMR WebSocket is blocked if missing).

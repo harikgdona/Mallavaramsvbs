@@ -1,5 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import { Inter, Playfair_Display } from "next/font/google";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import { AdminAuthProvider } from "@/components/AdminAuthProvider";
 import { ConfigProvider } from "@/components/ConfigProvider";
@@ -8,6 +9,11 @@ import { TopHeader } from "@/components/TopHeader";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { BottomRightActions } from "@/components/BottomRightActions";
+import { LayoutViewportOffsets } from "@/components/LayoutViewportOffsets";
+import { TypographyTheme } from "@/components/TypographyTheme";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-site-body" });
+const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-site-heading" });
 
 export const metadata: Metadata = {
   title:
@@ -31,20 +37,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <body>
         <LanguageProvider>
           <ConfigProvider>
+            <TypographyTheme />
             <AdminAuthProvider>
-              {/* Desktop-only ornate banner; mobile uses the compact bar inside Header. */}
-              <TopHeader />
-              <div className="flex min-h-screen min-h-[100dvh] flex-col md:flex-row">
-                <Header />
-                <MainContentColumn>
-                  <main className="relative flex-1 flex flex-col min-h-0">{children}</main>
-                  <Footer />
-                </MainContentColumn>
+              {/* min-h-dvh on outer column so TopHeader + main row = one viewport (avoids min-h-screen stacking past 100vh). */}
+              <div className="flex min-h-[100dvh] min-h-[100svh] flex-col">
+                {/* Desktop-only ornate banner; mobile uses the compact bar inside Header. */}
+                <TopHeader />
+                <div className="flex min-h-0 flex-1 flex-col md:flex-row">
+                  <Header />
+                  <MainContentColumn>
+                    <main className="relative flex min-h-0 min-w-0 w-full max-w-full flex-1 flex-col overflow-x-hidden">
+                      {children}
+                    </main>
+                    <Footer />
+                  </MainContentColumn>
+                </div>
               </div>
+              <LayoutViewportOffsets />
               <BottomRightActions />
             </AdminAuthProvider>
           </ConfigProvider>

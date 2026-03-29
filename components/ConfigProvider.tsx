@@ -15,6 +15,12 @@ import {
   SITE_MANUAL_STORAGE_KEY,
   type SiteManualConfig
 } from "@/lib/siteManualSchema";
+import {
+  COMMITTEE_STORAGE_KEY,
+  defaultCommitteeMembers,
+  normalizeCommitteeMembers,
+  type CommitteeMemberConfig
+} from "@/lib/committeeConfig";
 
 const STORAGE_KEY = "mallavaram-text-config";
 
@@ -26,6 +32,8 @@ type ConfigContextType = {
   resetOverrides: () => void;
   gallerySlots: GallerySlotConfig[];
   setGallerySlots: (slots: GallerySlotConfig[]) => void;
+  committeeMembers: CommitteeMemberConfig[];
+  setCommitteeMembers: (rows: CommitteeMemberConfig[]) => void;
   siteManual: SiteManualConfig;
   setSiteManual: (next: SiteManualConfig) => void;
 };
@@ -74,6 +82,26 @@ function saveGalleryToStorage(slots: GallerySlotConfig[]) {
   }
 }
 
+function loadCommitteeFromStorage(): CommitteeMemberConfig[] {
+  if (typeof window === "undefined") return defaultCommitteeMembers();
+  try {
+    const raw = window.localStorage.getItem(COMMITTEE_STORAGE_KEY);
+    if (!raw) return defaultCommitteeMembers();
+    return normalizeCommitteeMembers(JSON.parse(raw) as unknown);
+  } catch {
+    return defaultCommitteeMembers();
+  }
+}
+
+function saveCommitteeToStorage(rows: CommitteeMemberConfig[]) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(COMMITTEE_STORAGE_KEY, JSON.stringify(rows));
+  } catch {
+    // ignore
+  }
+}
+
 function loadSiteManualFromStorage(): SiteManualConfig {
   if (typeof window === "undefined") return SITE_MANUAL_DEFAULTS;
   try {
@@ -99,6 +127,9 @@ function saveSiteManualToStorage(cfg: SiteManualConfig): boolean {
 export function ConfigProvider({ children }: { children: React.ReactNode }) {
   const [overrides, setOverrides] = useState<Overrides>({});
   const [gallerySlots, setGallerySlotsState] = useState<GallerySlotConfig[]>(defaultGallerySlots);
+  const [committeeMembers, setCommitteeMembersState] = useState<CommitteeMemberConfig[]>(
+    defaultCommitteeMembers
+  );
   const [siteManual, setSiteManualState] = useState<SiteManualConfig>(() => ({
     ...SITE_MANUAL_DEFAULTS,
     toranamImagePaths: [...SITE_MANUAL_DEFAULTS.toranamImagePaths]
@@ -107,6 +138,7 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setOverrides(loadFromStorage());
     setGallerySlotsState(loadGalleryFromStorage());
+    setCommitteeMembersState(loadCommitteeFromStorage());
     setSiteManualState(loadSiteManualFromStorage());
   }, []);
 
@@ -122,6 +154,12 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     const normalized = normalizeGallerySlots(slots);
     setGallerySlotsState(normalized);
     saveGalleryToStorage(normalized);
+  }, []);
+
+  const setCommitteeMembers = useCallback((rows: CommitteeMemberConfig[]) => {
+    const normalized = normalizeCommitteeMembers(rows);
+    setCommitteeMembersState(normalized);
+    saveCommitteeToStorage(normalized);
   }, []);
 
   const setSiteManual = useCallback((next: SiteManualConfig) => {
@@ -141,6 +179,15 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     const defaults = defaultGallerySlots();
     setGallerySlotsState(defaults);
     saveGalleryToStorage(defaults);
+    const committeeDefaults = defaultCommitteeMembers();
+    setCommitteeMembersState(committeeDefaults);
+    if (typeof window !== "undefined") {
+      try {
+        window.localStorage.removeItem(COMMITTEE_STORAGE_KEY);
+      } catch {
+        // ignore
+      }
+    }
     const siteDefaults = mergeSiteManual({});
     setSiteManualState(siteDefaults);
     if (typeof window !== "undefined") {
@@ -160,6 +207,8 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
         resetOverrides,
         gallerySlots,
         setGallerySlots,
+        committeeMembers,
+        setCommitteeMembers,
         siteManual,
         setSiteManual
       }}

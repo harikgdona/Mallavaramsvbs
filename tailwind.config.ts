@@ -20,8 +20,8 @@ const config: Config = {
         "light-green": "#b8e6d5"
       },
       fontFamily: {
-        heading: ["'Playfair Display'", "serif"],
-        body: ["'Inter'", "system-ui", "sans-serif"]
+        heading: ["var(--app-font-heading)", "Georgia", "serif"],
+        body: ["var(--app-font-body)", "system-ui", "sans-serif"]
       },
       boxShadow: {
         "soft-gold": "0 12px 30px rgba(212, 175, 55, 0.25)"

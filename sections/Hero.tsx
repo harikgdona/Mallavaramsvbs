@@ -19,7 +19,7 @@ export function Hero() {
   return (
     <section
       id="home"
-      className="relative flex min-h-screen flex-col overflow-hidden bg-beige"
+      className="relative flex min-h-app-section flex-col overflow-hidden bg-beige"
       aria-label="Hero section"
     >
       {/* Full-viewport background photo (JPEG has no alpha; “transparency” is via opacity + scrim). */}
@@ -28,7 +28,7 @@ export function Hero() {
           src={heroBg.src}
           alt=""
           fill
-          className="object-cover object-center opacity-85"
+          className="object-cover object-center opacity-90"
           priority
           quality={95}
           sizes="100vw"
@@ -47,18 +47,18 @@ export function Hero() {
         aria-hidden
       />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-        <div className="mx-auto max-w-xl text-center text-text-dark lg:mx-0 lg:max-w-none lg:text-left">
-          <p className="mb-5 inline-block rounded-full border border-maroon/15 bg-white/75 px-4 py-1.5 text-xs tracking-wide text-maroon/90 shadow-sm backdrop-blur-sm md:text-sm">
+      <div className="relative z-10 mx-auto flex w-full min-w-0 max-w-6xl flex-1 flex-col justify-center px-4 py-10 sm:px-6 sm:py-14 md:py-12 lg:px-8 lg:py-14">
+        <div className="mx-auto min-w-0 max-w-xl break-words text-center text-text-dark lg:mx-0 lg:max-w-none lg:text-left">
+          <p className="mb-5 inline-block max-w-full break-words rounded-full border border-maroon/15 bg-white/75 px-4 py-1.5 text-xs tracking-wide text-maroon/90 shadow-sm backdrop-blur-sm md:text-sm">
             Sri Mallavaram Venkateswara Annadaana Samajamu mariyu Brahmana Satramu
           </p>
-          <h1 className="mb-4 font-heading text-3xl leading-tight text-maroon sm:text-4xl lg:text-[2.75rem]">
+          <h1 className="mb-4 break-words font-heading text-3xl leading-tight text-maroon sm:text-4xl lg:text-[2.75rem]">
             <span className="block">Serving Dharma.</span>
             <span className="mt-1 block text-[0.92em] font-normal text-text-dark">
               Supporting Brahmin Families.
             </span>
           </h1>
-          <p className="mb-6 text-sm leading-relaxed text-text-dark/85 md:mb-8 md:text-base lg:text-lg">
+          <p className="mb-6 break-words text-sm leading-relaxed text-text-dark/85 md:mb-8 md:text-base lg:text-lg">
             {t("hero_subtitle")}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4 lg:justify-start">
@@ -80,7 +80,7 @@ export function Hero() {
           </p>
         </div>
 
-        <p className="mt-auto pt-10 text-center text-xs text-text-dark/55 lg:text-left">
+        <p className="mt-auto pt-6 text-center text-xs text-text-dark/55 md:pt-8 lg:text-left">
           Sri Mallavaram Brahmana Satram — evening darshan
         </p>
       </div>

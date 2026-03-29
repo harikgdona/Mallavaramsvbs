@@ -4,6 +4,33 @@
 
 :root {
   color-scheme: light;
+  /*
+   * Fallbacks before JS runs; LayoutViewportOffsets overwrites with real px from #site-mobile-nav-bar-top
+   * and #site-desktop-top-header. You can still override in DevTools on <html> if needed.
+   */
+  --section-viewport-offset-mobile: 3.5rem;
+  --section-viewport-offset-desktop: 10rem;
+  /* Subtracted from min-h-app-section after header offsets (mobile + desktop base). */
+  --section-viewport-extra-trim: 1.5cm;
+  /* Extra reduction on md+ so the hero band is shorter and lines up better with the left menu column. */
+  --section-viewport-hero-shrink-desktop: 3.25rem;
+  /* Typography (TypographyTheme overwrites from Configure); match SITE_MANUAL_DEFAULTS */
+  --app-font-body: var(--font-site-body), system-ui, sans-serif;
+  --app-font-heading: var(--font-site-heading), Georgia, serif;
+  --app-font-nav: var(--font-site-heading), Georgia, serif;
+  --app-font-body-weight: 400;
+  --app-font-heading-weight: 600;
+  --app-font-nav-weight: 600;
+  --app-font-body-style: normal;
+  --app-font-heading-style: normal;
+  --app-font-nav-style: normal;
+  --app-section-heading-size: clamp(1.75rem, 4.5vw, 2.25rem);
+  --app-section-subtitle-size: 1.125rem;
+}
+
+html {
+  overflow-x: hidden;
+  font-size: 16px;
 }
 
 html,
@@ -15,10 +42,14 @@ body {
   color: #2b2113;
   scroll-behavior: smooth;
   overflow-x: hidden;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 body {
   min-height: 100vh;
+  font-weight: var(--app-font-body-weight, 400);
+  font-style: var(--app-font-body-style, normal);
 }
 
 a {
@@ -27,11 +58,25 @@ a {
 }
 
 .section-heading {
-  @apply font-heading text-3xl md:text-4xl text-maroon mb-4;
+  @apply font-heading text-maroon mb-4 max-w-full break-words;
+  font-size: var(--app-section-heading-size, clamp(1.75rem, 4.5vw, 2.25rem));
+  font-weight: var(--app-font-heading-weight, 600);
+  font-style: var(--app-font-heading-style, normal);
 }
 
 .section-subtitle {
-  @apply text-base md:text-lg text-text-dark/80;
+  @apply text-text-dark/80 max-w-full break-words;
+  font-size: var(--app-section-subtitle-size, 1.125rem);
+  font-weight: var(--app-font-body-weight, 400);
+  font-style: var(--app-font-body-style, normal);
+}
+
+@layer components {
+  .app-nav-typography {
+    font-family: var(--app-font-nav), Georgia, serif;
+    font-weight: var(--app-font-nav-weight, 600);
+    font-style: var(--app-font-nav-style, normal);
+  }
 }
 
 .btn-primary {
@@ -51,5 +96,34 @@ a {
   text-shadow:
     1px 1px 0 rgba(255, 255, 255, 0.6),
     -1px -1px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* Same min-height as Hero — use on sections when you want each block ≈ one viewport (optional). */
+@layer utilities {
+  /* Extends Tailwind `font-heading` (family) with configurable weight/style */
+  .font-heading {
+    font-weight: var(--app-font-heading-weight, 600);
+    font-style: var(--app-font-heading-style, normal);
+  }
+  .min-h-app-section {
+    min-height: max(
+      0px,
+      calc(
+        100dvh - var(--section-viewport-offset-mobile, 3.5rem) - var(--section-viewport-extra-trim, 1.5cm)
+      )
+    );
+  }
+  @media (min-width: 768px) {
+    .min-h-app-section {
+      min-height: max(
+        0px,
+        calc(
+          100dvh - var(--section-viewport-offset-desktop, 10rem) -
+            var(--section-viewport-extra-trim, 1.5cm) -
+            var(--section-viewport-hero-shrink-desktop, 3.25rem)
+        )
+      );
+    }
+  }
 }
 

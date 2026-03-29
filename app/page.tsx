@@ -6,6 +6,7 @@ import { DonationSection } from "@/sections/DonationSection";
 import { GallerySection } from "@/sections/GallerySection";
 import { VolunteerSection } from "@/sections/VolunteerSection";
 import { TransparencySection } from "@/sections/TransparencySection";
+import { CommitteeSection } from "@/sections/CommitteeSection";
 import { ContactSection } from "@/sections/ContactSection";
 import { ConfigureSection } from "@/sections/ConfigureSection";
 
@@ -20,6 +21,7 @@ export default function HomePage() {
       <GallerySection />
       <VolunteerSection />
       <TransparencySection />
+      <CommitteeSection />
       <ContactSection />
       <ConfigureSection />
     </>

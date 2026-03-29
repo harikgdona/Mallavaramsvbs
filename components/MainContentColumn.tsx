@@ -6,7 +6,7 @@ export function MainContentColumn({ children }: { children: React.ReactNode }) {
   const { siteManual } = useSiteManual();
   return (
     <div
-      className="flex-1 flex flex-col relative min-w-0"
+      className="relative flex min-h-0 min-w-0 flex-1 flex-col"
       style={{ backgroundColor: siteManual.siteMainColumnBackground }}
     >
       {children}

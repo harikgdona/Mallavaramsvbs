@@ -79,8 +79,10 @@ export function DonationSection() {
                   src={withBasePath("/images/upi-qr.svg")}
                   alt="UPI QR code for Mallavaram Brahmana Satram"
                   fill
+                  sizes="(min-width: 768px) 224px, 192px"
                   className="object-contain"
                   unoptimized
+                  loading="eager"
                 />
               </div>
             </div>

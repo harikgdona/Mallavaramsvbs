@@ -38,13 +38,17 @@ export const tMap: Translations = {
     en: "Volunteer",
     te: "సేవకులు"
   },
+  nav_committee: {
+    en: "Committee",
+    te: "కమిటీ"
+  },
   nav_contact: {
     en: "Contact",
     te: "సంప్రదించండి"
   },
   nav_configure: {
-    en: "Configure",
-    te: "కాన్ఫిగర్"
+    en: "Configure (Admin only)",
+    te: "కాన్ఫిగర్ (నిర్వాహకులు మాత్రమే)"
   },
   donate_now: {
     en: "Donate Now",
@@ -130,6 +134,14 @@ export const tMap: Translations = {
     en: "Transparency & Trust",
     te: "పారదర్శకత & నమ్మకం"
   },
+  committee_title: {
+    en: "Managing Committee",
+    te: "నిర్వహణ కమిటీ"
+  },
+  committee_subtitle: {
+    en: "Trust office bearers and committee members.",
+    te: "ట్రస్ట్ పదాధికారులు మరియు కమిటీ సభ్యులు."
+  },
   contact_title: {
     en: "Contact",
     te: "సంప్రదించండి"
@@ -150,6 +162,7 @@ export const CONFIG_SECTIONS: Record<string, (keyof typeof tMap)[]> = {
     "nav_donate",
     "nav_gallery",
     "nav_volunteer",
+    "nav_committee",
     "nav_contact",
     "nav_configure"
   ],
@@ -170,6 +183,7 @@ export const CONFIG_SECTIONS: Record<string, (keyof typeof tMap)[]> = {
   "Gallery": ["gallery_title"],
   "Volunteer": ["volunteer_title", "volunteer_subtitle"],
   "Transparency": ["transparency_title"],
+  "Committee": ["committee_title", "committee_subtitle"],
   "Contact": ["contact_title"]
 };
 

@@ -3,16 +3,18 @@ import React from "react";
 type Props = {
   id?: string;
   className?: string;
+  /** When true, section is at least one viewport tall (minus header chrome); tweak offsets in globals.css. */
+  fillViewport?: boolean;
   children: React.ReactNode;
 };
 
-export function SectionContainer({ id, className, children }: Props) {
+export function SectionContainer({ id, className, fillViewport, children }: Props) {
   return (
     <section
       id={id}
-      className={`py-12 md:py-20 px-4 sm:px-6 lg:px-8 ${className ?? ""}`}
+      className={`min-w-0 max-w-full py-12 md:py-20 px-4 sm:px-6 lg:px-8 ${fillViewport ? "min-h-app-section " : ""}${className ?? ""}`}
     >
-      <div className="max-w-6xl mx-auto">{children}</div>
+      <div className="mx-auto w-full min-w-0 max-w-6xl">{children}</div>
     </section>
   );
 }

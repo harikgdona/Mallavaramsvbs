@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Great_Vibes } from "next/font/google";
 import { useSiteManual, useTranslate } from "./ConfigProvider";
 import { withBasePath } from "@/lib/basePath";
@@ -20,6 +20,7 @@ const navKeys = [
   "nav_donate",
   "nav_gallery",
   "nav_volunteer",
+  "nav_committee",
   "nav_contact",
   "nav_configure"
 ] as const;
@@ -27,6 +28,17 @@ const navItems = navKeys.map((key) => ({
   id: key.replace("nav_", ""),
   key
 }));
+
+function SidebarHostCredit({ size = "desktop" }: { size?: "desktop" | "mobile" }) {
+  /* ~40% smaller than previous text-xl (1.25rem) / text-lg (1.125rem) */
+  const nameClass = size === "mobile" ? "text-[0.675rem]" : "text-[0.75rem]";
+  return (
+    <div className="mt-[60px] shrink-0 border-t border-maroon/10 px-2 pt-2 pb-1 text-center">
+      <p className="mb-0.5 text-[0.39rem] leading-tight text-text-dark/80">Built and hosted by</p>
+      <p className={`${greatVibes.className} text-maroon ${nameClass}`}>Hari Krishna</p>
+    </div>
+  );
+}
 
 export function Header() {
   const t = useTranslate();
@@ -44,33 +56,35 @@ export function Header() {
     <>
       {/* Desktop: left vertical sidebar — width matches TopHeader logo column */}
       <aside
-        className="hidden md:flex md:flex-col md:flex-shrink-0 md:sticky md:top-0 md:self-start md:h-screen md:max-h-screen border-r border-maroon/15 z-20 shadow-[inset_-1px_0_0_rgba(123,30,30,0.06)]"
+        className="hidden md:flex md:min-h-0 md:flex-shrink-0 md:flex-col md:self-stretch border-r border-maroon/15 z-20 shadow-[inset_-1px_0_0_rgba(123,30,30,0.06)]"
         style={{
-          minHeight: 0,
           width: SIDEBAR_WIDTH_PX,
           minWidth: SIDEBAR_WIDTH_PX,
           maxWidth: SIDEBAR_WIDTH_PX,
           background: leftMenuBg
         }}
       >
-        <nav className="flex-1 overflow-y-auto py-5 px-3 space-y-0.5 min-h-0">
+        <nav className="flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto px-2.5 py-3">
           {navItems.map((item) => (
-            <a
-              key={item.id}
-              href={withBasePath(`/#${item.id}`)}
-              className="block font-heading text-[0.95rem] font-semibold not-italic text-maroon/85 hover:text-maroon hover:bg-white/70 py-2.5 px-3 rounded-xl transition-colors text-center border border-transparent hover:border-maroon/10 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon/35 focus-visible:ring-offset-2 focus-visible:ring-offset-sandal"
-            >
-              {t(item.key)}
-            </a>
+            <Fragment key={item.id}>
+              <a
+                href={withBasePath(`/#${item.id}`)}
+                className="app-nav-typography block rounded-lg border border-transparent py-2 px-2.5 text-center text-[0.875rem] leading-tight text-maroon/85 transition-colors hover:border-maroon/10 hover:bg-white/70 hover:text-maroon hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon/35 focus-visible:ring-offset-2 focus-visible:ring-offset-sandal"
+              >
+                {t(item.key)}
+              </a>
+              {item.id === "configure" ? (
+                <div
+                  className="shrink-0"
+                  style={{ background: leftMenuBg }}
+                >
+                  <SidebarHostCredit size="desktop" />
+                </div>
+              ) : null}
+            </Fragment>
           ))}
+          <div className="min-h-0 flex-1 shrink" aria-hidden />
         </nav>
-
-        <div className="flex-shrink-0 px-3 pb-4 pt-6 text-center border-t border-maroon/10 mt-auto">
-          <p className="text-xs text-text-dark/80 mb-1.5">Built and hosted by</p>
-          <p className={`text-2xl ${greatVibes.className} text-maroon`}>
-            Hari Krishna
-          </p>
-        </div>
       </aside>
 
       {/* Mobile: compact top bar + hamburger menu (full width when layout stacks with flex-col). */}
@@ -78,7 +92,10 @@ export function Header() {
         className="md:hidden sticky top-0 z-30 w-full flex-shrink-0 border-b border-maroon/10"
         style={{ backgroundColor: c.siteMobileNavBarBackground }}
       >
-        <div className="flex items-center justify-between px-3 py-2 gap-2">
+        <div
+          id="site-mobile-nav-bar-top"
+          className="flex items-center justify-between px-3 py-2 gap-2"
+        >
           <Link href="/#home" className="flex-shrink-0 flex items-center">
             <div className="relative h-10 w-10">
               <Image
@@ -92,7 +109,7 @@ export function Header() {
               />
             </div>
           </Link>
-          <p className="font-heading font-bold text-sm text-maroon whitespace-nowrap overflow-hidden text-ellipsis flex-1 min-w-0 text-center">
+          <p className="font-heading min-w-0 flex-1 text-center text-sm leading-snug text-maroon break-words">
             Sri Mallavaram Venkateswara Annadaana Samajamu &amp; Brahmana Satramu
           </p>
           <button
@@ -108,23 +125,21 @@ export function Header() {
         </div>
         {open && (
           <div
-            className="border-t border-maroon/10 px-3 pb-3 space-y-0.5"
+            className="space-y-0 border-t border-maroon/10 px-2.5 pb-2"
             style={{ backgroundColor: c.siteMobileNavMenuBackground }}
           >
             {navItems.map((item) => (
-              <a
-                key={item.id}
-                href={withBasePath(`/#${item.id}`)}
-                className="block font-heading text-base font-semibold not-italic py-2.5 text-maroon/85 hover:text-maroon hover:bg-white/80 rounded-lg text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon/35 focus-visible:ring-offset-2 focus-visible:ring-offset-sandal"
-                onClick={() => setOpen(false)}
-              >
-                {t(item.key)}
-              </a>
+              <Fragment key={item.id}>
+                <a
+                  href={withBasePath(`/#${item.id}`)}
+                  className="app-nav-typography block rounded-md py-2 text-center text-sm leading-tight text-maroon/85 hover:bg-white/80 hover:text-maroon focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon/35 focus-visible:ring-offset-2 focus-visible:ring-offset-sandal"
+                  onClick={() => setOpen(false)}
+                >
+                  {t(item.key)}
+                </a>
+                {item.id === "configure" ? <SidebarHostCredit size="mobile" /> : null}
+              </Fragment>
             ))}
-            <div className="pt-4 mt-3 border-t border-maroon/10 text-center">
-              <p className="text-xs text-text-dark/80 mb-1">Built and hosted by</p>
-              <p className={`text-xl ${greatVibes.className} text-maroon`}>Hari Krishna</p>
-            </div>
           </div>
         )}
       </header>
