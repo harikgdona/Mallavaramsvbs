@@ -71,10 +71,11 @@ export type SiteManualConfig = {
   typographySectionSubtitleRem: number;
 };
 
+// <site-manual-defaults>
 export const SITE_MANUAL_DEFAULTS: SiteManualConfig = {
   siteTopHeaderBackground: "#D4AF37",
   siteMainColumnBackground: "#F5F5DC",
-  siteLeftMenuGradientFrom: "#FFFBEB",
+  siteLeftMenuGradientFrom: "#87CEEB",
   siteLeftMenuGradientVia: "#F8F1E5",
   siteLeftMenuGradientTo: "#F8F1E5",
   siteMobileNavBarBackground: "#FDE047",
@@ -84,7 +85,7 @@ export const SITE_MANUAL_DEFAULTS: SiteManualConfig = {
   topHeaderHeightClasses: "h-[8.7rem] md:h-[9.9rem]",
   topHeaderMoolaColumnWidthPx: 112,
   topHeaderLeftLampWidthPx: 165,
-  topHeaderLeftLampShiftXPx: 0,
+  topHeaderLeftLampShiftXPx: -58,
   topHeaderRightLampWidthPx: 110,
   topHeaderLogoSrc: "/images/logo.png",
   topHeaderLeftLampSrc: "/images/lamp-left.png",
@@ -100,28 +101,27 @@ export const SITE_MANUAL_DEFAULTS: SiteManualConfig = {
   topHeaderAddressFontMaxRem: 1.05,
   topHeaderMiddleTextAlignLeft: true,
   topHeaderMiddleTextShiftPx: -45,
-  topHeaderMiddleTextPushDownPx: 10,
+  topHeaderMiddleTextPushDownPx: 35,
   topHeaderTitleToAddressGapPx: 30,
   toranamImagePaths: [
     "/images/toranam-1.jpeg",
     "/images/Toranam-2.jpeg",
     "/images/Toranam-3.jpeg",
     "/images/toranam-4.png",
-    "/images/toranam-5.png"
+    "/images/toranam-5.png",
   ],
   headerToranamStripHeightPx: 76,
   headerToranamTileHeightPx: 70,
-  headerToranamTileWidthPx: 250,
+  headerToranamTileWidthPx: 255,
   headerToranamGapPx: 0,
   headerToranamObjectFit: "cover",
-  headerToranamTileCount: 4,
+  headerToranamTileCount: 3,
   headerToranamLeftPullPx: 60,
   headerToranamShiftUpPx: 10,
   homeHeroBackgroundSrc: "/images/Satram-illuminated.jpeg",
-
   typographyHtmlFontPx: 16,
   typographyBodyFontFamily: "var(--font-site-body), system-ui, sans-serif",
-  typographyHeadingFontFamily: "var(--font-site-heading), Georgia, serif",
+  typographyHeadingFontFamily: "'Merriweather', Georgia, serif",
   typographyNavFontFamily: "var(--font-site-body), system-ui, sans-serif",
   typographyBodyFontWeight: 400,
   typographyHeadingFontWeight: 700,
@@ -132,8 +132,9 @@ export const SITE_MANUAL_DEFAULTS: SiteManualConfig = {
   typographySectionTitleMinRem: 1.75,
   typographySectionTitlePrefVw: 4.5,
   typographySectionTitleMaxRem: 2.35,
-  typographySectionSubtitleRem: 1.125
+  typographySectionSubtitleRem: 1.125,
 };
+// </site-manual-defaults>
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null && !Array.isArray(v);

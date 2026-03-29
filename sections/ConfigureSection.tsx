@@ -20,6 +20,7 @@ import {
 import { withBasePath } from "@/lib/basePath";
 import {
   SITE_MANUAL_DEFAULTS,
+  mergeSiteManual,
   resolveSiteManualForUi,
   type SiteManualConfig
 } from "@/lib/siteManualSchema";
@@ -263,6 +264,19 @@ export function ConfigureSection() {
     setSiteLayoutDirty(false);
     runFlash("site-layout");
   }, [siteManualDraft, setSiteManual, runFlash]);
+
+  const downloadSiteManualJsonForGit = useCallback(() => {
+    const normalized = mergeSiteManual(siteManualDraft);
+    const text = JSON.stringify(normalized, null, 2);
+    const blob = new Blob([text], { type: "application/json;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "site-manual-from-browser.json";
+    a.click();
+    URL.revokeObjectURL(url);
+    runFlash("site-manual-json");
+  }, [siteManualDraft, runFlash]);
 
   const saveTextSection = useCallback(
     (headerName: string, keys: readonly (keyof typeof tMap)[]) => {
@@ -1040,11 +1054,20 @@ export function ConfigureSection() {
               </>
             ) : null}
 
-            <div className="flex flex-wrap gap-3 mt-6 pt-4 border-t border-maroon/10">
+            <div className="flex flex-wrap items-center gap-3 mt-6 pt-4 border-t border-maroon/10">
               <button type="button" onClick={saveSiteLayout} className="btn-primary">
                 {saveFlash === "site-layout" ? "Saved" : "Save layout & header"}
               </button>
+              <button type="button" onClick={downloadSiteManualJsonForGit} className="btn-outline text-sm py-2 px-4">
+                {saveFlash === "site-manual-json" ? "Downloaded" : "Download JSON for Git (defaults)"}
+              </button>
             </div>
+            <p className="text-xs text-text-dark/65 mt-2 max-w-2xl">
+              Save the downloaded file as <code className="bg-sandal/60 px-1 rounded">site-manual-from-browser.json</code> in
+              your project folder (same level as <code className="bg-sandal/60 px-1 rounded">package.json</code>), then run{" "}
+              <code className="bg-sandal/60 px-1 rounded">npm run apply-site-manual</code> and commit{" "}
+              <code className="bg-sandal/60 px-1 rounded">lib/siteManualSchema.ts</code>.
+            </p>
           </fieldset>
 
           {Object.entries(CONFIG_SECTIONS).map(([headerName, keys]) => (
