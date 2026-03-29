@@ -2,11 +2,19 @@
 
 import Image from "next/image";
 import { DonationButton } from "@/components/DonationButton";
-import { useTranslate } from "@/components/ConfigProvider";
+import { useTranslate, useSiteManual } from "@/components/ConfigProvider";
 import { withBasePath } from "@/lib/basePath";
+import { resolveGalleryImageSrc } from "@/lib/galleryConfig";
+
+const HERO_BG_FALLBACK = "/images/Satram-illuminated.jpeg";
 
 export function Hero() {
   const t = useTranslate();
+  const { siteManual: c } = useSiteManual();
+  const heroBg = resolveGalleryImageSrc(
+    c.homeHeroBackgroundSrc.trim() || HERO_BG_FALLBACK,
+    withBasePath(HERO_BG_FALLBACK)
+  );
 
   return (
     <section
@@ -17,14 +25,14 @@ export function Hero() {
       {/* Full-viewport background photo (JPEG has no alpha; “transparency” is via opacity + scrim). */}
       <div className="pointer-events-none absolute inset-0 z-0">
         <Image
-          src={withBasePath("/images/Satram-illuminated.jpeg")}
+          src={heroBg.src}
           alt=""
           fill
           className="object-cover object-center opacity-85"
           priority
           quality={95}
           sizes="100vw"
-          unoptimized
+          unoptimized={heroBg.unoptimized}
           aria-hidden
         />
       </div>

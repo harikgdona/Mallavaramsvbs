@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Great_Vibes } from "next/font/google";
 import { useSiteManual, useTranslate } from "./ConfigProvider";
 import { withBasePath } from "@/lib/basePath";
+import { resolveGalleryImageSrc } from "@/lib/galleryConfig";
 import { siteLeftMenuBackgroundFromConfig } from "@/lib/siteManualConfig";
 
 const greatVibes = Great_Vibes({ weight: "400", subsets: ["latin"] });
@@ -32,6 +33,10 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const SIDEBAR_WIDTH_PX = c.sidebarWidthPx;
   const leftMenuBg = siteLeftMenuBackgroundFromConfig(c);
+  const mobileLogo = resolveGalleryImageSrc(
+    c.topHeaderLogoSrc.trim() || "/images/logo.png",
+    withBasePath("/images/logo.png")
+  );
 
   return (
     <>
@@ -75,12 +80,13 @@ export function Header() {
           <Link href="/#home" className="flex-shrink-0 flex items-center">
             <div className="relative h-10 w-10">
               <Image
-                src={withBasePath("/images/logo.png")}
+                src={mobileLogo.src}
                 alt=""
                 fill
                 sizes="40px"
                 className="object-contain"
                 priority
+                unoptimized={mobileLogo.unoptimized}
               />
             </div>
           </Link>

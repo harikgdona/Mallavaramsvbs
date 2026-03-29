@@ -46,7 +46,12 @@ export const TOP_HEADER_HEIGHT_CLASSES = D.topHeaderHeightClasses;
 // §4
 export const TOP_HEADER_MOOLA_COLUMN_WIDTH_PX = D.topHeaderMoolaColumnWidthPx;
 export const TOP_HEADER_LEFT_LAMP_WIDTH_PX = D.topHeaderLeftLampWidthPx;
+export const TOP_HEADER_LEFT_LAMP_SHIFT_X_PX = D.topHeaderLeftLampShiftXPx;
 export const TOP_HEADER_RIGHT_LAMP_WIDTH_PX = D.topHeaderRightLampWidthPx;
+export const TOP_HEADER_LOGO_SRC = D.topHeaderLogoSrc;
+export const TOP_HEADER_LEFT_LAMP_SRC = D.topHeaderLeftLampSrc;
+export const TOP_HEADER_RIGHT_LAMP_SRC = D.topHeaderRightLampSrc;
+export const TOP_HEADER_MOOLA_VIRAT_SRC = D.topHeaderMoolaViratSrc;
 
 // §5
 export const TOP_HEADER_TITLE_FONT_FIXED_REM = D.topHeaderTitleFontFixedRem;
@@ -75,3 +80,4 @@ export const HEADER_TORANAM_OBJECT_FIT = D.headerToranamObjectFit;
 export const HEADER_TORANAM_TILE_COUNT = D.headerToranamTileCount;
 export const HEADER_TORANAM_LEFT_PULL_PX = D.headerToranamLeftPullPx;
 export const HEADER_TORANAM_SHIFT_UP_PX = D.headerToranamShiftUpPx;
+export const HOME_HERO_BACKGROUND_SRC = D.homeHeroBackgroundSrc;

@@ -9,7 +9,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSiteManual } from "@/components/ConfigProvider";
 import { withBasePath } from "@/lib/basePath";
+import { resolveGalleryImageSrc } from "@/lib/galleryConfig";
 import { topHeaderAddressFontSizeCss, topHeaderTitleFontSizeCss } from "@/lib/siteManualConfig";
+
+function resolveHeaderImage(raw: string, fallbackPath: string) {
+  const path = raw?.trim() || fallbackPath;
+  return resolveGalleryImageSrc(path, withBasePath(fallbackPath));
+}
 
 export function TopHeader() {
   const { siteManual: c } = useSiteManual();
@@ -18,6 +24,7 @@ export function TopHeader() {
   const SITE_TOP_HEADER_BACKGROUND = c.siteTopHeaderBackground;
   const TOP_HEADER_HEIGHT_CLASSES = c.topHeaderHeightClasses;
   const TOP_HEADER_LEFT_LAMP_WIDTH_PX = c.topHeaderLeftLampWidthPx;
+  const TOP_HEADER_LEFT_LAMP_SHIFT_X_PX = c.topHeaderLeftLampShiftXPx;
   const TOP_HEADER_RIGHT_LAMP_WIDTH_PX = c.topHeaderRightLampWidthPx;
   const TOP_HEADER_MOOLA_COLUMN_WIDTH_PX = c.topHeaderMoolaColumnWidthPx;
   const TOP_HEADER_MIDDLE_TEXT_ALIGN_LEFT = c.topHeaderMiddleTextAlignLeft;
@@ -33,6 +40,11 @@ export function TopHeader() {
   const HEADER_TORANAM_LEFT_PULL_PX = c.headerToranamLeftPullPx;
   const HEADER_TORANAM_SHIFT_UP_PX = c.headerToranamShiftUpPx;
   const TORANAM_IMAGE_PATHS = c.toranamImagePaths;
+
+  const logoImg = resolveHeaderImage(c.topHeaderLogoSrc, "/images/logo.png");
+  const leftLampImg = resolveHeaderImage(c.topHeaderLeftLampSrc, "/images/lamp-left.png");
+  const rightLampImg = resolveHeaderImage(c.topHeaderRightLampSrc, "/images/lamp-right.png");
+  const moolaImg = resolveHeaderImage(c.topHeaderMoolaViratSrc, "/images/moola-virat.png");
 
   // --- Middle band horizontal insets (px). Title + toranams live in this rectangle. ---
   const middleLeft = SIDEBAR_WIDTH_PX + TOP_HEADER_LEFT_LAMP_WIDTH_PX;
@@ -81,13 +93,13 @@ export function TopHeader() {
       >
         <Link href="/#home" className="relative block h-full min-h-0 w-full min-w-0" aria-label="Home">
           <Image
-            // [TWEAK] Logo file: change path in src= below (keep withBasePath).
-            src={withBasePath("/images/logo.png")}
+            src={logoImg.src}
             alt=""
             fill
             sizes={`${SIDEBAR_WIDTH_PX}px`}
             className="object-contain object-center"
             priority
+            unoptimized={logoImg.unoptimized}
           />
         </Link>
       </div>
@@ -100,22 +112,23 @@ export function TopHeader() {
           left: SIDEBAR_WIDTH_PX,
           width: TOP_HEADER_LEFT_LAMP_WIDTH_PX,
           minWidth: TOP_HEADER_LEFT_LAMP_WIDTH_PX,
-          maxWidth: TOP_HEADER_LEFT_LAMP_WIDTH_PX
+          maxWidth: TOP_HEADER_LEFT_LAMP_WIDTH_PX,
+          transform: `translateX(${TOP_HEADER_LEFT_LAMP_SHIFT_X_PX}px)`
         }}
         aria-hidden
       >
         <div className="relative h-full w-full min-h-0">
           <Image
-            // object-right-bottom + rotate-90: pin lamp art toward the *toranam* side of this column so wide
+            // object-right-bottom: pin lamp art toward the *toranam* side of this column so wide
             // LEFT_LAMP_WIDTH_PX does not leave gold between the visible lamp and the first toranam.
-            // If the lamp shifts the wrong way for your asset, try object-left-bottom again or object-right-top.
-            src={withBasePath("/images/lamp-left.png")}
+            // If the lamp shifts the wrong way for your asset, try object-left-bottom or object-right-top.
+            src={leftLampImg.src}
             alt=""
             fill
             sizes={`${TOP_HEADER_LEFT_LAMP_WIDTH_PX}px`}
-            className="object-contain object-right-bottom rotate-90"
+            className="object-contain object-right-bottom"
             loading="eager"
-            unoptimized
+            unoptimized={leftLampImg.unoptimized}
           />
         </div>
       </div>
@@ -135,13 +148,13 @@ export function TopHeader() {
         <div className="relative h-full w-full min-h-0">
           <Image
             // [TWEAK] Right lamp asset: src= and object-* classes.
-            src={withBasePath("/images/lamp-right.png")}
+            src={rightLampImg.src}
             alt=""
             fill
             sizes={`${TOP_HEADER_RIGHT_LAMP_WIDTH_PX}px`}
             className="object-contain object-right-bottom"
             loading="eager"
-            unoptimized
+            unoptimized={rightLampImg.unoptimized}
           />
         </div>
       </div>
@@ -159,13 +172,13 @@ export function TopHeader() {
         <div className="relative w-full h-full">
           <Image
             // [TWEAK] Deity image: src=; object-right + object-contain control alignment inside column.
-            src={withBasePath("/images/moola-virat.png")}
+            src={moolaImg.src}
             alt="Moola-virat"
             fill
             sizes={`${TOP_HEADER_MOOLA_COLUMN_WIDTH_PX}px`}
             className="object-contain object-right"
             loading="eager"
-            unoptimized
+            unoptimized={moolaImg.unoptimized}
           />
         </div>
       </div>
@@ -233,7 +246,7 @@ export function TopHeader() {
           </div>
         </div>
 
-        {/* Title + address */}
+        {/* Title + address (address horizontally centered under the title block). */}
         <div
           className={`absolute left-0 right-0 bottom-0 flex flex-col justify-center px-2 pb-1 ${
             TOP_HEADER_MIDDLE_TEXT_ALIGN_LEFT ? "items-start" : "items-center"
@@ -241,27 +254,32 @@ export function TopHeader() {
           style={{
             top: toranamRowHeightPx,
             paddingTop: TOP_HEADER_MIDDLE_TEXT_PUSH_DOWN_PX,
-            gap: `${TOP_HEADER_TITLE_TO_ADDRESS_GAP_PX}px`,
-            // translateX(0px) is a no-op when shift is 0; avoids TS narrowing on literal consts.
             transform: `translateX(${TOP_HEADER_MIDDLE_TEXT_SHIFT_PX}px)`
           }}
         >
-          <h1
-            className={`font-heading font-bold leading-tight text-maroon text-bevel max-w-full md:whitespace-nowrap ${
-              TOP_HEADER_MIDDLE_TEXT_ALIGN_LEFT ? "text-left" : "text-center"
+          <div
+            className={`flex max-w-full flex-col ${
+              TOP_HEADER_MIDDLE_TEXT_ALIGN_LEFT ? "items-start" : "items-center"
             }`}
-            style={{ fontSize: topHeaderTitleFontSizeCss(c) }}
+            style={{ gap: `${TOP_HEADER_TITLE_TO_ADDRESS_GAP_PX}px` }}
           >
-            శ్రీ మల్లవరం బ్రాహ్మణ సమాజము మరియు అన్నదాన సత్రము
-          </h1>
-          <p
-            className={`max-w-full text-maroon/95 font-semibold leading-tight px-1 md:w-max md:max-w-[calc(100%-0.5rem)] md:whitespace-nowrap ${
-              TOP_HEADER_MIDDLE_TEXT_ALIGN_LEFT ? "text-left" : "text-center"
-            }`}
-            style={{ fontSize: topHeaderAddressFontSizeCss(c) }}
-          >
-            రి.నెం. 692/2022 మద్దిపాడు (మం), మల్లవరం గ్రామం, ప్రకాశం జిల్లా, ఆంధ్ర ప్రదేశ్
-          </p>
+            <h1
+              className={`font-heading font-bold leading-tight text-maroon text-bevel max-w-full md:whitespace-nowrap ${
+                TOP_HEADER_MIDDLE_TEXT_ALIGN_LEFT ? "text-left" : "text-center"
+              }`}
+              style={{ fontSize: topHeaderTitleFontSizeCss(c) }}
+            >
+              శ్రీ మల్లవరం బ్రాహ్మణ సమాజము మరియు అన్నదాన సత్రము
+            </h1>
+            <p
+              className={`max-w-full px-1 text-center text-maroon/95 font-semibold leading-tight md:w-max md:max-w-[calc(100%-0.5rem)] md:whitespace-nowrap ${
+                TOP_HEADER_MIDDLE_TEXT_ALIGN_LEFT ? "self-center" : ""
+              }`}
+              style={{ fontSize: topHeaderAddressFontSizeCss(c) }}
+            >
+              రి.నెం. 692/2022 మద్దిపాడు (మం), మల్లవరం గ్రామం, ప్రకాశం జిల్లా, ఆంధ్ర ప్రదేశ్
+            </p>
+          </div>
         </div>
       </div>
 

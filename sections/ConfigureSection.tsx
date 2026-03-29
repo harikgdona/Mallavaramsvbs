@@ -1,13 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 import Image from "next/image";
 import { SectionContainer } from "@/components/SectionContainer";
+import { useAdminAuth } from "@/components/AdminAuthProvider";
 import { useConfig, useSiteManual } from "@/components/ConfigProvider";
 import { tMap, CONFIG_SECTIONS } from "@/i18n/config";
 import {
   defaultGallerySlots,
-  GALLERY_SLOT_COUNT,
+  MAX_GALLERY_PHOTOS,
   resolveGalleryImageSrc,
   type GallerySlotConfig
 } from "@/lib/galleryConfig";
@@ -47,10 +48,87 @@ function cloneSiteManual(cfg: SiteManualConfig): SiteManualConfig {
   return { ...cfg, toranamImagePaths: [...cfg.toranamImagePaths] };
 }
 
+function HeaderImageField({
+  label,
+  hint,
+  value,
+  fallbackPath,
+  onChange
+}: {
+  label: string;
+  hint?: string;
+  value: string;
+  fallbackPath: string;
+  onChange: (next: string) => void;
+}) {
+  const ph = withBasePath(fallbackPath);
+  const { src: thumbSrc, unoptimized } = resolveGalleryImageSrc(
+    value.trim() || fallbackPath,
+    ph
+  );
+
+  return (
+    <div className="rounded-xl border border-maroon/15 bg-sandal/25 p-3 md:p-4 space-y-2">
+      <p className="text-xs font-semibold text-maroon">{label}</p>
+      {hint ? <p className="text-xs text-text-dark/65">{hint}</p> : null}
+      <div className="flex flex-wrap items-start gap-4">
+        <div className="relative h-20 w-20 shrink-0 rounded-lg overflow-hidden border border-maroon/20 bg-white">
+          <Image src={thumbSrc} alt="" fill sizes="80px" className="object-contain" unoptimized={unoptimized} />
+        </div>
+        <div className="flex-1 min-w-[12rem] space-y-2">
+          <label className="text-xs text-text-dark/70 block">Path, URL, or upload</label>
+          <input
+            type="text"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={fallbackPath}
+            className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white font-mono"
+          />
+          <div className="flex flex-wrap items-center gap-2">
+            <label className="text-xs text-maroon/90 cursor-pointer btn-outline py-1.5 px-3">
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  e.target.value = "";
+                  if (!file) return;
+                  if (file.size > MAX_IMAGE_FILE_MB * 1024 * 1024) {
+                    window.alert(
+                      `File is too large. Use an image under ${MAX_IMAGE_FILE_MB} MB or host it and paste the URL.`
+                    );
+                    return;
+                  }
+                  const reader = new FileReader();
+                  reader.onload = () => {
+                    const r = reader.result;
+                    if (typeof r === "string") onChange(r);
+                  };
+                  reader.readAsDataURL(file);
+                }}
+              />
+              Upload
+            </label>
+            <button type="button" className="text-xs text-maroon/80 underline" onClick={() => onChange(fallbackPath)}>
+              Use default file
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function ConfigureSection() {
+  const { ready, authed, login, logout } = useAdminAuth();
   const { overrides, saveOverrides, resetOverrides, gallerySlots, setGallerySlots, setSiteManual } =
     useConfig();
   const { siteManual } = useSiteManual();
+  const [loginUser, setLoginUser] = useState("admin");
+  const [loginPass, setLoginPass] = useState("");
+  const [loginErr, setLoginErr] = useState<string | null>(null);
+  const [loginBusy, setLoginBusy] = useState(false);
   const [draft, setDraft] = useState<Overrides>(() => ({ ...overrides }));
   const [galleryDraft, setGalleryDraft] = useState<GallerySlotConfig[]>(() => defaultGallerySlots());
   const [siteManualDraft, setSiteManualDraft] = useState<SiteManualConfig>(() =>
@@ -92,6 +170,18 @@ export function ConfigureSection() {
     setGalleryDraft((prev) =>
       prev.map((row, j) => (j === index ? { ...row, ...patch } : row))
     );
+  }, []);
+
+  const addGalleryPhoto = useCallback(() => {
+    setGalleryDraft((prev) =>
+      prev.length >= MAX_GALLERY_PHOTOS
+        ? prev
+        : [...prev, { src: "", altEn: "", altTe: "" }]
+    );
+  }, []);
+
+  const removeGalleryPhoto = useCallback((index: number) => {
+    setGalleryDraft((prev) => prev.filter((_, j) => j !== index));
   }, []);
 
   const runFlash = useCallback((id: string) => {
@@ -139,16 +229,139 @@ export function ConfigureSection() {
     }
   }, [resetOverrides]);
 
+  const submitLogin = useCallback(
+    async (e: FormEvent) => {
+      e.preventDefault();
+      setLoginErr(null);
+      setLoginBusy(true);
+      const r = await login(loginUser, loginPass);
+      setLoginBusy(false);
+      if (!r.ok) setLoginErr(r.error ?? "Sign-in failed.");
+      else setLoginPass("");
+    },
+    [login, loginUser, loginPass]
+  );
+
+  if (!ready) {
+    return (
+      <SectionContainer id="configure">
+        <div className="py-12 text-center text-text-dark/70">Loading…</div>
+      </SectionContainer>
+    );
+  }
+
+  if (!authed) {
+    return (
+      <SectionContainer id="configure">
+        <div className="bg-white rounded-3xl border border-maroon/20 shadow-md p-6 md:p-8 max-w-md mx-auto">
+          <h2 className="section-heading text-2xl">Configure — sign in</h2>
+          <p className="text-sm text-text-dark/75 mb-4">
+            Admin access only. This site is a static export: the password is verified in your browser and a one-way
+            hash is kept in localStorage (not a remote database). Clear site data to reset; first visit creates the
+            default hash for the initial password.
+          </p>
+          <form className="space-y-4" onSubmit={submitLogin}>
+            <label className="grid gap-1 text-sm font-medium text-text-dark/80">
+              Username
+              <input
+                type="text"
+                autoComplete="username"
+                value={loginUser}
+                onChange={(e) => setLoginUser(e.target.value)}
+                className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-sandal/30"
+              />
+            </label>
+            <label className="grid gap-1 text-sm font-medium text-text-dark/80">
+              Password
+              <input
+                type="password"
+                autoComplete="current-password"
+                value={loginPass}
+                onChange={(e) => setLoginPass(e.target.value)}
+                className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-sandal/30"
+              />
+            </label>
+            {loginErr ? <p className="text-sm text-red-700">{loginErr}</p> : null}
+            <button type="submit" disabled={loginBusy} className="btn-primary w-full sm:w-auto">
+              {loginBusy ? "Signing in…" : "Sign in"}
+            </button>
+          </form>
+        </div>
+      </SectionContainer>
+    );
+  }
+
   return (
     <SectionContainer id="configure">
       <div className="bg-white rounded-3xl border border-maroon/20 shadow-md p-6 md:p-8">
-        <h2 className="section-heading">Configure</h2>
+        <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
+          <h2 className="section-heading mb-0">Configure</h2>
+          <button type="button" onClick={logout} className="btn-outline text-sm py-2 px-4">
+            Sign out
+          </button>
+        </div>
         <p className="section-subtitle mb-6">
-          Each block has its own Save button (this browser only, localStorage). Use the palette or color picker for
-          colors; you can still paste hex or rgba in the text field.
+          Each block has its own Save button (this browser only, localStorage). Header images are saved with{" "}
+          <strong>Save layout & header</strong>. Password hash: localStorage key{" "}
+          <code className="text-xs bg-sandal/60 px-1 rounded">mallavaram-admin-credentials</code>.
         </p>
 
         <div className="space-y-8">
+          <fieldset className="border border-maroon/20 rounded-2xl p-4 md:p-5">
+            <legend className="font-heading text-lg text-maroon px-2 font-bold">Header images</legend>
+            <p className="text-sm text-text-dark/75 mt-2 mb-4">
+              Current previews below. Use a site path like <code className="text-xs bg-sandal/60 px-1 rounded">/images/logo.png</code>, a full URL, or upload (stored in this browser only).
+            </p>
+            <div className="space-y-4">
+              <HeaderImageField
+                label="Logo"
+                hint="Desktop gold header and mobile top bar."
+                value={siteManualDraft.topHeaderLogoSrc}
+                fallbackPath="/images/logo.png"
+                onChange={(v) => patchLayoutDraft((p) => ({ ...p, topHeaderLogoSrc: v }))}
+              />
+              <HeaderImageField
+                label="Left lamp"
+                value={siteManualDraft.topHeaderLeftLampSrc}
+                fallbackPath="/images/lamp-left.png"
+                onChange={(v) => patchLayoutDraft((p) => ({ ...p, topHeaderLeftLampSrc: v }))}
+              />
+              <HeaderImageField
+                label="Right lamp"
+                value={siteManualDraft.topHeaderRightLampSrc}
+                fallbackPath="/images/lamp-right.png"
+                onChange={(v) => patchLayoutDraft((p) => ({ ...p, topHeaderRightLampSrc: v }))}
+              />
+              <HeaderImageField
+                label="Moola virat"
+                value={siteManualDraft.topHeaderMoolaViratSrc}
+                fallbackPath="/images/moola-virat.png"
+                onChange={(v) => patchLayoutDraft((p) => ({ ...p, topHeaderMoolaViratSrc: v }))}
+              />
+            </div>
+            <p className="text-xs text-text-dark/65 mt-4">
+              Use <strong>Save layout & header</strong> at the bottom of the next block to persist these images with the
+              rest of the header settings.
+            </p>
+          </fieldset>
+
+          <fieldset className="border border-maroon/20 rounded-2xl p-4 md:p-5">
+            <legend className="font-heading text-lg text-maroon px-2 font-bold">Home page hero</legend>
+            <p className="text-sm text-text-dark/75 mt-2 mb-4">
+              Full-screen background behind the welcome text on the home section (#home).
+            </p>
+            <HeaderImageField
+              label="Hero background image"
+              hint="Same rules as header images: path, URL, or upload."
+              value={siteManualDraft.homeHeroBackgroundSrc}
+              fallbackPath="/images/Satram-illuminated.jpeg"
+              onChange={(v) => patchLayoutDraft((p) => ({ ...p, homeHeroBackgroundSrc: v }))}
+            />
+            <p className="text-xs text-text-dark/65 mt-4">
+              Saved with <strong>Save layout & header</strong> below.
+            </p>
+          </fieldset>
+
           <fieldset className="border border-maroon/20 rounded-2xl p-4 md:p-5">
             <legend className="font-heading text-lg text-maroon px-2 font-bold">
               Site layout and header
@@ -254,6 +467,25 @@ export function ConfigureSection() {
                   }
                   className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-white"
                 />
+              </label>
+              <label className="grid gap-1 text-xs font-medium text-text-dark/70">
+                Left lamp shift horizontal (px)
+                <input
+                  type="number"
+                  min={-200}
+                  max={200}
+                  value={siteManualDraft.topHeaderLeftLampShiftXPx}
+                  onChange={(e) =>
+                    patchLayoutDraft((p) => ({
+                      ...p,
+                      topHeaderLeftLampShiftXPx: Number(e.target.value) || 0
+                    }))
+                  }
+                  className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-white"
+                />
+                <span className="font-normal text-text-dark/60">
+                  Positive moves toward toranams; negative toward the logo.
+                </span>
               </label>
               <label className="grid gap-1 text-xs font-medium text-text-dark/70">
                 Right lamp width (px)
@@ -583,94 +815,110 @@ export function ConfigureSection() {
 
                 {headerName === "Gallery" && (
                   <div className="pt-4 mt-4 border-t border-maroon/15 space-y-5">
-                    <p className="text-sm text-text-dark/80 font-medium">
-                      Gallery photos (up to {GALLERY_SLOT_COUNT} slots)
-                    </p>
-                    <p className="text-xs text-text-dark/65">
-                      Paste an image URL, a site path like{" "}
-                      <code className="bg-sandal/80 px-1 rounded">/images/your-photo.jpg</code>, or
-                      upload a file (stored in this browser only; keep files under ~{MAX_IMAGE_FILE_MB}{" "}
-                      MB for best results). Empty URL uses the default placeholder.
-                    </p>
-                    {galleryDraft.map((slot, i) => (
-                      <div
-                        key={i}
-                        className="rounded-xl border border-maroon/15 bg-sandal/30 p-3 md:p-4 space-y-3"
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <p className="text-sm text-text-dark/80 font-medium">
+                        Gallery photos ({galleryDraft.length} / {MAX_GALLERY_PHOTOS})
+                      </p>
+                      <button
+                        type="button"
+                        onClick={addGalleryPhoto}
+                        disabled={galleryDraft.length >= MAX_GALLERY_PHOTOS}
+                        className="btn-primary text-sm py-2 px-4 disabled:opacity-50 disabled:pointer-events-none"
                       >
-                        <p className="text-xs font-semibold text-maroon">Photo {i + 1}</p>
-                        <div className="grid md:grid-cols-[100px_1fr] gap-4 items-start">
-                          <div className="relative h-24 w-24 rounded-lg overflow-hidden border border-maroon/20 bg-white shrink-0 mx-auto md:mx-0">
-                            <GalleryThumb src={slot.src} />
+                        Add photo
+                      </button>
+                    </div>
+                    <p className="text-xs text-text-dark/65">
+                      Add photos one at a time. Paste a URL, a path like{" "}
+                      <code className="bg-sandal/80 px-1 rounded">/images/your-photo.jpg</code>, or upload (this
+                      browser only; under ~{MAX_IMAGE_FILE_MB} MB). Toranam images are not used here — they stay in the
+                      header strip only. Save with <strong>Save Gallery</strong> below.
+                    </p>
+                    {galleryDraft.length === 0 ? (
+                      <p className="text-sm text-text-dark/60 italic">No photos yet. Click Add photo to start.</p>
+                    ) : (
+                      galleryDraft.map((slot, i) => (
+                        <div
+                          key={i}
+                          className="rounded-xl border border-maroon/15 bg-sandal/30 p-3 md:p-4 space-y-3"
+                        >
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <p className="text-xs font-semibold text-maroon">Photo {i + 1}</p>
+                            <button
+                              type="button"
+                              className="text-xs text-red-800 underline font-medium"
+                              onClick={() => removeGalleryPhoto(i)}
+                            >
+                              Remove photo
+                            </button>
                           </div>
-                          <div className="space-y-2 min-w-0">
-                            <label className="text-xs text-text-dark/70 block">Image URL or path</label>
-                            <input
-                              type="text"
-                              value={slot.src}
-                              onChange={(e) => updateGallerySlot(i, { src: e.target.value })}
-                              placeholder="https://... or /images/photo.jpg"
-                              className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-maroon bg-white"
-                            />
-                            <div className="flex flex-wrap items-center gap-2">
-                              <label className="text-xs text-maroon/90 cursor-pointer btn-outline py-1.5 px-3">
-                                <input
-                                  type="file"
-                                  accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml"
-                                  className="hidden"
-                                  onChange={(e) => {
-                                    const file = e.target.files?.[0];
-                                    e.target.value = "";
-                                    if (!file) return;
-                                    if (file.size > MAX_IMAGE_FILE_MB * 1024 * 1024) {
-                                      window.alert(
-                                        `File is too large. Please use an image under ${MAX_IMAGE_FILE_MB} MB or host it online and paste the URL.`
-                                      );
-                                      return;
-                                    }
-                                    const reader = new FileReader();
-                                    reader.onload = () => {
-                                      const r = reader.result;
-                                      if (typeof r === "string") updateGallerySlot(i, { src: r });
-                                    };
-                                    reader.readAsDataURL(file);
-                                  }}
-                                />
-                                Upload file
-                              </label>
-                              <button
-                                type="button"
-                                className="text-xs text-maroon/80 underline"
-                                onClick={() => updateGallerySlot(i, { src: "", altEn: "", altTe: "" })}
-                              >
-                                Clear slot
-                              </button>
+                          <div className="grid md:grid-cols-[100px_1fr] gap-4 items-start">
+                            <div className="relative h-24 w-24 rounded-lg overflow-hidden border border-maroon/20 bg-white shrink-0 mx-auto md:mx-0">
+                              <GalleryThumb src={slot.src} />
                             </div>
-                            <div className="grid sm:grid-cols-2 gap-2 pt-1">
-                              <div>
-                                <span className="text-xs text-maroon/80 block mb-1">Alt text (English)</span>
-                                <input
-                                  type="text"
-                                  value={slot.altEn}
-                                  onChange={(e) => updateGallerySlot(i, { altEn: e.target.value })}
-                                  placeholder="Short description"
-                                  className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white"
-                                />
+                            <div className="space-y-2 min-w-0">
+                              <label className="text-xs text-text-dark/70 block">Image URL or path</label>
+                              <input
+                                type="text"
+                                value={slot.src}
+                                onChange={(e) => updateGallerySlot(i, { src: e.target.value })}
+                                placeholder="https://... or /images/photo.jpg"
+                                className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-maroon bg-white"
+                              />
+                              <div className="flex flex-wrap items-center gap-2">
+                                <label className="text-xs text-maroon/90 cursor-pointer btn-outline py-1.5 px-3">
+                                  <input
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml"
+                                    className="hidden"
+                                    onChange={(e) => {
+                                      const file = e.target.files?.[0];
+                                      e.target.value = "";
+                                      if (!file) return;
+                                      if (file.size > MAX_IMAGE_FILE_MB * 1024 * 1024) {
+                                        window.alert(
+                                          `File is too large. Please use an image under ${MAX_IMAGE_FILE_MB} MB or host it online and paste the URL.`
+                                        );
+                                        return;
+                                      }
+                                      const reader = new FileReader();
+                                      reader.onload = () => {
+                                        const r = reader.result;
+                                        if (typeof r === "string") updateGallerySlot(i, { src: r });
+                                      };
+                                      reader.readAsDataURL(file);
+                                    }}
+                                  />
+                                  Upload file
+                                </label>
                               </div>
-                              <div>
-                                <span className="text-xs text-maroon/80 block mb-1">Alt text (Telugu)</span>
-                                <input
-                                  type="text"
-                                  value={slot.altTe}
-                                  onChange={(e) => updateGallerySlot(i, { altTe: e.target.value })}
-                                  placeholder="వివరణ"
-                                  className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white"
-                                />
+                              <div className="grid sm:grid-cols-2 gap-2 pt-1">
+                                <div>
+                                  <span className="text-xs text-maroon/80 block mb-1">Alt text (English)</span>
+                                  <input
+                                    type="text"
+                                    value={slot.altEn}
+                                    onChange={(e) => updateGallerySlot(i, { altEn: e.target.value })}
+                                    placeholder="Short description"
+                                    className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white"
+                                  />
+                                </div>
+                                <div>
+                                  <span className="text-xs text-maroon/80 block mb-1">Alt text (Telugu)</span>
+                                  <input
+                                    type="text"
+                                    value={slot.altTe}
+                                    onChange={(e) => updateGallerySlot(i, { altTe: e.target.value })}
+                                    placeholder="వివరణ"
+                                    className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white"
+                                  />
+                                </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))
+                    )}
                   </div>
                 )}
               </div>

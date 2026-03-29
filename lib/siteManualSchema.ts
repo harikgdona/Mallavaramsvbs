@@ -17,7 +17,14 @@ export type SiteManualConfig = {
   topHeaderHeightClasses: string;
   topHeaderMoolaColumnWidthPx: number;
   topHeaderLeftLampWidthPx: number;
+  /** Nudge left lamp art horizontally (px). Positive = toward toranams, negative = toward logo. */
+  topHeaderLeftLampShiftXPx: number;
   topHeaderRightLampWidthPx: number;
+  /** Site path, URL, or data URL — logo (desktop header + mobile bar). */
+  topHeaderLogoSrc: string;
+  topHeaderLeftLampSrc: string;
+  topHeaderRightLampSrc: string;
+  topHeaderMoolaViratSrc: string;
   topHeaderTitleFontFixedRem: number;
   topHeaderTitleFontMinRem: number;
   topHeaderTitleFontPrefVw: number;
@@ -40,6 +47,8 @@ export type SiteManualConfig = {
   headerToranamLeftPullPx: number;
   /** Move entire toranam row upward (px). Does not affect title band position. */
   headerToranamShiftUpPx: number;
+  /** Full-bleed background on the home hero (#home) — path, URL, or data URL. */
+  homeHeroBackgroundSrc: string;
 };
 
 export const SITE_MANUAL_DEFAULTS: SiteManualConfig = {
@@ -54,7 +63,12 @@ export const SITE_MANUAL_DEFAULTS: SiteManualConfig = {
   topHeaderHeightClasses: "h-[8.7rem] md:h-[9.9rem]",
   topHeaderMoolaColumnWidthPx: 112,
   topHeaderLeftLampWidthPx: 165,
+  topHeaderLeftLampShiftXPx: 0,
   topHeaderRightLampWidthPx: 110,
+  topHeaderLogoSrc: "/images/logo.png",
+  topHeaderLeftLampSrc: "/images/lamp-left.png",
+  topHeaderRightLampSrc: "/images/lamp-right.png",
+  topHeaderMoolaViratSrc: "/images/moola-virat.png",
   topHeaderTitleFontFixedRem: 1.55,
   topHeaderTitleFontMinRem: 1.125,
   topHeaderTitleFontPrefVw: 3.6,
@@ -81,7 +95,8 @@ export const SITE_MANUAL_DEFAULTS: SiteManualConfig = {
   headerToranamObjectFit: "cover",
   headerToranamTileCount: 4,
   headerToranamLeftPullPx: 60,
-  headerToranamShiftUpPx: 10
+  headerToranamShiftUpPx: 10,
+  homeHeroBackgroundSrc: "/images/Satram-illuminated.jpeg"
 };
 
 function isRecord(v: unknown): v is Record<string, unknown> {
@@ -122,7 +137,15 @@ export function mergeSiteManual(overrides: unknown): SiteManualConfig {
   next.topHeaderHeightClasses = str("topHeaderHeightClasses");
   next.topHeaderMoolaColumnWidthPx = Math.max(20, Math.round(num("topHeaderMoolaColumnWidthPx")));
   next.topHeaderLeftLampWidthPx = Math.max(0, Math.round(num("topHeaderLeftLampWidthPx")));
+  next.topHeaderLeftLampShiftXPx = Math.max(
+    -200,
+    Math.min(200, Math.round(num("topHeaderLeftLampShiftXPx")))
+  );
   next.topHeaderRightLampWidthPx = Math.max(0, Math.round(num("topHeaderRightLampWidthPx")));
+  next.topHeaderLogoSrc = str("topHeaderLogoSrc");
+  next.topHeaderLeftLampSrc = str("topHeaderLeftLampSrc");
+  next.topHeaderRightLampSrc = str("topHeaderRightLampSrc");
+  next.topHeaderMoolaViratSrc = str("topHeaderMoolaViratSrc");
   next.topHeaderTitleFontFixedRem = num("topHeaderTitleFontFixedRem");
   next.topHeaderTitleFontMinRem = num("topHeaderTitleFontMinRem");
   next.topHeaderTitleFontPrefVw = num("topHeaderTitleFontPrefVw");
@@ -149,6 +172,7 @@ export function mergeSiteManual(overrides: unknown): SiteManualConfig {
   next.headerToranamTileCount = Math.max(0, Math.min(20, Math.round(num("headerToranamTileCount"))));
   next.headerToranamLeftPullPx = Math.max(0, Math.round(num("headerToranamLeftPullPx")));
   next.headerToranamShiftUpPx = Math.max(0, Math.min(120, Math.round(num("headerToranamShiftUpPx"))));
+  next.homeHeroBackgroundSrc = str("homeHeroBackgroundSrc");
 
   return next;
 }

@@ -1,8 +1,11 @@
 import { withBasePath } from "@/lib/basePath";
 import { TORANAM_IMAGE_PATHS } from "@/lib/toranamStrip";
 
-/** Number of gallery photo slots (Configure + Gallery section). */
-export const GALLERY_SLOT_COUNT = 10;
+/** Maximum photos in the gallery (Configure + Gallery section). */
+export const MAX_GALLERY_PHOTOS = 40;
+
+/** @deprecated Use MAX_GALLERY_PHOTOS */
+export const GALLERY_SLOT_COUNT = MAX_GALLERY_PHOTOS;
 
 export const GALLERY_STORAGE_KEY = "mallavaram-gallery-photos";
 
@@ -13,51 +16,38 @@ export type GallerySlotConfig = {
   altTe: string;
 };
 
-export function defaultGallerySlots(): GallerySlotConfig[] {
-  const toranams: GallerySlotConfig[] = TORANAM_IMAGE_PATHS.map((src, i) => {
-    const n = i + 1;
-    return {
-      src,
-      altEn: `Toranam decoration ${n}`,
-      altTe: `తోరణం అలంకారం ${n}`
-    };
-  });
-
-  const slots = Array.from({ length: GALLERY_SLOT_COUNT }, () => ({
-    src: "",
-    altEn: "",
-    altTe: ""
-  }));
-
-  for (let i = 0; i < Math.min(GALLERY_SLOT_COUNT, toranams.length); i++) {
-    slots[i] = toranams[i];
-  }
-  return slots;
+/** Slots that use header toranam asset paths are dropped (toranams stay in the header only). */
+function isHeaderToranamSrc(src: string): boolean {
+  const t = src.trim();
+  if (!t) return false;
+  const lower = t.toLowerCase();
+  return TORANAM_IMAGE_PATHS.some(
+    (p) => lower === p.toLowerCase() || lower.endsWith(p.toLowerCase())
+  );
 }
 
-export function emptyGallerySlots(): GallerySlotConfig[] {
-  return Array.from({ length: GALLERY_SLOT_COUNT }, () => ({
-    src: "",
-    altEn: "",
-    altTe: ""
-  }));
+export function defaultGallerySlots(): GallerySlotConfig[] {
+  return [];
 }
 
 export function normalizeGallerySlots(raw: unknown): GallerySlotConfig[] {
-  const base = defaultGallerySlots();
-  if (!Array.isArray(raw)) return base;
-  for (let i = 0; i < GALLERY_SLOT_COUNT; i++) {
+  if (!Array.isArray(raw)) return [];
+  const out: GallerySlotConfig[] = [];
+  for (let i = 0; i < Math.min(raw.length, MAX_GALLERY_PHOTOS); i++) {
     const row = raw[i];
     if (row && typeof row === "object") {
       const o = row as Record<string, unknown>;
-      base[i] = {
+      const slot: GallerySlotConfig = {
         src: typeof o.src === "string" ? o.src : "",
         altEn: typeof o.altEn === "string" ? o.altEn : "",
         altTe: typeof o.altTe === "string" ? o.altTe : ""
       };
+      if (!isHeaderToranamSrc(slot.src)) {
+        out.push(slot);
+      }
     }
   }
-  return base;
+  return out;
 }
 
 /** Resolve stored gallery `src` for next/image (paths get basePath on GitHub Pages). */
