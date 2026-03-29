@@ -34,8 +34,9 @@ export default function RootLayout({
       <body>
         <LanguageProvider>
           <ConfigProvider>
+          {/* Desktop-only ornate banner; mobile uses the compact bar inside Header. */}
           <TopHeader />
-          <div className="flex min-h-screen">
+          <div className="flex min-h-screen min-h-[100dvh] flex-col md:flex-row">
             <Header />
             <MainContentColumn>
               <main className="relative flex-1 flex flex-col min-h-0">{children}</main>

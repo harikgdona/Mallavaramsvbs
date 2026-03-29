@@ -66,9 +66,9 @@ export function Header() {
         </div>
       </aside>
 
-      {/* Mobile: compact top bar + hamburger menu */}
+      {/* Mobile: compact top bar + hamburger menu (full width when layout stacks with flex-col). */}
       <header
-        className="md:hidden sticky top-0 z-30 border-b border-maroon/10"
+        className="md:hidden sticky top-0 z-30 w-full flex-shrink-0 border-b border-maroon/10"
         style={{ backgroundColor: c.siteMobileNavBarBackground }}
       >
         <div className="flex items-center justify-between px-3 py-2 gap-2">

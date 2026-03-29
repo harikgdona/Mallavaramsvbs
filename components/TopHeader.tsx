@@ -66,7 +66,7 @@ export function TopHeader() {
 
   return (
     <header
-      className={`w-full flex-shrink-0 overflow-hidden border-b border-maroon/20 z-30 relative ${TOP_HEADER_HEIGHT_CLASSES}`}
+      className={`hidden w-full flex-shrink-0 overflow-hidden border-b border-maroon/20 z-30 relative md:block ${TOP_HEADER_HEIGHT_CLASSES}`}
       style={{ backgroundColor: SITE_TOP_HEADER_BACKGROUND }}
     >
       {/* ========== LOGO COLUMN (width = SIDEBAR_WIDTH_PX from lib/sidebarWidth.ts) ========== */}
@@ -247,7 +247,7 @@ export function TopHeader() {
           }}
         >
           <h1
-            className={`font-heading font-bold leading-tight text-maroon text-bevel whitespace-nowrap max-w-full ${
+            className={`font-heading font-bold leading-tight text-maroon text-bevel max-w-full md:whitespace-nowrap ${
               TOP_HEADER_MIDDLE_TEXT_ALIGN_LEFT ? "text-left" : "text-center"
             }`}
             style={{ fontSize: topHeaderTitleFontSizeCss(c) }}
@@ -255,7 +255,7 @@ export function TopHeader() {
             శ్రీ మల్లవరం బ్రాహ్మణ సమాజము మరియు అన్నదాన సత్రము
           </h1>
           <p
-            className={`w-max max-w-[calc(100%-0.5rem)] text-maroon/95 font-semibold leading-tight whitespace-nowrap px-1 ${
+            className={`max-w-full text-maroon/95 font-semibold leading-tight px-1 md:w-max md:max-w-[calc(100%-0.5rem)] md:whitespace-nowrap ${
               TOP_HEADER_MIDDLE_TEXT_ALIGN_LEFT ? "text-left" : "text-center"
             }`}
             style={{ fontSize: topHeaderAddressFontSizeCss(c) }}
