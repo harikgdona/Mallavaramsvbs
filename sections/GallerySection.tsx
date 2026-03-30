@@ -35,7 +35,13 @@ export function GallerySection() {
   const { language } = useLanguage();
   const { gallerySlots } = useConfig();
   const placeholder = withBasePath("/images/placeholder.svg");
-  const filled = gallerySlots.filter((s) => s.src.trim() !== "");
+  const filled = gallerySlots
+    .filter((s) => s.src.trim() !== "")
+    .sort((a, b) => {
+      const numA = parseInt(a.src.match(/(\d+)/)?.[1] ?? "0");
+      const numB = parseInt(b.src.match(/(\d+)/)?.[1] ?? "0");
+      return numA - numB;
+    });
 
   return (
     <SectionContainer id="gallery">
