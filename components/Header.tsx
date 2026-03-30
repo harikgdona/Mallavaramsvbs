@@ -63,6 +63,7 @@ export function Header() {
           maxWidth: SIDEBAR_WIDTH_PX,
           background: leftMenuBg
         }}
+        suppressHydrationWarning
       >
         <nav className="flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto px-2.5 py-3">
           {navItems.map((item) => (
@@ -91,6 +92,7 @@ export function Header() {
       <header
         className="md:hidden sticky top-0 z-30 w-full flex-shrink-0 border-b border-maroon/10"
         style={{ backgroundColor: c.siteMobileNavBarBackground }}
+        suppressHydrationWarning
       >
         <div
           id="site-mobile-nav-bar-top"
@@ -127,6 +129,7 @@ export function Header() {
           <div
             className="space-y-0 border-t border-maroon/10 px-2.5 pb-2"
             style={{ backgroundColor: c.siteMobileNavMenuBackground }}
+            suppressHydrationWarning
           >
             {navItems.map((item) => (
               <Fragment key={item.id}>

@@ -305,6 +305,22 @@ export function ConfigureSection() {
     }
   }, [resetOverrides]);
 
+  const handleDownload = useCallback(() => {
+    const bundle = {
+      siteManual: JSON.parse(localStorage.getItem("mallavaram-site-manual-config") ?? "null"),
+      textOverrides: JSON.parse(localStorage.getItem("mallavaram-text-config") ?? "{}"),
+      gallerySlots: JSON.parse(localStorage.getItem("mallavaram-gallery-photos") ?? "[]"),
+      committeeMembers: JSON.parse(localStorage.getItem("mallavaram-committee-config") ?? "[]"),
+    };
+    const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "site-bundle-from-browser.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  }, []);
+
   const submitLogin = useCallback(
     async (e: FormEvent) => {
       e.preventDefault();
@@ -967,7 +983,7 @@ export function ConfigureSection() {
             </label>
 
             <p className="text-xs font-semibold text-maroon mt-4 mb-2">Toranam strip (header)</p>
-            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
               <label className="grid gap-1 text-xs font-medium text-text-dark/70">
                 Strip height (px)
                 <input
@@ -1075,7 +1091,7 @@ export function ConfigureSection() {
                   className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-white"
                 />
               </label>
-              <label className="grid gap-1 text-xs font-medium text-text-dark/70 md:col-span-2 lg:col-span-3">
+              <label className="grid gap-1 text-xs font-medium text-text-dark/70 sm:col-span-2">
                 Shift toranam strip up (px)
                 <input
                   type="number"
@@ -1435,9 +1451,17 @@ export function ConfigureSection() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3 mt-8 pt-6 border-t border-maroon/10">
-          <button type="button" onClick={handleReset} className="btn-outline">
-            Reset everything to defaults
+          <button type="button" onClick={handleDownload} className="btn-primary">
+            Download for deploy
           </button>
+          <p className="text-xs text-text-dark/60 max-w-sm">
+            Downloads <code className="bg-sandal/60 px-1 rounded">site-bundle-from-browser.json</code> — move it to your project root then run <code className="bg-sandal/60 px-1 rounded">npm run publish-site</code> to push to the live site.
+          </p>
+          <div className="w-full border-t border-maroon/10 pt-3 mt-1">
+            <button type="button" onClick={handleReset} className="btn-outline text-sm">
+              Reset everything to defaults
+            </button>
+          </div>
         </div>
       </div>
     </SectionContainer>

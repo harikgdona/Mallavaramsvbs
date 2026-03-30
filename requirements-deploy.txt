@@ -1,0 +1,76 @@
+# Mallavaram — requirements for one-shot deploy on a new computer
+#
+# After cloning the repo, run from the repo root:
+#   .\Deploy-Mallavaram.ps1
+# That runs npm ci (or npm install), playwright install chromium, and npm run deploy-from-browser.
+#
+# Exact npm versions are pinned in package-lock.json — always commit the lockfile and use npm ci.
+
+--------------------------------------------------------------------------------
+1) Install on the machine first (not installable via npm)
+--------------------------------------------------------------------------------
+
+  Node.js     LTS 20.x or newer (includes npm). Required for all scripts.
+              https://nodejs.org/
+
+  Git         Required for npm run publish-site (commit + push to origin).
+              https://git-scm.com/
+
+  Windows     PowerShell 5.1 or later (Deploy-Mallavaram.ps1 uses #Requires 5.1).
+              Included with Windows 10/11.
+
+  Optional    Git remote + credentials configured for your GitHub repo (HTTPS or SSH).
+
+--------------------------------------------------------------------------------
+2) Configuration (not in npm — create locally)
+--------------------------------------------------------------------------------
+
+  .env.local  Copy from .env.example in the repo root. Set at minimum:
+              MALLAVARAM_ADMIN_USER
+              MALLAVARAM_ADMIN_PASSWORD
+              Never commit .env.local (it is listed in .gitignore).
+
+--------------------------------------------------------------------------------
+3) npm packages — dependencies (package.json "dependencies")
+--------------------------------------------------------------------------------
+
+  @noble/hashes       ^1.7.1
+  next                ^16.2.0
+  react               18.2.0
+  react-dom           18.2.0
+  react-icons         5.2.1
+
+--------------------------------------------------------------------------------
+4) npm packages — devDependencies (package.json "devDependencies")
+--------------------------------------------------------------------------------
+
+  @types/node         20.11.19
+  @types/react        18.2.55
+  @types/react-dom    18.2.19
+  autoprefixer        10.4.17
+  dotenv              ^17.3.1          (loads .env / .env.local for export script)
+  eslint              ^9.17.0
+  eslint-config-next  ^16.2.0
+  playwright          ^1.51.0          (browser automation for export-site-bundle)
+  postcss             8.4.35
+  tailwindcss         3.4.1
+  tsx                 ^4.21.0          (runs TypeScript publish/export scripts)
+  typescript          5.4.2
+
+--------------------------------------------------------------------------------
+5) Playwright browsers (downloaded by deploy script, not npm packages)
+--------------------------------------------------------------------------------
+
+  Chromium    Installed with: npx playwright install chromium
+              Deploy-Mallavaram.ps1 runs this automatically unless -SkipPlaywrightInstall.
+              Large download; requires network access on first run.
+
+--------------------------------------------------------------------------------
+6) Deploy pipeline commands (what the root script wraps)
+--------------------------------------------------------------------------------
+
+  npm ci | npm install
+  npx playwright install chromium
+  npm run deploy-from-browser
+    -> npm run export-site-bundle   (tsx + playwright + dotenv)
+    -> npm run publish-site         (tsx; uses git)

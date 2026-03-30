@@ -21,6 +21,7 @@ import {
   normalizeCommitteeMembers,
   type CommitteeMemberConfig
 } from "@/lib/committeeConfig";
+import publicSiteContent from "@/lib/publicSiteContent.json";
 
 const STORAGE_KEY = "mallavaram-text-config";
 
@@ -40,15 +41,19 @@ type ConfigContextType = {
 
 const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
 
+const bakedText = (publicSiteContent.textOverrides ?? {}) as Overrides;
+const bakedGallery = normalizeGallerySlots(publicSiteContent.gallerySlots);
+const bakedCommittee = normalizeCommitteeMembers(publicSiteContent.committeeMembers);
+
 function loadFromStorage(): Overrides {
-  if (typeof window === "undefined") return {};
+  if (typeof window === "undefined") return { ...bakedText };
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return {};
+    if (!raw) return { ...bakedText };
     const parsed = JSON.parse(raw) as Overrides;
-    return typeof parsed === "object" && parsed !== null ? parsed : {};
+    return typeof parsed === "object" && parsed !== null ? { ...bakedText, ...parsed } : { ...bakedText };
   } catch {
-    return {};
+    return { ...bakedText };
   }
 }
 
@@ -56,11 +61,11 @@ function loadGalleryFromStorage(): GallerySlotConfig[] {
   if (typeof window === "undefined") return defaultGallerySlots();
   try {
     const raw = window.localStorage.getItem(GALLERY_STORAGE_KEY);
-    if (!raw) return defaultGallerySlots();
+    if (!raw) return bakedGallery.length ? bakedGallery : defaultGallerySlots();
     const parsed = JSON.parse(raw) as unknown;
     return normalizeGallerySlots(parsed);
   } catch {
-    return defaultGallerySlots();
+    return bakedGallery.length ? bakedGallery : defaultGallerySlots();
   }
 }
 
@@ -86,19 +91,21 @@ function loadCommitteeFromStorage(): CommitteeMemberConfig[] {
   if (typeof window === "undefined") return defaultCommitteeMembers();
   try {
     const raw = window.localStorage.getItem(COMMITTEE_STORAGE_KEY);
-    if (!raw) return defaultCommitteeMembers();
+    if (!raw) return bakedCommittee.length ? bakedCommittee : defaultCommitteeMembers();
     return normalizeCommitteeMembers(JSON.parse(raw) as unknown);
   } catch {
-    return defaultCommitteeMembers();
+    return bakedCommittee.length ? bakedCommittee : defaultCommitteeMembers();
   }
 }
 
-function saveCommitteeToStorage(rows: CommitteeMemberConfig[]) {
-  if (typeof window === "undefined") return;
+function saveCommitteeToStorage(rows: CommitteeMemberConfig[]): boolean {
+  if (typeof window === "undefined") return true;
   try {
     window.localStorage.setItem(COMMITTEE_STORAGE_KEY, JSON.stringify(rows));
-  } catch {
-    // ignore
+    return true;
+  } catch (e) {
+    console.error("committee localStorage save failed:", e);
+    return false;
   }
 }
 
@@ -125,10 +132,12 @@ function saveSiteManualToStorage(cfg: SiteManualConfig): boolean {
 }
 
 export function ConfigProvider({ children }: { children: React.ReactNode }) {
-  const [overrides, setOverrides] = useState<Overrides>({});
-  const [gallerySlots, setGallerySlotsState] = useState<GallerySlotConfig[]>(defaultGallerySlots);
-  const [committeeMembers, setCommitteeMembersState] = useState<CommitteeMemberConfig[]>(
-    defaultCommitteeMembers
+  const [overrides, setOverrides] = useState<Overrides>(() => ({ ...bakedText }));
+  const [gallerySlots, setGallerySlotsState] = useState<GallerySlotConfig[]>(() =>
+    bakedGallery.length ? bakedGallery : defaultGallerySlots()
+  );
+  const [committeeMembers, setCommitteeMembersState] = useState<CommitteeMemberConfig[]>(() =>
+    bakedCommittee.length ? bakedCommittee : defaultCommitteeMembers()
   );
   const [siteManual, setSiteManualState] = useState<SiteManualConfig>(() => ({
     ...SITE_MANUAL_DEFAULTS,
@@ -159,7 +168,13 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
   const setCommitteeMembers = useCallback((rows: CommitteeMemberConfig[]) => {
     const normalized = normalizeCommitteeMembers(rows);
     setCommitteeMembersState(normalized);
-    saveCommitteeToStorage(normalized);
+    if (!saveCommitteeToStorage(normalized) && typeof window !== "undefined") {
+      window.alert(
+        "Could not save committee data in this browser (storage quota exceeded is common when photos are embedded as very large base64). " +
+          "Use a file under /public/images or a short URL, compress the image, or click Remove member and re-upload a smaller file. " +
+          "Until this saves, deploy export will not include your new members."
+      );
+    }
   }, []);
 
   const setSiteManual = useCallback((next: SiteManualConfig) => {
@@ -174,29 +189,20 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const resetOverrides = useCallback(() => {
-    setOverrides({});
-    saveToStorage({});
-    const defaults = defaultGallerySlots();
-    setGallerySlotsState(defaults);
-    saveGalleryToStorage(defaults);
-    const committeeDefaults = defaultCommitteeMembers();
-    setCommitteeMembersState(committeeDefaults);
     if (typeof window !== "undefined") {
       try {
+        window.localStorage.removeItem(STORAGE_KEY);
+        window.localStorage.removeItem(GALLERY_STORAGE_KEY);
         window.localStorage.removeItem(COMMITTEE_STORAGE_KEY);
-      } catch {
-        // ignore
-      }
-    }
-    const siteDefaults = mergeSiteManual({});
-    setSiteManualState(siteDefaults);
-    if (typeof window !== "undefined") {
-      try {
         window.localStorage.removeItem(SITE_MANUAL_STORAGE_KEY);
       } catch {
         // ignore
       }
     }
+    setOverrides({ ...bakedText });
+    setGallerySlotsState(bakedGallery.length ? bakedGallery : defaultGallerySlots());
+    setCommitteeMembersState(bakedCommittee.length ? bakedCommittee : defaultCommitteeMembers());
+    setSiteManualState(mergeSiteManual({}));
   }, []);
 
   return (

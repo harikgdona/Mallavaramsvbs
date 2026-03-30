@@ -81,6 +81,7 @@ export function TopHeader() {
       id="site-desktop-top-header"
       className={`hidden w-full flex-shrink-0 overflow-hidden border-b border-maroon/20 z-30 relative md:block ${TOP_HEADER_HEIGHT_CLASSES}`}
       style={{ backgroundColor: SITE_TOP_HEADER_BACKGROUND }}
+      suppressHydrationWarning
     >
       {/* ========== LOGO COLUMN (width = SIDEBAR_WIDTH_PX from lib/sidebarWidth.ts) ========== */}
       <div

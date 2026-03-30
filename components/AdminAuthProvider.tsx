@@ -25,6 +25,7 @@ const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefin
 export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
   const [authed, setAuthed] = useState(false);
+  // Start as false on both server and client — useEffect sets the real value
   const [needsSetup, setNeedsSetup] = useState(false);
 
   useEffect(() => {

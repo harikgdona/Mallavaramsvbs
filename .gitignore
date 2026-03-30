@@ -20,6 +20,8 @@ build/
 .env
 .env.local
 .env*.local
+.mallavaram-admin-password
+export-login-debug.png
 .env.development.local
 .env.test.local
 .env.production.local
@@ -39,8 +41,9 @@ coverage/
 *.tsbuildinfo
 next-env.d.ts.bak
 
-# ——— Site manual: paste from browser localStorage to import (may contain huge data URLs) ———
+# ——— Configure exports for npm run publish-site (may contain huge data URLs) ———
 site-manual-from-browser.json
+site-bundle-from-browser.json
 
 # ——— Local / backup component copies (not for main branch) ———
 components/TopHeader.before-reset.tsx

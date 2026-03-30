@@ -1,0 +1,13 @@
+﻿[2026-03-29 21:03:56] --- Mallavaram deploy log start ---
+[2026-03-29 21:03:56] Repo: D:\My Apps\Mallavaram_website
+[2026-03-29 21:03:56] Found .env.local (contents not shown; never paste secrets).
+[2026-03-29 21:03:56]   .env.local MALLAVARAM_ADMIN_USER=admin
+[2026-03-29 21:03:56]   .env.local MALLAVARAM_SITE_URL=https://mallavaramsvbs.org (script appends hash configure if missing)
+[2026-03-29 21:03:56] Environment: MALLAVARAM_EXPORT_VERBOSE=1 MALLAVARAM_PUBLISH_VERBOSE=1
+[2026-03-29 21:03:56] Started deploy-from-browser pipeline
+[2026-03-29 21:03:56] Skipped npm install (-SkipNpmInstall)
+[2026-03-29 21:03:56] Skipped Playwright install (-SkipPlaywrightInstall)
+[2026-03-29 21:03:57] Running npm run deploy-from-browser ...
+[2026-03-29 21:04:07] npm run deploy-from-browser finished (exit 0)
+[2026-03-29 21:04:07] site-bundle-from-browser.json size: 96 bytes
+[2026-03-29 21:04:07] --- Mallavaram deploy log end (success) ---
