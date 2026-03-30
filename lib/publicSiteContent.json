@@ -1,10 +1,158 @@
 {
-  "textOverrides": {},
+  "textOverrides": {
+    "committee_title": {
+      "en": "Managing Committee",
+      "te": "నిర్వహణ కమిటీ"
+    },
+    "committee_subtitle": {
+      "en": "Trust office bearers and committee members.",
+      "te": "ట్రస్ట్ పదాధికారులు మరియు కమిటీ సభ్యులు."
+    },
+    "gallery_title": {
+      "en": "Gallery",
+      "te": "గ్యాలరీ"
+    }
+  },
   "gallerySlots": [
     {
+      "src": "/images/uploads/svbs_image31.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image32.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image33.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image34.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image35.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image36.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image37.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image38.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image39.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image40.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image41.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image42.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image43.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
       "src": "/images/uploads/svbs_image44.jpeg",
-      "altEn": "Mallavaram Satram",
-      "altTe": "Mallavaram Satram"
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image45.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image46.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image47.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image48.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image49.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image50.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image51.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image52.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image53.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image54.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image55.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image56.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image57.jpeg",
+      "altEn": "",
+      "altTe": ""
+    },
+    {
+      "src": "/images/uploads/svbs_image58.jpeg",
+      "altEn": "",
+      "altTe": ""
     }
   ],
   "committeeMembers": []
