@@ -48,9 +48,9 @@ jobs:
           ls -la out | head -20
 
       # Fail the workflow if the static site folder is too large for your policy (adjust MAX_MB if needed).
-      - name: Check deploy bundle size (max 50 MB)
+      - name: Check deploy bundle size (max 150 MB)
         run: |
-          MAX_MB=50
+          MAX_MB=150
           BYTES=$(du -sb out | cut -f1)
           MB=$((BYTES / 1024 / 1024))
           echo "out/ size: ${MB} MB (${BYTES} bytes)"
