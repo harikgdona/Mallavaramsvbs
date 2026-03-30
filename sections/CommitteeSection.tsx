@@ -7,6 +7,29 @@ import { useLanguage } from "@/components/LanguageProvider";
 import { resolveGalleryImageSrc } from "@/lib/galleryConfig";
 import { withBasePath } from "@/lib/basePath";
 
+function MemberImage({ src, alt, unoptimized }: { src: string; alt: string; unoptimized: boolean }) {
+  // next/image does not support base64 data URLs in static export — use plain img instead
+  if (src.startsWith("data:")) {
+    return (
+      <img
+        src={src}
+        alt={alt}
+        className="absolute inset-0 h-full w-full object-contain object-center"
+      />
+    );
+  }
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      sizes="(max-width: 640px) 90vw, 280px"
+      className="object-contain object-center"
+      unoptimized={unoptimized}
+    />
+  );
+}
+
 export function CommitteeSection() {
   const t = useTranslate();
   const { language } = useLanguage();
@@ -41,14 +64,7 @@ export function CommitteeSection() {
                 className="rounded-2xl border border-maroon/15 bg-white/80 p-4 shadow-sm text-center"
               >
                 <div className="relative mx-auto mb-4 w-full max-w-[280px] overflow-hidden rounded-2xl border-2 border-gold/50 bg-sandal/50 aspect-[5/4]">
-                  <Image
-                    src={img.src}
-                    alt={name}
-                    fill
-                    sizes="(max-width: 640px) 90vw, 280px"
-                    className="object-contain object-center"
-                    unoptimized={img.unoptimized}
-                  />
+                  <MemberImage src={img.src} alt={name} unoptimized={img.unoptimized} />
                 </div>
                 <p className="font-heading text-base font-bold text-maroon">{name}</p>
                 {designation ? (

@@ -7,6 +7,29 @@ import { useLanguage } from "@/components/LanguageProvider";
 import { resolveGalleryImageSrc } from "@/lib/galleryConfig";
 import { withBasePath } from "@/lib/basePath";
 
+function GalleryImage({ src, alt, unoptimized }: { src: string; alt: string; unoptimized: boolean }) {
+  // next/image does not support base64 data URLs in static export — use plain img instead
+  if (src.startsWith("data:")) {
+    return (
+      <img
+        src={src}
+        alt={alt}
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+    );
+  }
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      className="object-cover"
+      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+      unoptimized={unoptimized}
+    />
+  );
+}
+
 export function GallerySection() {
   const t = useTranslate();
   const { language } = useLanguage();
@@ -41,14 +64,7 @@ export function GallerySection() {
                 key={`${slot.src}-${i}`}
                 className="relative aspect-square sm:aspect-[5/4] md:aspect-square max-h-52 sm:max-h-none rounded-2xl overflow-hidden border border-maroon/15 shadow-sm"
               >
-                <Image
-                  src={src}
-                  alt={alt}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                  unoptimized={unoptimized}
-                />
+                <GalleryImage src={src} alt={alt} unoptimized={unoptimized} />
               </div>
             );
           })}
