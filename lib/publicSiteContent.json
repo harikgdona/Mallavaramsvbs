@@ -1,19 +1,10 @@
-﻿{
-  "textOverrides": {
-    "committee_title": {
-      "en": "Managing Committee",
-      "te": "నిర్వహణ కమిటీ"
-    },
-    "committee_subtitle": {
-      "en": "Trust office bearers and committee members.",
-      "te": "ట్రస్ట్ పదాధికారులు మరియు కమిటీ సభ్యులు."
-    }
-  },
+{
+  "textOverrides": {},
   "gallerySlots": [
     {
       "src": "/images/uploads/svbs_image44.jpeg",
       "altEn": "Mallavaram Satram",
-      "altTe": "మల్లవరం సత్రం"
+      "altTe": "Mallavaram Satram"
     }
   ],
   "committeeMembers": []
