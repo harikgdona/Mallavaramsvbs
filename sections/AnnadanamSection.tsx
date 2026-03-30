@@ -44,7 +44,7 @@ export function AnnadanamSection() {
         <div className="grid grid-cols-2 gap-3 md:gap-4">
           <div className="relative h-36 md:h-44 lg:h-52 rounded-3xl overflow-hidden shadow-md border border-maroon/15">
             <Image
-              src={withBasePath("/images/uploads/svbs_image28.jpeg")}
+              src={withBasePath("/images/uploads/svbs_image47.jpeg")}
               alt="Annadanam serving"
               fill
               className="object-cover"
@@ -53,17 +53,8 @@ export function AnnadanamSection() {
           </div>
           <div className="relative h-36 md:h-44 lg:h-52 rounded-3xl overflow-hidden shadow-md border border-maroon/15">
             <Image
-              src={withBasePath("/images/uploads/svbs_image29.jpeg")}
+              src={withBasePath("/images/uploads/svbs_image48.jpeg")}
               alt="Prasadam distribution"
-              fill
-              className="object-cover"
-              unoptimized
-            />
-          </div>
-          <div className="relative h-36 md:h-44 lg:h-52 rounded-3xl overflow-hidden shadow-md border border-maroon/15 col-span-2">
-            <Image
-              src={withBasePath("/images/uploads/svbs_image30.jpeg")}
-              alt="Devotees at the satram"
               fill
               className="object-cover"
               unoptimized
