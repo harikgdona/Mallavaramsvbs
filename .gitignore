@@ -39,6 +39,7 @@ coverage/
 
 # ——— TypeScript / tooling cache ———
 *.tsbuildinfo
+next-env.d.ts
 next-env.d.ts.bak
 
 # ——— Configure exports for npm run publish-site (may contain huge data URLs) ———
