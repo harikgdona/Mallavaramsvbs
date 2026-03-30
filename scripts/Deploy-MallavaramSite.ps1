@@ -4,9 +4,10 @@
   Publish your Configure changes to GitHub Pages.
 
 .DESCRIPTION
-  1. Looks for site-bundle-from-browser.json in the project root or Downloads
-  2. Runs npm run publish-site (updates lib files, git commit, git push)
-  3. GitHub Actions builds and deploys the live site in about 1-2 minutes
+  1. Checks for uncommitted code changes and asks permission to commit them
+  2. Looks for site-bundle-from-browser.json in the project root or Downloads
+  3. Runs npm run publish-site (updates lib files, git commit, git push)
+  4. GitHub Actions builds and deploys the live site in about 1-2 minutes
 
   Before running:
     - In the Configure panel, click Save on each section you changed
@@ -45,9 +46,59 @@ Write-Host ""
 Push-Location $RepoRoot
 
 try {
+    # 0. Check for uncommitted code changes
+    Write-Host "[0/3] Checking for uncommitted code changes..." -ForegroundColor Yellow
+
+    $gitStatus = & git status --porcelain 2>&1
+    # Filter out the bundle/content files that publish-site handles itself
+    $managedFiles = @(
+        "lib/publicSiteContent.json",
+        "lib/siteManualSchema.ts",
+        "site-bundle-from-browser.json"
+    )
+    $pendingLines = $gitStatus | Where-Object {
+        $line = $_.Trim()
+        if ($line -eq "") { return $false }
+        $filePath = $line.Substring(3).Trim().Replace("/", "\")
+        foreach ($managed in $managedFiles) {
+            if ($filePath -eq $managed.Replace("/", "\")) { return $false }
+        }
+        return $true
+    }
+
+    if ($pendingLines.Count -gt 0) {
+        Write-Host ""
+        Write-Host "WARNING: You have uncommitted code changes that are NOT yet on GitHub:" -ForegroundColor Yellow
+        Write-Host ""
+        foreach ($line in $pendingLines) {
+            Write-Host "  $line" -ForegroundColor White
+        }
+        Write-Host ""
+        Write-Host "If you skip this, the live site will be built WITHOUT these changes." -ForegroundColor Red
+        Write-Host ""
+        $answer = Read-Host "Commit these changes now before deploying? (Y/N)"
+        if ($answer -match "^[Yy]") {
+            $commitMsg = Read-Host "Enter a commit message (or press Enter for default)"
+            if ([string]::IsNullOrWhiteSpace($commitMsg)) {
+                $commitMsg = "chore: commit pending code changes before content deploy"
+            }
+            & git add -A
+            & git commit -m $commitMsg
+            if ($LASTEXITCODE -ne 0) { Write-Error "git commit failed." }
+            & git push
+            if ($LASTEXITCODE -ne 0) { Write-Error "git push failed. Try: git pull --rebase origin main  then re-run." }
+            Write-Host "Code changes committed and pushed." -ForegroundColor Green
+        } else {
+            Write-Host "Skipping code commit. Proceeding with content deploy only." -ForegroundColor DarkGray
+        }
+    } else {
+        Write-Host "No uncommitted code changes found." -ForegroundColor Green
+    }
+
     # 1. npm install
+    Write-Host ""
     if (-not $SkipNpmInstall) {
-        Write-Host "[1/2] npm ci ..." -ForegroundColor Yellow
+        Write-Host "[1/3] npm ci ..." -ForegroundColor Yellow
         if (Test-Path (Join-Path $RepoRoot "package-lock.json")) {
             & npm ci
         } else {
@@ -55,13 +106,16 @@ try {
         }
         if ($LASTEXITCODE -ne 0) { Write-Error "npm install failed." }
     } else {
-        Write-Host "[1/2] Skipping npm install (-SkipNpmInstall)" -ForegroundColor DarkGray
+        Write-Host "[1/3] Skipping npm install (-SkipNpmInstall)" -ForegroundColor DarkGray
     }
 
     # 2. Find the bundle file
-    $bundleName       = "site-bundle-from-browser.json"
-    $bundleInRoot     = Join-Path $RepoRoot $bundleName
+    $bundleName        = "site-bundle-from-browser.json"
+    $bundleInRoot      = Join-Path $RepoRoot $bundleName
     $bundleInDownloads = Join-Path $HOME "Downloads\$bundleName"
+
+    Write-Host ""
+    Write-Host "[2/3] Looking for $bundleName ..." -ForegroundColor Yellow
 
     if (Test-Path $bundleInRoot) {
         Write-Host "Found bundle: $bundleInRoot" -ForegroundColor Green
@@ -84,7 +138,7 @@ try {
 
     # 3. Publish
     Write-Host ""
-    Write-Host "[2/2] Publishing to GitHub ..." -ForegroundColor Yellow
+    Write-Host "[3/3] Publishing content to GitHub ..." -ForegroundColor Yellow
 
     & npm run publish-site
     if ($LASTEXITCODE -ne 0) {
