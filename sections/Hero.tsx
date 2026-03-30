@@ -53,10 +53,7 @@ export function Hero() {
             Sri Mallavaram Venkateswara Annadaana Samajamu mariyu Brahmana Satramu
           </p>
           <h1 className="mb-4 break-words font-heading text-3xl leading-tight text-maroon sm:text-4xl lg:text-[2.75rem]">
-            <span className="block">Serving Dharma.</span>
-            <span className="mt-1 block text-[0.92em] font-normal text-text-dark">
-              Supporting Brahmin Families.
-            </span>
+            {t("hero_heading")}
           </h1>
           <p className="mb-6 break-words text-sm leading-relaxed text-text-dark/85 md:mb-8 md:text-base lg:text-lg">
             {t("hero_subtitle")}

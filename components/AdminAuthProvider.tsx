@@ -3,8 +3,9 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import {
   clearAdminSession,
-  ensureAdminCredentialRecordAsync,
+  hasAdminCredentials,
   isAdminSession,
+  setAdminPassword,
   setAdminSession,
   verifyAdminLogin
 } from "@/lib/adminAuth";
@@ -12,7 +13,10 @@ import {
 type AdminAuthContextType = {
   ready: boolean;
   authed: boolean;
+  /** True when no password has been set yet in this browser (first-time setup). */
+  needsSetup: boolean;
   login: (username: string, password: string) => Promise<{ ok: boolean; error?: string }>;
+  setupPassword: (password: string) => Promise<{ ok: boolean; error?: string }>;
   logout: () => void;
 };
 
@@ -21,19 +25,12 @@ const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefin
 export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
   const [authed, setAuthed] = useState(false);
+  const [needsSetup, setNeedsSetup] = useState(false);
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      await ensureAdminCredentialRecordAsync();
-      if (!cancelled) {
-        setAuthed(isAdminSession());
-        setReady(true);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
+    setNeedsSetup(!hasAdminCredentials());
+    setAuthed(isAdminSession());
+    setReady(true);
   }, []);
 
   const login = useCallback(async (username: string, password: string) => {
@@ -46,13 +43,24 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
     return { ok: false, error: "Invalid username or password." };
   }, []);
 
+  const setupPassword = useCallback(async (password: string) => {
+    if (password.length < 8) {
+      return { ok: false, error: "Password must be at least 8 characters." };
+    }
+    await setAdminPassword(password);
+    setNeedsSetup(false);
+    setAdminSession();
+    setAuthed(true);
+    return { ok: true };
+  }, []);
+
   const logout = useCallback(() => {
     clearAdminSession();
     setAuthed(false);
   }, []);
 
   return (
-    <AdminAuthContext.Provider value={{ ready, authed, login, logout }}>
+    <AdminAuthContext.Provider value={{ ready, authed, needsSetup, login, setupPassword, logout }}>
       {children}
     </AdminAuthContext.Provider>
   );

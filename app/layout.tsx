@@ -22,13 +22,25 @@ export const metadata: Metadata = {
   description:
     "Official website of Sri Mallavaram Venkateswara Annadaana Samajamu mariyu Brahmana Satramu – supporting poor Brahmin families in Mallavaram village through Annadanam and dharmic activities.",
   metadataBase: new URL("https://MallavaramBrahmanasatram.org"),
+  icons: {
+    icon: "/images/logo.png",
+    apple: "/images/logo.png"
+  },
   openGraph: {
     title:
       "Sri Mallavaram Venkateswara Annadaana Samajamu mariyu Brahmana Satramu",
     description:
       "Support Annadanam and dharmic activities for poor Brahmin families in Mallavaram village, Prakasam district.",
     url: "https://MallavaramBrahmanasatram.org",
-    type: "website"
+    type: "website",
+    images: [
+      {
+        url: "/images/Satram-illuminated.jpeg",
+        width: 1200,
+        height: 630,
+        alt: "Sri Mallavaram Brahmana Satram"
+      }
+    ]
   }
 };
 

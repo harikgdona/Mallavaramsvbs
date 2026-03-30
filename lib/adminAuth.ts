@@ -3,9 +3,14 @@
  *
  * This app uses static export (no server). A real database + server-side auth is not available here.
  * We persist a PBKDF2-SHA256 hash + salt in localStorage (password never stored in plain text).
- * Anyone with browser access can still bypass this in devtools — treat as a deterrent, not bank-grade security.
+ * Anyone with browser access can still bypass this in devtools -- treat as a deterrent, not bank-grade security.
  *
  * PBKDF2 uses @noble/hashes (not crypto.subtle) so login works on plain HTTP / LAN where SubtleCrypto is unavailable.
+ *
+ * FIRST-TIME SETUP:
+ *   On first visit, no credentials exist in localStorage. The login form shows a
+ *   "Set password" mode so you can create your own password directly in the browser.
+ *   No default password is stored in source code.
  */
 
 import { pbkdf2 } from "@noble/hashes/pbkdf2";
@@ -16,9 +21,6 @@ export const ADMIN_SESSION_KEY = "mallavaram-admin-session";
 const CREDENTIALS_KEY = "mallavaram-admin-credentials";
 const PBKDF2_ITERATIONS = 150_000;
 const DEFAULT_ADMIN_USER = "admin";
-
-/** First-time bootstrap password (change via future “change password” or by clearing storage + redeploy init). */
-const BOOTSTRAP_PASSWORD = "Hari678#";
 
 type StoredCred = {
   v: 1;
@@ -72,13 +74,16 @@ function writeStored(rec: StoredCred) {
   window.localStorage.setItem(CREDENTIALS_KEY, JSON.stringify(rec));
 }
 
-/** Create default admin hash record if missing (runs in browser). */
-export async function ensureAdminCredentialRecordAsync(): Promise<void> {
-  if (typeof window === "undefined") return;
-  if (readStored()) return;
+/** Returns true if admin credentials have been set in this browser. */
+export function hasAdminCredentials(): boolean {
+  return readStored() !== null;
+}
+
+/** Set (or reset) the admin password. Call this on first-time setup or password change. */
+export async function setAdminPassword(newPassword: string): Promise<void> {
   const salt = new Uint8Array(16);
   crypto.getRandomValues(salt);
-  const hashBuf = await deriveHash(BOOTSTRAP_PASSWORD, salt);
+  const hashBuf = await deriveHash(newPassword, salt);
   writeStored({
     v: 1,
     saltB64: bufToB64(salt.buffer),
@@ -89,11 +94,7 @@ export async function ensureAdminCredentialRecordAsync(): Promise<void> {
 
 export async function verifyAdminLogin(username: string, password: string): Promise<boolean> {
   if (username.trim().toLowerCase() !== DEFAULT_ADMIN_USER.toLowerCase()) return false;
-  let stored = readStored();
-  if (!stored) {
-    await ensureAdminCredentialRecordAsync();
-    stored = readStored();
-  }
+  const stored = readStored();
   if (!stored) return false;
   const salt = b64ToBuf(stored.saltB64);
   const expected = b64ToBuf(stored.hashB64);

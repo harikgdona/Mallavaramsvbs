@@ -136,7 +136,7 @@ function HeaderImageField({
 }
 
 export function ConfigureSection() {
-  const { ready, authed, login, logout } = useAdminAuth();
+  const { ready, authed, needsSetup, login, setupPassword, logout } = useAdminAuth();
   const {
     overrides,
     saveOverrides,
@@ -152,6 +152,10 @@ export function ConfigureSection() {
   const [loginPass, setLoginPass] = useState("");
   const [loginErr, setLoginErr] = useState<string | null>(null);
   const [loginBusy, setLoginBusy] = useState(false);
+  const [setupPass, setSetupPass] = useState("");
+  const [setupPass2, setSetupPass2] = useState("");
+  const [setupErr, setSetupErr] = useState<string | null>(null);
+  const [setupBusy, setSetupBusy] = useState(false);
   const [draft, setDraft] = useState<Overrides>(() => ({ ...overrides }));
   const [galleryDraft, setGalleryDraft] = useState<GallerySlotConfig[]>(() => defaultGallerySlots());
   const [committeeDraft, setCommitteeDraft] = useState<CommitteeMemberConfig[]>(() =>
@@ -265,19 +269,6 @@ export function ConfigureSection() {
     runFlash("site-layout");
   }, [siteManualDraft, setSiteManual, runFlash]);
 
-  const downloadSiteManualJsonForGit = useCallback(() => {
-    const normalized = mergeSiteManual(siteManualDraft);
-    const text = JSON.stringify(normalized, null, 2);
-    const blob = new Blob([text], { type: "application/json;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "site-manual-from-browser.json";
-    a.click();
-    URL.revokeObjectURL(url);
-    runFlash("site-manual-json");
-  }, [siteManualDraft, runFlash]);
-
   const saveTextSection = useCallback(
     (headerName: string, keys: readonly (keyof typeof tMap)[]) => {
       const updates: Overrides = {};
@@ -327,6 +318,23 @@ export function ConfigureSection() {
     [login, loginUser, loginPass]
   );
 
+  const submitSetup = useCallback(
+    async (e: FormEvent) => {
+      e.preventDefault();
+      setSetupErr(null);
+      if (setupPass !== setupPass2) {
+        setSetupErr("Passwords do not match.");
+        return;
+      }
+      setSetupBusy(true);
+      const r = await setupPassword(setupPass);
+      setSetupBusy(false);
+      if (!r.ok) setSetupErr(r.error ?? "Setup failed.");
+      else { setSetupPass(""); setSetupPass2(""); }
+    },
+    [setupPassword, setupPass, setupPass2]
+  );
+
   if (!ready) {
     return (
       <SectionContainer id="configure">
@@ -339,38 +347,74 @@ export function ConfigureSection() {
     return (
       <SectionContainer id="configure">
         <div className="bg-white rounded-3xl border border-maroon/20 shadow-md p-6 md:p-8 max-w-md mx-auto">
-          <h2 className="section-heading text-2xl">Configure — sign in</h2>
-          <p className="text-sm text-text-dark/75 mb-4">
-            Admin access only. This site is a static export: the password is verified in your browser and a one-way
-            hash is kept in localStorage (not a remote database). Clear site data to reset; first visit creates the
-            default hash for the initial password.
-          </p>
-          <form className="space-y-4" onSubmit={submitLogin}>
-            <label className="grid gap-1 text-sm font-medium text-text-dark/80">
-              Username
-              <input
-                type="text"
-                autoComplete="username"
-                value={loginUser}
-                onChange={(e) => setLoginUser(e.target.value)}
-                className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-sandal/30"
-              />
-            </label>
-            <label className="grid gap-1 text-sm font-medium text-text-dark/80">
-              Password
-              <input
-                type="password"
-                autoComplete="current-password"
-                value={loginPass}
-                onChange={(e) => setLoginPass(e.target.value)}
-                className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-sandal/30"
-              />
-            </label>
-            {loginErr ? <p className="text-sm text-red-700">{loginErr}</p> : null}
-            <button type="submit" disabled={loginBusy} className="btn-primary w-full sm:w-auto">
-              {loginBusy ? "Signing in…" : "Sign in"}
-            </button>
-          </form>
+          {needsSetup ? (
+            <>
+              <h2 className="section-heading text-2xl">Configure — set password</h2>
+              <p className="text-sm text-text-dark/75 mb-4">
+                No admin password has been set in this browser yet. Create one to access the Configure panel.
+                The password is stored as a one-way hash in localStorage — it never leaves your browser.
+              </p>
+              <form className="space-y-4" onSubmit={submitSetup}>
+                <label className="grid gap-1 text-sm font-medium text-text-dark/80">
+                  New password (min 8 characters)
+                  <input
+                    type="password"
+                    autoComplete="new-password"
+                    value={setupPass}
+                    onChange={(e) => setSetupPass(e.target.value)}
+                    className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-sandal/30"
+                  />
+                </label>
+                <label className="grid gap-1 text-sm font-medium text-text-dark/80">
+                  Confirm password
+                  <input
+                    type="password"
+                    autoComplete="new-password"
+                    value={setupPass2}
+                    onChange={(e) => setSetupPass2(e.target.value)}
+                    className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-sandal/30"
+                  />
+                </label>
+                {setupErr ? <p className="text-sm text-red-700">{setupErr}</p> : null}
+                <button type="submit" disabled={setupBusy} className="btn-primary w-full sm:w-auto">
+                  {setupBusy ? "Setting up…" : "Set password & sign in"}
+                </button>
+              </form>
+            </>
+          ) : (
+            <>
+              <h2 className="section-heading text-2xl">Configure — sign in</h2>
+              <p className="text-sm text-text-dark/75 mb-4">
+                Admin access only. The password is verified in your browser using a one-way hash stored in localStorage.
+              </p>
+              <form className="space-y-4" onSubmit={submitLogin}>
+                <label className="grid gap-1 text-sm font-medium text-text-dark/80">
+                  Username
+                  <input
+                    type="text"
+                    autoComplete="username"
+                    value={loginUser}
+                    onChange={(e) => setLoginUser(e.target.value)}
+                    className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-sandal/30"
+                  />
+                </label>
+                <label className="grid gap-1 text-sm font-medium text-text-dark/80">
+                  Password
+                  <input
+                    type="password"
+                    autoComplete="current-password"
+                    value={loginPass}
+                    onChange={(e) => setLoginPass(e.target.value)}
+                    className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-sandal/30"
+                  />
+                </label>
+                {loginErr ? <p className="text-sm text-red-700">{loginErr}</p> : null}
+                <button type="submit" disabled={loginBusy} className="btn-primary w-full sm:w-auto">
+                  {loginBusy ? "Signing in…" : "Sign in"}
+                </button>
+              </form>
+            </>
+          )}
         </div>
       </SectionContainer>
     );
@@ -387,7 +431,8 @@ export function ConfigureSection() {
         </div>
         <p className="section-subtitle mb-6">
           Each block has its own Save button (this browser only, localStorage). Header images are saved with{" "}
-          <strong>Save layout & header</strong>. Password hash: localStorage key{" "}
+          <strong>Save layout & header</strong>. To push changes to everyone on the public site, use{" "}
+          <strong>Download for public site</strong> and run <code className="text-xs bg-sandal/60 px-1 rounded">npm run publish-site</code> from the project folder. Password hash: localStorage key{" "}
           <code className="text-xs bg-sandal/60 px-1 rounded">mallavaram-admin-credentials</code>.
         </p>
 
@@ -1058,16 +1103,38 @@ export function ConfigureSection() {
               <button type="button" onClick={saveSiteLayout} className="btn-primary">
                 {saveFlash === "site-layout" ? "Saved" : "Save layout & header"}
               </button>
-              <button type="button" onClick={downloadSiteManualJsonForGit} className="btn-outline text-sm py-2 px-4">
-                {saveFlash === "site-manual-json" ? "Downloaded" : "Download JSON for Git (defaults)"}
-              </button>
             </div>
-            <p className="text-xs text-text-dark/65 mt-2 max-w-2xl">
-              Save the downloaded file as <code className="bg-sandal/60 px-1 rounded">site-manual-from-browser.json</code> in
-              your project folder (same level as <code className="bg-sandal/60 px-1 rounded">package.json</code>), then run{" "}
-              <code className="bg-sandal/60 px-1 rounded">npm run apply-site-manual</code> and commit{" "}
-              <code className="bg-sandal/60 px-1 rounded">lib/siteManualSchema.ts</code>.
-            </p>
+            <div className="rounded-xl border border-maroon/15 bg-sandal/25 px-3 py-2.5 mt-3 max-w-2xl">
+              <p className="text-xs font-semibold text-maroon mb-1">Update the live site for everyone</p>
+              <p className="text-xs text-text-dark/75 leading-relaxed">
+                Save each block you changed (layout, Gallery, Committee, section text, etc.). On your PC, put admin
+                credentials in{" "}
+                <code className="bg-white/80 px-1.5 py-0.5 rounded text-[0.7rem] font-mono border border-maroon/15">
+                  .env.local
+                </code>{" "}
+                (see{" "}
+                <code className="bg-white/80 px-1.5 py-0.5 rounded text-[0.7rem] font-mono border border-maroon/15">
+                  .env.example
+                </code>
+                ) and run{" "}
+                <code className="bg-white/80 px-1.5 py-0.5 rounded text-[0.7rem] font-mono border border-maroon/15">
+                  npm run export-site-bundle
+                </code>{" "}
+                — it signs in headlessly and writes{" "}
+                <code className="bg-white/80 px-1.5 py-0.5 rounded text-[0.7rem] font-mono border border-maroon/15">
+                  site-bundle-from-browser.json
+                </code>
+                . Without creds, a browser opens for manual sign-in. Then run{" "}
+                <code className="bg-white/80 px-1.5 py-0.5 rounded text-[0.7rem] font-mono border border-maroon/15">
+                  npm run publish-site
+                </code>{" "}
+                or{" "}
+                <code className="bg-white/80 px-1.5 py-0.5 rounded text-[0.7rem] font-mono border border-maroon/15">
+                  npm run deploy-from-browser
+                </code>{" "}
+                for export and publish in one step.
+              </p>
+            </div>
           </fieldset>
 
           {Object.entries(CONFIG_SECTIONS).map(([headerName, keys]) => (
@@ -1125,7 +1192,9 @@ export function ConfigureSection() {
                     </div>
                     <p className="text-xs text-text-dark/65">
                       Photo path, URL, or upload (this browser only; under ~{MAX_IMAGE_FILE_MB} MB). Name and
-                      designation in English and Telugu. Save with <strong>Save Committee</strong> below.
+                      designation in English and Telugu. You must click{" "}
+                      <strong>Save Committee (text &amp; members)</strong> below or deploy exports will not include new
+                      members (draft rows are not written to localStorage until then).
                     </p>
                     {committeeDraft.length === 0 ? (
                       <p className="text-sm text-text-dark/60 italic">

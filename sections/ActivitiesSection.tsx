@@ -7,6 +7,7 @@ import { useTranslate } from "@/components/ConfigProvider";
 const activities = [
   {
     key: "Annadanam",
+    keyTe: "అన్నదానం",
     description:
       "Daily and special occasions Annadanam for poor Brahmin families, Veda pandits and pilgrims.",
     descriptionTe:
@@ -14,6 +15,7 @@ const activities = [
   },
   {
     key: "Satram Services",
+    keyTe: "సత్రం సేవలు",
     description:
       "Simple accommodation and prasadam for visiting families and devotees, subject to availability.",
     descriptionTe:
@@ -21,6 +23,7 @@ const activities = [
   },
   {
     key: "Spiritual Activities",
+    keyTe: "ఆధ్యాత్మిక కార్యక్రమాలు",
     description:
       "Support for Veda parayanam, homams and traditional temple-related dharmic activities.",
     descriptionTe:
@@ -50,7 +53,7 @@ export function ActivitiesSection() {
           >
             <div>
               <h3 className="font-heading text-lg md:text-xl text-maroon mb-2">
-                {activity.key}
+                {language === "te" ? activity.keyTe : activity.key}
               </h3>
               <p className="text-sm md:text-base text-text-dark/80">
                 {language === "te" ? activity.descriptionTe : activity.description}
