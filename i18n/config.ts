@@ -75,7 +75,7 @@ export const tMap: Translations = {
     te: "సంస్థ గురించి"
   },
   about_body: {
-    en: " "
+    en: " *"
     te: "*"},
   annadanam_title: {
     en: "Annadanam – Feeding with Devotion",
