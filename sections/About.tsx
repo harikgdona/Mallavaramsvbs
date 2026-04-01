@@ -40,8 +40,11 @@ export function About() {
       <div className="grid md:grid-cols-2 gap-8 items-start">
         <div>
           <h2 className="section-heading">{t("about_title")}</h2>
-          <p className="section-subtitle mb-4">
-            {t("about_body")}
+          <p className="text-sm md:text-base text-text-dark/80 mt-2 mb-4">
+            Located in Mallavaram village, Prakasam district, Andhra Pradesh,
+            Sri Mallavaram Venkateswara Annadaana Samajamu mariyu Brahmana Satramu
+            is a charitable trust dedicated to supporting poor Brahmin families
+            through daily Annadanam, spiritual services, and community support.
           </p>
           <p className="text-sm md:text-base text-text-dark/80">
             The satram offers a simple, clean and devotional space where pilgrims,
