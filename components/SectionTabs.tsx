@@ -5,6 +5,7 @@ import React, { createContext, useCallback, useContext, useState } from "react";
 const SECTION_IDS = [
   "home",
   "about",
+  "temple-history",
   "annadanam",
   "activities",
   "donate",

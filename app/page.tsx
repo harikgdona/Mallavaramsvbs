@@ -3,6 +3,7 @@
 import { useSectionTabs, type SectionId } from "@/components/SectionTabs";
 import { Hero } from "@/sections/Hero";
 import { About } from "@/sections/About";
+import { TempleHistorySection } from "@/sections/TempleHistorySection";
 import { AnnadanamSection } from "@/sections/AnnadanamSection";
 import { ActivitiesSection } from "@/sections/ActivitiesSection";
 import { DonationSection } from "@/sections/DonationSection";
@@ -14,6 +15,7 @@ import { ConfigureSection } from "@/sections/ConfigureSection";
 const sections: Record<SectionId, React.ComponentType> = {
   home: Hero,
   about: About,
+  "temple-history": TempleHistorySection,
   annadanam: AnnadanamSection,
   activities: ActivitiesSection,
   donate: DonationSection,

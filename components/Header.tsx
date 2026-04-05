@@ -16,6 +16,7 @@ const greatVibes = Great_Vibes({ weight: "400", subsets: ["latin"] });
 const navKeys = [
   "nav_home",
   "nav_about",
+  "nav_temple-history",
   "nav_annadanam",
   "nav_activities",
   "nav_donate",

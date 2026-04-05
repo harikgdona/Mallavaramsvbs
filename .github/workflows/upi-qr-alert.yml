@@ -6,6 +6,7 @@ on:
     paths:
       - "public/images/upi-qr.svg"
       - "public/images/upi-qr.*"
+      - "public/images/upi-scanner.*"
       - "sections/DonationSection.tsx"
 
 jobs:

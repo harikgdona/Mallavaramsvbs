@@ -18,6 +18,10 @@ export const tMap: Translations = {
     en: "About",
     te: "సంస్థ గురించి"
   },
+  "nav_temple-history": {
+    en: "Temple History",
+    te: "ఆలయ చరిత్ర"
+  },
   nav_annadanam: {
     en: "Annadanam",
     te: "అన్నదానం"
