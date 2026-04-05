@@ -9,8 +9,6 @@ const SECTION_IDS = [
   "activities",
   "donate",
   "gallery",
-  "volunteer",
-  "transparency",
   "committee",
   "contact",
   "configure"

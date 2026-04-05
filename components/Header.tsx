@@ -20,7 +20,6 @@ const navKeys = [
   "nav_activities",
   "nav_donate",
   "nav_gallery",
-  "nav_volunteer",
   "nav_committee",
   "nav_contact",
   "nav_configure"

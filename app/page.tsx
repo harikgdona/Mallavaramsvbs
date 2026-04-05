@@ -7,8 +7,6 @@ import { AnnadanamSection } from "@/sections/AnnadanamSection";
 import { ActivitiesSection } from "@/sections/ActivitiesSection";
 import { DonationSection } from "@/sections/DonationSection";
 import { GallerySection } from "@/sections/GallerySection";
-import { VolunteerSection } from "@/sections/VolunteerSection";
-import { TransparencySection } from "@/sections/TransparencySection";
 import { CommitteeSection } from "@/sections/CommitteeSection";
 import { ContactSection } from "@/sections/ContactSection";
 import { ConfigureSection } from "@/sections/ConfigureSection";
@@ -20,8 +18,6 @@ const sections: Record<SectionId, React.ComponentType> = {
   activities: ActivitiesSection,
   donate: DonationSection,
   gallery: GallerySection,
-  volunteer: VolunteerSection,
-  transparency: TransparencySection,
   committee: CommitteeSection,
   contact: ContactSection,
   configure: ConfigureSection,

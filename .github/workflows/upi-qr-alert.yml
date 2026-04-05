@@ -1,0 +1,58 @@
+name: UPI QR Code Change Alert
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "public/images/upi-qr.svg"
+      - "public/images/upi-qr.*"
+      - "sections/DonationSection.tsx"
+
+jobs:
+  alert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect changes and alert
+        env:
+          ALERT_EMAILS: "hari.gudladona@solix.com,kote_rao@yahoo.com"
+        run: |
+          CHANGED=$(git diff --name-only HEAD~1 HEAD)
+          echo "Changed files:"
+          echo "$CHANGED"
+
+          COMMITTER=$(git log -1 --format='%an <%ae>')
+          COMMIT_MSG=$(git log -1 --format='%s')
+          COMMIT_SHA=$(git log -1 --format='%H')
+
+          echo ""
+          echo "::warning::UPI QR CODE OR DONATION SECTION WAS MODIFIED!"
+          echo "Committer: $COMMITTER"
+          echo "Message: $COMMIT_MSG"
+          echo "SHA: $COMMIT_SHA"
+          echo ""
+          echo "ALERT: Email notification should be sent to $ALERT_EMAILS"
+          echo "To enable email alerts, add a SendGrid/Mailgun API key as a GitHub secret"
+          echo "and uncomment the email step below."
+
+      # Uncomment and configure when you have a mail service API key:
+      # - name: Send email alert
+      #   uses: dawidd6/action-send-mail@v3
+      #   with:
+      #     server_address: smtp.gmail.com
+      #     server_port: 587
+      #     username: ${{ secrets.MAIL_USERNAME }}
+      #     password: ${{ secrets.MAIL_PASSWORD }}
+      #     subject: "ALERT: UPI QR Code changed on Mallavaram website"
+      #     to: hari.gudladona@solix.com,kote_rao@yahoo.com
+      #     from: Mallavaram Website Alert <noreply@mallavaramsvbs.org>
+      #     body: |
+      #       The UPI QR code or Donation section was modified.
+      #       Committer: ${{ github.actor }}
+      #       Commit: ${{ github.sha }}
+      #       Message: ${{ github.event.head_commit.message }}
+      #       Please verify this change immediately.
