@@ -79,7 +79,7 @@ export const tMap: Translations = {
     te: "అన్నదాన సేవలో చేరండి"
   },
   about_title: {
-    en: "About The Trust",
+    en: "About Brahmana Satram",
     te: "సంస్థ గురించి"
   },
   annadanam_title: {
@@ -95,8 +95,8 @@ export const tMap: Translations = {
     te: "శ్రీ వెంకటేశ్వర స్వామి కృపతో మరియు భక్తుల సహకారంతో ఈ వినయపూర్వక సత్రం అవసరంలో ఉన్నవారికి సేవ అందిస్తోంది."
   },
   activities_title: {
-    en: "Our Activities",
-    te: "మా సేవలు"
+    en: "Cultural & Dharmic Programs",
+    te: "సాంస్కృతిక మరియు ధార్మిక కార్యకలాపాలు"
   },
   donation_title: {
     en: "Offer Your Support",

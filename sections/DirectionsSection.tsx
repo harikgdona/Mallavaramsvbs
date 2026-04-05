@@ -8,6 +8,11 @@ const GOOGLE_MAPS_EMBED =
 
 const GOOGLE_MAPS_LINK = "https://maps.app.goo.gl/pzzSemARxTMfoyWg6";
 
+const SATRAM_MAPS_EMBED =
+  "https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d1500!2d79.9825893!3d15.6595017!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sin!4v1711800000001";
+
+const SATRAM_MAPS_LINK = "https://www.google.com/maps?q=15.6595017,79.9825893&z=17&hl=en";
+
 export function DirectionsSection() {
   const { language } = useLanguage();
 
@@ -23,7 +28,7 @@ export function DirectionsSection() {
       </p>
 
       <div className="grid md:grid-cols-[2fr_1fr] gap-6">
-        <div className="w-full rounded-3xl overflow-hidden border border-maroon/15 shadow-md" style={{ height: "min(70vh, 500px)" }}>
+        <div className="w-full rounded-3xl overflow-hidden border border-maroon/15 shadow-md" style={{ height: "280px" }}>
           <iframe
             src={GOOGLE_MAPS_EMBED}
             loading="lazy"
@@ -65,7 +70,34 @@ export function DirectionsSection() {
             rel="noopener noreferrer"
             className="btn-primary block text-center"
           >
-            {language === "te" ? "Google Maps లో తెరవండి" : "Open in Google Maps"}
+            {language === "te" ? "Google Maps లో తెరవండి" : "Open Temple in Google Maps"}
+          </a>
+        </div>
+      </div>
+
+      {/* Directions to Satram */}
+      <h3 className="font-heading text-lg text-maroon mt-8 mb-4">
+        {language === "te" ? "సత్రం దిశలు" : "Directions to Satram"}
+      </h3>
+      <div className="grid md:grid-cols-[2fr_1fr] gap-6">
+        <div className="w-full rounded-3xl overflow-hidden border border-maroon/15 shadow-md" style={{ height: "280px" }}>
+          <iframe
+            src={SATRAM_MAPS_EMBED}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            className="w-full h-full border-0"
+            aria-label="Map showing Mallavaram Brahmana Satram"
+            allowFullScreen
+          />
+        </div>
+        <div className="flex items-start">
+          <a
+            href={SATRAM_MAPS_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-primary block text-center w-full"
+          >
+            {language === "te" ? "సత్రం Google Maps లో తెరవండి" : "Open Satram in Google Maps"}
           </a>
         </div>
       </div>

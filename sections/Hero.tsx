@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { DonationButton } from "@/components/DonationButton";
 import { useTranslate, useSiteManual } from "@/components/ConfigProvider";
+import { useLanguage } from "@/components/LanguageProvider";
 import { withBasePath } from "@/lib/basePath";
 import { resolveGalleryImageSrc } from "@/lib/galleryConfig";
 import { useSectionTabs } from "@/components/SectionTabs";
@@ -12,6 +13,7 @@ const HERO_BG_FALLBACK = "/images/Satram-illuminated.jpeg";
 export function Hero() {
   const t = useTranslate();
   const { siteManual: c } = useSiteManual();
+  const { language } = useLanguage();
   const { setActiveSection } = useSectionTabs();
   const heroBg = resolveGalleryImageSrc(
     c.homeHeroBackgroundSrc.trim() || HERO_BG_FALLBACK,
@@ -71,13 +73,16 @@ export function Hero() {
             </button>
           </div>
           <p className="mx-auto mt-5 max-w-md text-xs leading-relaxed text-text-dark/70 md:text-sm lg:mx-0">
-            Every meal you support is a blessing shared with Veda pandits, poor Brahmin families, and pilgrims
-            visiting Mallavaram.
+            {language === "te"
+              ? "మీరు మద్దతు ఇచ్చే ప్రతి భోజనం వేద పండితులు, పేద బ్రాహ్మణ కుటుంబాలు మరియు మల్లవరం సందర్శించే యాత్రికులతో పంచుకునే ఆశీర్వాదం."
+              : "Every meal you support is a blessing shared with Veda pandits, poor Brahmin families, and pilgrims visiting Mallavaram."}
           </p>
         </div>
 
         <p className="mt-auto pt-6 text-center text-xs text-text-dark/55 md:pt-8 lg:text-left">
-          Sri Mallavaram Brahmana Satram — evening darshan
+          {language === "te"
+            ? "శ్రీ మల్లవరం బ్రాహ్మణ సత్రం — సాయంత్రం దర్శనం"
+            : "Sri Mallavaram Brahmana Satram — evening darshan"}
         </p>
       </div>
     </section>

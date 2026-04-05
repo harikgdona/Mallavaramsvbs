@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { SectionContainer } from "@/components/SectionContainer";
 import { useTranslate } from "@/components/ConfigProvider";
+import { useLanguage } from "@/components/LanguageProvider";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { withBasePath } from "@/lib/basePath";
 
@@ -12,6 +13,7 @@ const UPI_ID = "9440887264@sbi";
 
 export function DonationSection() {
   const t = useTranslate();
+  const { language } = useLanguage();
   const [copied, setCopied] = useState(false);
 
   const handleCopyUPI = async () => {
@@ -35,29 +37,12 @@ export function DonationSection() {
             </p>
 
             <div className="mb-4">
-              <p className="text-xs md:text-sm font-semibold text-text-dark/90 mb-1">
-                {t("donation_upi_label")}
+              <p className="text-xs md:text-sm text-text-dark/80 mb-3">
+              {language === "te"
+                ? "కుడి వైపున ఉన్న QR కోడ్‌ను స్కాన్ చేయండి. మీ బ్యాంకింగ్ / UPI యాప్ (Google Pay, PhonePe, Paytm, BHIM మొదలైనవి) ఉపయోగించండి."
+                : "Scan the QR code on the right using your banking / UPI app (Google Pay, PhonePe, Paytm, BHIM etc.)."}
               </p>
-              <div className="flex flex-wrap items-center gap-2">
-                <code className="text-sm md:text-base bg-sandal/80 border border-maroon/20 rounded-full px-4 py-2 text-maroon font-semibold">
-                  {UPI_ID}
-                </code>
-                <button
-                  type="button"
-                  onClick={handleCopyUPI}
-                  className="btn-outline text-xs md:text-sm"
-                >
-                  {copied
-                    ? "Copied"
-                    : t("donation_copy")}
-                </button>
-              </div>
             </div>
-
-            <p className="text-xs md:text-sm text-text-dark/80 mb-3">
-              Scan the QR code on the right or use the UPI ID above from your
-              banking / UPI app (Google Pay, PhonePe, Paytm, BHIM etc.).
-            </p>
 
             <p className="text-xs md:text-sm text-text-dark/80 mb-4">
               {t("donation_instructions")}
@@ -68,8 +53,9 @@ export function DonationSection() {
             </div>
 
             <p className="text-xs text-text-dark/70 mt-3">
-              For larger donations, family-specific sevas or regular monthly
-              contributions, please contact the trust through phone or WhatsApp.
+              {language === "te"
+                ? "పెద్ద మొత్తంలో దానాలు, కుటుంబ-నిర్దిష్ట సేవలు లేదా నెలవారీ విరాళాల కోసం, దయచేసి ఫోన్ లేదా వాట్సాప్ ద్వారా ట్రస్ట్‌ను సంప్రదించండి."
+                : "For larger donations, family-specific sevas or regular monthly contributions, please contact the trust through phone or WhatsApp."}
             </p>
           </div>
 
@@ -88,8 +74,9 @@ export function DonationSection() {
               </div>
             </div>
             <p className="text-xs md:text-sm text-text-dark/80 mt-3 text-center max-w-xs">
-              Use any UPI app to scan this QR code and make your offering
-              securely and directly to the trust account.
+              {language === "te"
+                ? "ఏదైనా UPI యాప్‌ను ఉపయోగించి ఈ QR కోడ్‌ను స్కాన్ చేసి మీ దానాన్ని సురక్షితంగా మరియు నేరుగా ట్రస్ట్ ఖాతాకు అందించండి."
+                : "Use any UPI app to scan this QR code and make your offering securely and directly to the trust account."}
             </p>
           </div>
         </div>

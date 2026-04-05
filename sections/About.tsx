@@ -40,15 +40,14 @@ export function About() {
       <div>
           <h2 className="section-heading">{t("about_title")}</h2>
           <p className="text-sm md:text-base text-text-dark/80 mt-2 mb-4">
-            Located in Mallavaram village, Prakasam district, Andhra Pradesh,
-            Sri Mallavaram Venkateswara Annadaana Samajamu mariyu Brahmana Satramu
-            is a charitable trust dedicated to supporting poor Brahmin families
-            through daily Annadanam, spiritual services, and community support.
+            {language === "te"
+              ? "ఆంధ్రప్రదేశ్, ప్రకాశం జిల్లా, మల్లవరం గ్రామంలో ఉన్న శ్రీ మల్లవరం వెంకటేశ్వర అన్నదాన సమాజం మరియు బ్రాహ్మణ సత్రం అనేది పేద బ్రాహ్మణ కుటుంబాలను అన్నదానం, ఆధ్యాత్మిక సేవలు మరియు సమాజ సహాయం ద్వారా మద్దతు ఇవ్వడానికి అంకితమైన చారిటబుల్ ట్రస్ట్."
+              : "Located in Mallavaram village, Prakasam district, Andhra Pradesh, Sri Mallavaram Venkateswara Annadaana Samajamu mariyu Brahmana Satramu is a charitable trust dedicated to supporting poor Brahmin families through daily Annadanam, spiritual services, and community support."}
           </p>
           <p className="text-sm md:text-base text-text-dark/80">
-            The satram offers a simple, clean and devotional space where pilgrims,
-            Veda pandits and local families can rest, receive prasadam and participate
-            in traditional dharmic activities with dignity and respect.
+            {language === "te"
+              ? "బ్రాహ్మణ సత్రం ఒక మంచి సాంక్షిప్తమైన మరియు భక్తిపూర్ణమైన స్థలాన్ని అందిస్తుంది, ఇక్కడ యాత్రికులు, వేద పండితులు మరియు స్థానిక కుటుంబాలు విశ్రాంతి పొందవచ్చు, ప్రసాదం పొందవచ్చు మరియు సంప్రదాయ ధార్మిక కార్యకలాపాలలో గౌరవం మరియు మర్యాదతో పాల్గొనవచ్చు."
+              : "The satram offers a simple, clean and devotional space where pilgrims, Veda pandits and local families can rest, receive prasadam and participate in traditional dharmic activities with dignity and respect."}
           </p>
         </div>
 

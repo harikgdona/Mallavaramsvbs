@@ -35,7 +35,7 @@ function SidebarHostCredit({ size = "desktop" }: { size?: "desktop" | "mobile" }
   /* ~40% smaller than previous text-xl (1.25rem) / text-lg (1.125rem) */
   const nameClass = size === "mobile" ? "text-[0.675rem]" : "text-[0.75rem]";
   return (
-    <div className="mt-[60px] shrink-0 border-t border-maroon/10 px-2 pt-2 pb-1 text-center">
+    <div className="mt-4 shrink-0 border-t border-maroon/10 px-2 pt-2 pb-1 text-center">
       <p className="mb-0.5 text-[0.39rem] leading-tight text-text-dark/80">Built and hosted by</p>
       <p className={`${greatVibes.className} text-maroon ${nameClass}`}>Hari Krishna</p>
     </div>

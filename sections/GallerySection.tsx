@@ -49,8 +49,9 @@ export function GallerySection() {
         {t("gallery_title")}
       </h2>
       <p className="section-subtitle text-center max-w-2xl mx-auto mb-8">
-        Glimpses of Annadanam, satram ambience and dharmic activities
-        at Mallavaram.
+        {language === "te"
+          ? "మల్లవరంలో అన్నదానం, సత్రం వాతావరణం మరియు ధార్మిక కార్యకలాపాల చిత్రాలు."
+          : "Glimpses of Annadanam, satram ambience and dharmic activities at Mallavaram."}
       </p>
 
       {filled.length === 0 ? (
