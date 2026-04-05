@@ -5,12 +5,14 @@ import { DonationButton } from "@/components/DonationButton";
 import { useTranslate, useSiteManual } from "@/components/ConfigProvider";
 import { withBasePath } from "@/lib/basePath";
 import { resolveGalleryImageSrc } from "@/lib/galleryConfig";
+import { useSectionTabs } from "@/components/SectionTabs";
 
 const HERO_BG_FALLBACK = "/images/Satram-illuminated.jpeg";
 
 export function Hero() {
   const t = useTranslate();
   const { siteManual: c } = useSiteManual();
+  const { setActiveSection } = useSectionTabs();
   const heroBg = resolveGalleryImageSrc(
     c.homeHeroBackgroundSrc.trim() || HERO_BG_FALLBACK,
     withBasePath(HERO_BG_FALLBACK)
@@ -62,10 +64,7 @@ export function Hero() {
             <DonationButton size="large" />
             <button
               type="button"
-              onClick={() => {
-                const el = document.getElementById("annadanam");
-                if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-              }}
+              onClick={() => setActiveSection("annadanam")}
               className="btn-outline"
             >
               {t("hero_join_annadanam")}

@@ -4,6 +4,7 @@ import { Inter, Playfair_Display } from "next/font/google";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import { AdminAuthProvider } from "@/components/AdminAuthProvider";
 import { ConfigProvider } from "@/components/ConfigProvider";
+import { SectionTabsProvider } from "@/components/SectionTabs";
 import { MainContentColumn } from "@/components/MainContentColumn";
 import { TopHeader } from "@/components/TopHeader";
 import { Header } from "@/components/Header";
@@ -61,6 +62,7 @@ export default function RootLayout({
           <ConfigProvider>
             <TypographyTheme />
             <AdminAuthProvider>
+              <SectionTabsProvider>
               {/* min-h-dvh on outer column so TopHeader + main row = one viewport (avoids min-h-screen stacking past 100vh). */}
               <div className="flex min-h-[100dvh] min-h-[100svh] flex-col">
                 {/* Desktop-only ornate banner; mobile uses the compact bar inside Header. */}
@@ -77,6 +79,7 @@ export default function RootLayout({
               </div>
               <LayoutViewportOffsets />
               <BottomRightActions />
+              </SectionTabsProvider>
             </AdminAuthProvider>
           </ConfigProvider>
         </LanguageProvider>

@@ -9,6 +9,7 @@ import { withBasePath } from "@/lib/basePath";
 import { resolveGalleryImageSrc } from "@/lib/galleryConfig";
 import { siteLeftMenuBackgroundFromConfig } from "@/lib/siteManualConfig";
 import { resolveSiteManualForUi } from "@/lib/siteManualSchema";
+import { useSectionTabs, type SectionId } from "./SectionTabs";
 
 const greatVibes = Great_Vibes({ weight: "400", subsets: ["latin"] });
 
@@ -45,6 +46,7 @@ export function Header() {
   const { siteManual: raw } = useSiteManual();
   const c = resolveSiteManualForUi(raw);
   const [open, setOpen] = useState(false);
+  const { activeSection, setActiveSection } = useSectionTabs();
   const SIDEBAR_WIDTH_PX = c.sidebarWidthPx;
   const leftMenuBg = siteLeftMenuBackgroundFromConfig(c);
   const mobileLogo = resolveGalleryImageSrc(
@@ -68,12 +70,17 @@ export function Header() {
         <nav className="flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto px-2.5 py-3">
           {navItems.map((item) => (
             <Fragment key={item.id}>
-              <a
-                href={withBasePath(`/#${item.id}`)}
-                className="app-nav-typography block rounded-lg border border-transparent py-2 px-2.5 text-center text-[0.875rem] leading-tight text-maroon/85 transition-colors hover:border-maroon/10 hover:bg-white/70 hover:text-maroon hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon/35 focus-visible:ring-offset-2 focus-visible:ring-offset-sandal"
+              <button
+                type="button"
+                onClick={() => setActiveSection(item.id as SectionId)}
+                className={`app-nav-typography block w-full rounded-lg border py-2 px-2.5 text-center text-[0.875rem] leading-tight transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon/35 focus-visible:ring-offset-2 focus-visible:ring-offset-sandal ${
+                  activeSection === item.id
+                    ? "border-maroon/20 bg-white/80 text-maroon shadow-sm font-semibold"
+                    : "border-transparent text-maroon/85 hover:border-maroon/10 hover:bg-white/70 hover:text-maroon hover:shadow-sm"
+                }`}
               >
                 {t(item.key)}
-              </a>
+              </button>
               {item.id === "configure" ? (
                 <div
                   className="shrink-0"
@@ -98,7 +105,7 @@ export function Header() {
           id="site-mobile-nav-bar-top"
           className="flex items-center justify-between px-3 py-2 gap-2"
         >
-          <Link href="/#home" className="flex-shrink-0 flex items-center">
+          <button type="button" onClick={() => setActiveSection("home")} className="flex-shrink-0 flex items-center">
             <div className="relative h-10 w-10">
               <Image
                 src={mobileLogo.src}
@@ -110,7 +117,7 @@ export function Header() {
                 unoptimized={mobileLogo.unoptimized}
               />
             </div>
-          </Link>
+          </button>
           <p className="font-heading min-w-0 flex-1 text-center text-sm leading-snug text-maroon break-words">
             Sri Mallavaram Venkateswara Annadaana Samajamu &amp; Brahmana Satramu
           </p>
@@ -133,13 +140,17 @@ export function Header() {
           >
             {navItems.map((item) => (
               <Fragment key={item.id}>
-                <a
-                  href={withBasePath(`/#${item.id}`)}
-                  className="app-nav-typography block rounded-md py-2 text-center text-sm leading-tight text-maroon/85 hover:bg-white/80 hover:text-maroon focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon/35 focus-visible:ring-offset-2 focus-visible:ring-offset-sandal"
-                  onClick={() => setOpen(false)}
+                <button
+                  type="button"
+                  onClick={() => { setActiveSection(item.id as SectionId); setOpen(false); }}
+                  className={`app-nav-typography block w-full rounded-md py-2 text-center text-sm leading-tight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon/35 focus-visible:ring-offset-2 focus-visible:ring-offset-sandal ${
+                    activeSection === item.id
+                      ? "bg-white/80 text-maroon font-semibold"
+                      : "text-maroon/85 hover:bg-white/80 hover:text-maroon"
+                  }`}
                 >
                   {t(item.key)}
-                </a>
+                </button>
                 {item.id === "configure" ? <SidebarHostCredit size="mobile" /> : null}
               </Fragment>
             ))}
