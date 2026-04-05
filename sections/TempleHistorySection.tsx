@@ -1,7 +1,18 @@
 "use client";
 
+import Image from "next/image";
 import { SectionContainer } from "@/components/SectionContainer";
 import { useLanguage } from "@/components/LanguageProvider";
+import { withBasePath } from "@/lib/basePath";
+
+const templeImages = [
+  "/images/temple-history/Temple-history-1.jpg",
+  "/images/temple-history/Temple-history-2.jpg",
+  "/images/temple-history/Temple-history-3.jpg",
+  "/images/temple-history/Temple-history-4.jpg",
+  "/images/temple-history/Temple-history-5.jpg",
+  "/images/temple-history/Temple-history-6.jpg",
+];
 
 const historyTe = [
   `నారదుడు ప్రతిష్టించిన నారాయణుడు కలియుగ వరదుడైన శ్రీ వేంకటేశ్వరుడు ఎన్నో క్షేత్రాలలో కొలువు తీరి భక్తులకు వరప్రదాయనునిగా దర్శమిస్తున్నారు. మన దేశంలోనే కాదు విదేశాలలో కూడా స్వామి స్థానం ఏర్పరచుకున్నారు.`,
@@ -49,6 +60,22 @@ export function TempleHistorySection() {
           ? "మల్లవరం, ప్రకాశం జిల్లా"
           : "Mallavaram, Prakasam District"}
       </p>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
+        {templeImages.map((src, i) => (
+          <div key={i} className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-maroon/15 shadow-sm">
+            <Image
+              src={withBasePath(src)}
+              alt={`Temple history photo ${i + 1}`}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 50vw, 33vw"
+              unoptimized
+            />
+          </div>
+        ))}
+      </div>
+
       <div className="bg-white rounded-3xl border border-maroon/10 shadow-sm p-5 md:p-8">
         <div className="space-y-4 text-sm md:text-base text-text-dark/85 leading-relaxed">
           {history.map((para, i) => (
