@@ -7,8 +7,8 @@ import { useTranslate } from "@/components/ConfigProvider";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { withBasePath } from "@/lib/basePath";
 
-// TODO: replace with the actual trust UPI ID
-const UPI_ID = "YOUR_UPI_ID";
+// UPI ID for the trust
+const UPI_ID = "9440887264@sbi";
 
 export function DonationSection() {
   const t = useTranslate();
