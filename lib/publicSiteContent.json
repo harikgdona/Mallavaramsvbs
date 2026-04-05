@@ -1,27 +1,39 @@
 {
   "textOverrides": {},
   "gallerySlots": [
-    {
-      "src": "/images/uploads/svbs_image44.jpeg",
-      "altEn": "Mallavaram Satram",
-      "altTe": "Mallavaram Satram"
-    }
+    { "src": "/images/uploads/svbs_image28.jpeg", "altEn": "Satram photo 1", "altTe": "Satram photo 1" },
+    { "src": "/images/uploads/svbs_image29.jpeg", "altEn": "Satram photo 2", "altTe": "Satram photo 2" },
+    { "src": "/images/uploads/svbs_image30.jpeg", "altEn": "Satram photo 3", "altTe": "Satram photo 3" },
+    { "src": "/images/uploads/svbs_image31.jpeg", "altEn": "Satram photo 4", "altTe": "Satram photo 4" },
+    { "src": "/images/uploads/svbs_image32.jpeg", "altEn": "Satram photo 5", "altTe": "Satram photo 5" },
+    { "src": "/images/uploads/svbs_image33.jpeg", "altEn": "Satram photo 6", "altTe": "Satram photo 6" },
+    { "src": "/images/uploads/svbs_image34.jpeg", "altEn": "Satram photo 7", "altTe": "Satram photo 7" },
+    { "src": "/images/uploads/svbs_image35.jpeg", "altEn": "Satram photo 8", "altTe": "Satram photo 8" },
+    { "src": "/images/uploads/svbs_image36.jpeg", "altEn": "Satram photo 9", "altTe": "Satram photo 9" },
+    { "src": "/images/uploads/svbs_image37.jpeg", "altEn": "Satram photo 10", "altTe": "Satram photo 10" },
+    { "src": "/images/uploads/svbs_image38.jpeg", "altEn": "Satram photo 11", "altTe": "Satram photo 11" },
+    { "src": "/images/uploads/svbs_image39.jpeg", "altEn": "Satram photo 12", "altTe": "Satram photo 12" },
+    { "src": "/images/uploads/svbs_image40.jpeg", "altEn": "Satram photo 13", "altTe": "Satram photo 13" },
+    { "src": "/images/uploads/svbs_image41.jpeg", "altEn": "Satram photo 14", "altTe": "Satram photo 14" },
+    { "src": "/images/uploads/svbs_image42.jpeg", "altEn": "Satram photo 15", "altTe": "Satram photo 15" },
+    { "src": "/images/uploads/svbs_image43.jpeg", "altEn": "Satram photo 16", "altTe": "Satram photo 16" },
+    { "src": "/images/uploads/svbs_image45.jpeg", "altEn": "Satram photo 18", "altTe": "Satram photo 18" },
+    { "src": "/images/uploads/svbs_image46.jpeg", "altEn": "Satram photo 19", "altTe": "Satram photo 19" },
+    { "src": "/images/uploads/svbs_image47.jpeg", "altEn": "Satram photo 20", "altTe": "Satram photo 20" },
+    { "src": "/images/uploads/svbs_image48.jpeg", "altEn": "Satram photo 21", "altTe": "Satram photo 21" },
+    { "src": "/images/uploads/svbs_image49.jpeg", "altEn": "Satram photo 22", "altTe": "Satram photo 22" },
+    { "src": "/images/uploads/svbs_image50.jpeg", "altEn": "Satram photo 23", "altTe": "Satram photo 23" },
+    { "src": "/images/uploads/svbs_image51.jpeg", "altEn": "Satram photo 24", "altTe": "Satram photo 24" },
+    { "src": "/images/uploads/svbs_image52.jpeg", "altEn": "Satram photo 25", "altTe": "Satram photo 25" },
+    { "src": "/images/uploads/svbs_image53.jpeg", "altEn": "Satram photo 26", "altTe": "Satram photo 26" },
+    { "src": "/images/uploads/svbs_image54.jpeg", "altEn": "Satram photo 27", "altTe": "Satram photo 27" },
+    { "src": "/images/uploads/svbs_image55.jpeg", "altEn": "Satram photo 28", "altTe": "Satram photo 28" },
+    { "src": "/images/uploads/svbs_image56.jpeg", "altEn": "Satram photo 29", "altTe": "Satram photo 29" },
+    { "src": "/images/uploads/svbs_image57.jpeg", "altEn": "Satram photo 30", "altTe": "Satram photo 30" },
+    { "src": "/images/uploads/svbs_image58.jpeg", "altEn": "Satram photo 31", "altTe": "Satram photo 31" },
+    { "src": "/images/uploads/svbs_image59.jpeg", "altEn": "Satram photo 32", "altTe": "Satram photo 32" },
+    { "src": "/images/uploads/svbs_image60.jpeg", "altEn": "Satram photo 33", "altTe": "Satram photo 33" },
+    { "src": "/images/uploads/svbs_image44.jpeg", "altEn": "Mallavaram Satram", "altTe": "Mallavaram Satram" }
   ],
-  "committeeMembers": [
-    { "src": "", "nameEn": "Sri Neelamraju Subba Santha Rao", "nameTe": "", "designationEn": "President", "designationTe": "" },
-    { "src": "", "nameEn": "Sri Gali Venkata Rambabu", "nameTe": "", "designationEn": "Vice President-1", "designationTe": "" },
-    { "src": "", "nameEn": "Sri Neelamraju Venkata Subba Rao", "nameTe": "", "designationEn": "Vice President-2", "designationTe": "" },
-    { "src": "", "nameEn": "Sri Damaraju Venkata Laxmi Raghava Rao", "nameTe": "", "designationEn": "Vice President-3", "designationTe": "" },
-    { "src": "", "nameEn": "Sri Rachapudi Sri Krishna", "nameTe": "", "designationEn": "Secretary", "designationTe": "" },
-    { "src": "", "nameEn": "Sri Gali Satya Rama Koteswara Rao", "nameTe": "", "designationEn": "Treasurer", "designationTe": "" },
-    { "src": "", "nameEn": "Sri Neelamraju Rama Krishna", "nameTe": "", "designationEn": "Joint Secretary 1", "designationTe": "" },
-    { "src": "", "nameEn": "Sri Gali Suneel", "nameTe": "", "designationEn": "Joint Secretary 2", "designationTe": "" },
-    { "src": "", "nameEn": "Sri Doddavarapu Srinivas Siva Rama Krishna", "nameTe": "", "designationEn": "Member", "designationTe": "" },
-    { "src": "", "nameEn": "Sri Dhenuvakonda Seshagiri Rao", "nameTe": "", "designationEn": "Member", "designationTe": "" },
-    { "src": "", "nameEn": "Sri Gali Venkata Ramakrishna", "nameTe": "", "designationEn": "Member", "designationTe": "" },
-    { "src": "", "nameEn": "Sri Gali Balaram Revanth Kumar", "nameTe": "", "designationEn": "Member", "designationTe": "" },
-    { "src": "", "nameEn": "Sri Neelamraju Raghavendra Rao", "nameTe": "", "designationEn": "Member", "designationTe": "" },
-    { "src": "", "nameEn": "Sri G.V.S. Chalapathi", "nameTe": "", "designationEn": "Member", "designationTe": "" },
-    { "src": "", "nameEn": "Sri Neelamraju Venkata Ramana Kumar", "nameTe": "", "designationEn": "Member", "designationTe": "" }
-  ]
+  "committeeMembers": [{"src":"","nameEn":"Sri Neelamraju Subba Santha Rao","nameTe":"","designationEn":"President","designationTe":""},{"src":"","nameEn":"Sri Gali Venkata Rambabu","nameTe":"","designationEn":"Vice President-1","designationTe":""},{"src":"","nameEn":"Sri Neelamraju Venkata Subba Rao","nameTe":"","designationEn":"Vice President-2","designationTe":""},{"src":"","nameEn":"Sri Damaraju Venkata Laxmi Raghava Rao","nameTe":"","designationEn":"Vice President-3","designationTe":""},{"src":"","nameEn":"Sri Rachapudi Sri Krishna","nameTe":"","designationEn":"Secretary","designationTe":""},{"src":"","nameEn":"Sri Gali Satya Rama Koteswara Rao","nameTe":"","designationEn":"Treasurer","designationTe":""},{"src":"","nameEn":"Sri Neelamraju Rama Krishna","nameTe":"","designationEn":"Joint Secretary 1","designationTe":""},{"src":"","nameEn":"Sri Gali Suneel","nameTe":"","designationEn":"Joint Secretary 2","designationTe":""},{"src":"","nameEn":"Sri Doddavarapu Srinivas Siva Rama Krishna","nameTe":"","designationEn":"Member","designationTe":""},{"src":"","nameEn":"Sri Dhenuvakonda Seshagiri Rao","nameTe":"","designationEn":"Member","designationTe":""},{"src":"","nameEn":"Sri Gali Venkata Ramakrishna","nameTe":"","designationEn":"Member","designationTe":""},{"src":"","nameEn":"Sri Gali Balaram Revanth Kumar","nameTe":"","designationEn":"Member","designationTe":""},{"src":"","nameEn":"Sri Neelamraju Raghavendra Rao","nameTe":"","designationEn":"Member","designationTe":""},{"src":"","nameEn":"Sri G.V.S. Chalapathi","nameTe":"","designationEn":"Member","designationTe":""},{"src":"","nameEn":"Sri Neelamraju Venkata Ramana Kumar","nameTe":"","designationEn":"Member","designationTe":""}]
 }
