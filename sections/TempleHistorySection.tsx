@@ -63,12 +63,12 @@ export function TempleHistorySection() {
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
         {templeImages.map((src, i) => (
-          <div key={i} className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-maroon/15 shadow-sm">
+          <div key={i} className="relative aspect-[3/2] rounded-2xl overflow-hidden border border-maroon/15 shadow-sm bg-sandal/30">
             <Image
               src={withBasePath(src)}
               alt={`Temple history photo ${i + 1}`}
               fill
-              className="object-cover"
+              className="object-contain"
               sizes="(max-width: 768px) 50vw, 33vw"
               unoptimized
             />
