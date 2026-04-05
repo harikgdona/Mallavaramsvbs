@@ -12,7 +12,7 @@ export function SectionContainer({ id, className, fillViewport, children }: Prop
   return (
     <section
       id={id}
-      className={`min-w-0 max-w-full py-12 md:py-20 px-4 sm:px-6 lg:px-8 ${fillViewport ? "min-h-app-section " : ""}${className ?? ""}`}
+      className={`min-w-0 max-w-full py-4 md:py-6 px-4 sm:px-6 lg:px-8 ${fillViewport ? "min-h-app-section " : ""}${className ?? ""}`}
     >
       <div className="mx-auto w-full min-w-0 max-w-6xl">{children}</div>
     </section>

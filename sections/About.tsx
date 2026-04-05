@@ -37,8 +37,7 @@ export function About() {
 
   return (
     <SectionContainer id="about">
-      <div className="grid md:grid-cols-2 gap-8 items-start">
-        <div>
+      <div>
           <h2 className="section-heading">{t("about_title")}</h2>
           <p className="text-sm md:text-base text-text-dark/80 mt-2 mb-4">
             Located in Mallavaram village, Prakasam district, Andhra Pradesh,
@@ -52,21 +51,6 @@ export function About() {
             in traditional dharmic activities with dignity and respect.
           </p>
         </div>
-        <div className="bg-white rounded-3xl shadow-md border border-maroon/10 p-5 md:p-6">
-          <h3 className="font-heading text-lg md:text-xl text-maroon mb-3">
-            Mallavaram – A Village of Dharma
-          </h3>
-          <p className="text-sm md:text-base text-text-dark/80 mb-3">
-            Mallavaram is a small village in Prakasam district, Andhra Pradesh, with
-            a rich tradition of Vedic learning and temple worship. Many elderly and
-            poor Brahmin families reside here with limited income.
-          </p>
-          <p className="text-sm md:text-base text-text-dark/80">
-            Through this trust, devotees across India and abroad can directly support
-            these families and sustain the dharmic atmosphere of the village.
-          </p>
-        </div>
-      </div>
 
       {/* History section */}
       <div className="mt-10 bg-white rounded-3xl border border-maroon/10 shadow-sm p-5 md:p-8">
