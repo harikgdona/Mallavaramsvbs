@@ -21,7 +21,7 @@ export function Hero() {
   return (
     <section
       id="home"
-      className="relative flex min-h-app-section flex-col overflow-hidden bg-beige"
+      className="relative flex flex-1 flex-col overflow-hidden bg-beige"
       aria-label="Hero section"
     >
       {/* Full-viewport background photo (JPEG has no alpha; “transparency” is via opacity + scrim). */}

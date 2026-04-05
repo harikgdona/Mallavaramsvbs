@@ -8,7 +8,6 @@ import { SectionTabsProvider } from "@/components/SectionTabs";
 import { MainContentColumn } from "@/components/MainContentColumn";
 import { TopHeader } from "@/components/TopHeader";
 import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { BottomRightActions } from "@/components/BottomRightActions";
 import { LayoutViewportOffsets } from "@/components/LayoutViewportOffsets";
 import { TypographyTheme } from "@/components/TypographyTheme";
@@ -70,10 +69,9 @@ export default function RootLayout({
                 <div className="flex min-h-0 flex-1 flex-col md:flex-row">
                   <Header />
                   <MainContentColumn>
-                    <main className="relative flex min-h-0 min-w-0 w-full max-w-full flex-1 flex-col overflow-x-hidden">
+                    <main className="relative flex min-h-0 min-w-0 w-full max-w-full flex-1 flex-col overflow-x-hidden overflow-y-auto">
                       {children}
                     </main>
-                    <Footer />
                   </MainContentColumn>
                 </div>
               </div>
