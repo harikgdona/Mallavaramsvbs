@@ -17,6 +17,7 @@ const navKeys = [
   "nav_home",
   "nav_about",
   "nav_temple-history",
+  "nav_directions",
   "nav_annadanam",
   "nav_activities",
   "nav_donate",

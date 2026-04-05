@@ -26,7 +26,7 @@ const historyTe = [
   `అయిదు అంతస్థుల రాజగోపురం గుండా ప్రాంగణం లోనికి ప్రవేశిస్తే ఎత్తైన ధ్వజస్థంభం, బలిపీఠాలు మరియు శ్రీ గరుత్మంతుని సన్నిధి కనిపిస్తాయి. గర్భాలయంలో రమణీయ పుష్ప స్వర్ణాభరణ అలంకరణలో కలియుగ దైవం శ్రీ వెంకటేశ్వర స్వామి స్థానక భంగిమలో నయానందకరమైన దర్శనాన్ని ప్రసాదిస్తారు.`,
   `నిత్యం నాలుగు పూజలు జరిగే ఆలయంలో వినాయక చవితి, హనుమజ్జయంతి, తొలి ఏకాదశి, వైకుంఠ ఏకాదశి, ధనుర్మాస పూజలు, శ్రీ రామనవమి, శ్రీ కృష్ణ జన్మాష్టమి, ఉగాది ఆస్థానం ఘనంగా నిర్వహిస్తారు. చైత్రమాసంలో ఆలయ ఉత్సవాలు రంగరంగ వైభవంగా జరుపుతారు.`,
   `ఆలయం ఉదయం ఆరు నుండి పన్నెండు వరకు, సాయంత్రం నాలుగు నుండి రాత్రి ఎనిమిది వరకు తెరిచి ఉంటుంది. మల్లవరం కు ఒంగోలు పట్టణం నుండి సులభంగా రోడ్డు మార్గంలో చేరుకోవచ్చును (ఇరవై కిలోమీటర్లు).`,
-  `ఓం నమో నారాయణాయ!`,
+  `ఓం నమో వేంకటేశాయ!`,
 ];
 
 const historyEn = [
@@ -41,7 +41,7 @@ const historyEn = [
   `Entering through the five-storied Rajagopuram, one sees the tall Dhwajasthambham, Balipeethas, and the shrine of Sri Garutmantudu. In the sanctum sanctorum, the Kali Yuga deity Sri Venkateswara Swami stands in a magnificent posture adorned with flowers and golden ornaments, blessing all who seek his darshan.`,
   `The temple conducts four daily pujas and celebrates Vinayaka Chavithi, Hanuman Jayanti, Toli Ekadashi, Vaikuntha Ekadashi, Dhanurmas Pujas, Sri Rama Navami, Sri Krishna Janmashtami, and Ugadi with great grandeur. The annual Brahmotsavams in Chaitra month are celebrated with spectacular splendor.`,
   `The temple is open from 6 AM to 12 PM and 4 PM to 8 PM. Mallavaram is easily accessible by road from Ongole town (20 kilometers).`,
-  `Om Namo Narayanaya!`,
+  `Om Namo Venkateshaya!`,
 ];
 
 export function TempleHistorySection() {

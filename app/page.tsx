@@ -4,6 +4,7 @@ import { useSectionTabs, type SectionId } from "@/components/SectionTabs";
 import { Hero } from "@/sections/Hero";
 import { About } from "@/sections/About";
 import { TempleHistorySection } from "@/sections/TempleHistorySection";
+import { DirectionsSection } from "@/sections/DirectionsSection";
 import { AnnadanamSection } from "@/sections/AnnadanamSection";
 import { ActivitiesSection } from "@/sections/ActivitiesSection";
 import { DonationSection } from "@/sections/DonationSection";
@@ -16,6 +17,7 @@ const sections: Record<SectionId, React.ComponentType> = {
   home: Hero,
   about: About,
   "temple-history": TempleHistorySection,
+  directions: DirectionsSection,
   annadanam: AnnadanamSection,
   activities: ActivitiesSection,
   donate: DonationSection,

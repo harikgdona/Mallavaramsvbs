@@ -22,6 +22,10 @@ export const tMap: Translations = {
     en: "Temple History",
     te: "ఆలయ చరిత్ర"
   },
+  nav_directions: {
+    en: "Directions",
+    te: "దిశలు"
+  },
   nav_annadanam: {
     en: "Annadanam",
     te: "అన్నదానం"

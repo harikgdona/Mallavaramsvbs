@@ -6,6 +6,7 @@ const SECTION_IDS = [
   "home",
   "about",
   "temple-history",
+  "directions",
   "annadanam",
   "activities",
   "donate",
