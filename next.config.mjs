@@ -5,7 +5,7 @@
 const PROD_BASE_PATH = process.env.SITE_BASE_PATH ?? "";
 const basePath = process.env.NODE_ENV === "production" ? PROD_BASE_PATH : "";
 
-// Hostnames you use in the browser bar for `next dev` (HMR WebSocket is blocked if missing).
+// Hostnames / IPs you use in the browser bar for `next dev` (HMR WebSocket is blocked if missing).
 const extraDevOrigins =
   process.env.NEXT_DEV_EXTRA_ORIGINS?.split(/[\s,]+/).filter(Boolean) ?? [];
 

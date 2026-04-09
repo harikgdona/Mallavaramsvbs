@@ -8,6 +8,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useSiteManual } from "@/components/ConfigProvider";
+import { useLanguage } from "@/components/LanguageProvider";
 import { withBasePath } from "@/lib/basePath";
 import { resolveGalleryImageSrc } from "@/lib/galleryConfig";
 import { topHeaderAddressFontSizeCss, topHeaderTitleFontSizeCss } from "@/lib/siteManualConfig";
@@ -19,6 +20,7 @@ function resolveHeaderImage(raw: string, fallbackPath: string) {
 
 export function TopHeader() {
   const { siteManual: c } = useSiteManual();
+  const { language } = useLanguage();
 
   const SIDEBAR_WIDTH_PX = c.sidebarWidthPx;
   const SITE_TOP_HEADER_BACKGROUND = c.siteTopHeaderBackground;
@@ -271,7 +273,9 @@ export function TopHeader() {
               }`}
               style={{ fontSize: topHeaderTitleFontSizeCss(c) }}
             >
-              శ్రీ మల్లవరం బ్రాహ్మణ సమాజము మరియు అన్నదాన సత్రము
+              {language === "te"
+                ? "శ్రీ మల్లవరం బ్రాహ్మణ సమాజము మరియు అన్నదాన సత్రము"
+                : "Sri Mallavaram Brahmana Samajamu and Annadanam Satramu"}
             </h1>
             <p
               className={`w-full max-w-full break-words whitespace-normal px-1 text-center text-maroon/95 leading-tight ${
@@ -279,7 +283,9 @@ export function TopHeader() {
               }`}
               style={{ fontSize: topHeaderAddressFontSizeCss(c) }}
             >
-              రి.నెం. 692/2022 మద్దిపాడు (మం), మల్లవరం గ్రామం, ప్రకాశం జిల్లా, ఆంధ్ర ప్రదేశ్
+              {language === "te"
+                ? "రి.నెం. 692/2022 మద్దిపాడు (మం), మల్లవరం గ్రామం, ప్రకాశం జిల్లా, ఆంధ్ర ప్రదేశ్"
+                : "Reg. No. 692/2022, Maddipadu (M), Mallavaram Village, Prakasam District, Andhra Pradesh"}
             </p>
           </div>
         </div>

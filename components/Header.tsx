@@ -10,6 +10,7 @@ import { resolveGalleryImageSrc } from "@/lib/galleryConfig";
 import { siteLeftMenuBackgroundFromConfig } from "@/lib/siteManualConfig";
 import { resolveSiteManualForUi } from "@/lib/siteManualSchema";
 import { useSectionTabs, type SectionId } from "./SectionTabs";
+import { useLanguage } from "@/components/LanguageProvider";
 
 const greatVibes = Great_Vibes({ weight: "400", subsets: ["latin"] });
 
@@ -44,6 +45,7 @@ function SidebarHostCredit({ size = "desktop" }: { size?: "desktop" | "mobile" }
 
 export function Header() {
   const t = useTranslate();
+  const { language } = useLanguage();
   const { siteManual: raw } = useSiteManual();
   const c = resolveSiteManualForUi(raw);
   const [open, setOpen] = useState(false);
@@ -120,7 +122,9 @@ export function Header() {
             </div>
           </button>
           <p className="font-heading min-w-0 flex-1 text-center text-sm leading-snug text-maroon break-words">
-            Sri Mallavaram Venkateswara Annadaana Samajamu &amp; Brahmana Satramu
+            {language === "te"
+              ? "శ్రీ మల్లవరం బ్రాహ్మణ సమాజము మరియు అన్నదాన సత్రము"
+              : "Sri Mallavaram Brahmana Samajamu and Annadanam Satramu"}
           </p>
           <button
             type="button"
