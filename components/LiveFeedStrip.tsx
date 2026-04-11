@@ -48,7 +48,7 @@ function RainbowWords({ text }: { text: string }) {
 
 /**
  * Horizontal ticker in the main column only (starts after the left sidebar on desktop).
- * Visible on the Home section: 50px-tall strip, 5px below the header block, multicolor words, scrolls left → right.
+ * Visible on the Home section: 45px-tall strip (~10% shorter than prior 50px), 5px below the header block; scrolls left → right.
  */
 export function LiveFeedStrip() {
   const t = useTranslate();
@@ -62,11 +62,11 @@ export function LiveFeedStrip() {
 
   return (
     <div
-      className="live-feed-strip-shell relative z-10 mt-[5px] h-[50px] w-full max-w-full shrink-0 overflow-hidden border-y border-maroon/20 bg-gradient-to-r from-white/95 via-sandal/90 to-white/95 shadow-sm"
+      className="live-feed-strip-shell relative z-10 mt-[5px] h-[45px] w-full max-w-full shrink-0 overflow-hidden border-y border-maroon/20 bg-gradient-to-r from-white/95 via-sandal/90 to-white/95 shadow-sm"
       role="region"
       aria-label={language === "te" ? "లైవ్ ఫీడ్" : "Live feed"}
     >
-      <div className="live-feed-marquee-track flex h-[50px] items-center">
+      <div className="live-feed-marquee-track flex h-[45px] items-center">
         <div className="flex shrink-0 items-center px-6 md:px-8">
           <RainbowWords text={message} />
         </div>

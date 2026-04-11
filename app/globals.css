@@ -107,7 +107,7 @@ a {
 .live-feed-marquee-track {
   display: flex;
   width: max-content;
-  animation: live-feed-marquee 55s linear infinite reverse;
+  animation: live-feed-marquee 30s linear infinite reverse;
 }
 
 /* Home hero footer: brief opacity flicker every 10s (respects reduced-motion via rule below) */
@@ -164,7 +164,7 @@ a {
 
   .live-feed-strip-shell {
     height: auto;
-    min-height: 50px;
+    min-height: 45px;
     overflow: visible;
   }
 
@@ -177,7 +177,7 @@ a {
     row-gap: 0.125rem;
     padding: 0.25rem 0.5rem;
     height: auto;
-    min-height: 2.5rem;
+    min-height: 2.25rem;
   }
 }
 
