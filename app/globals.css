@@ -110,7 +110,58 @@ a {
   animation: live-feed-marquee 55s linear infinite reverse;
 }
 
+/* Home hero footer: brief opacity flicker every 10s (respects reduced-motion via rule below) */
+@keyframes home-footer-ticker-flicker {
+  0%,
+  97% {
+    opacity: 1;
+  }
+  97.4% {
+    opacity: 0.2;
+  }
+  97.8% {
+    opacity: 1;
+  }
+  98.2% {
+    opacity: 0.15;
+  }
+  98.6%,
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Home hero footer: Brahmotsavam schedule — right → left (no `reverse`; top live feed stays L→R) */
+.home-hero-footer-marquee-track {
+  display: flex;
+  width: max-content;
+  animation:
+    live-feed-marquee 160s linear infinite,
+    home-footer-ticker-flicker 10s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .home-hero-footer-ticker-shell {
+    overflow: visible;
+  }
+
+  .home-hero-footer-marquee-track {
+    animation: none;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+    row-gap: 0.25rem;
+    padding: 0.35rem 0.75rem;
+    height: auto;
+    min-height: 2.25rem;
+  }
+
+  .home-hero-footer-marquee-track > div {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
   .live-feed-strip-shell {
     height: auto;
     min-height: 50px;

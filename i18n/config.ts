@@ -83,6 +83,13 @@ export const tMap: Translations = {
     en: " Om Namo Venkateshaya. *** Welcome to Shri Prasannna Venkateshwara Swamy Vaari Brahmotsvalu *** Subharambham on 26th April.",
     te: " ఓం నమో వేంకటేశాయ. *** శ్రీ ప్రసన్న వెంకటేశ్వర స్వామి వారి బ్రహ్మోత్సవాలకు స్వాగతం *** ఏప్రిల్ 26న శుభారంభం."
   },
+  /** Home hero footer: horizontal marquee; full schedule from Brahmotsavam flyer (Configure → Hero). */
+  home_brahmotsavam_ticker: {
+    en:
+      "Programs • Apr 26, 2026 (Sun): Ankurarpana • Apr 27, 2026 (Mon): Dhwajarohanam, Sesha Vahanam • Apr 28, 2026 (Tue): Hamsa Vahanam • Apr 29, 2026 (Wed): Simha Vahanam • Apr 30, 2026 (Thu): Hanumantha Vahanam • May 1, 2026 (Fri): Mohini Utsavam, Garuda Vahana Seva • May 2, 2026 (Sat): Gajotsavam • May 3, 2026 (Sun): Kalyana Mahotsavam, Teppotsavam, Rathotsavam • May 4, 2026 (Mon): Ashwa Vahanam • May 5, 2026 (Tue): Dhwaja Avarohanam, Purnahuti • May 6, 2026 (Wed): Chakratheertham, Ekantha Seva • On 3 May 2026, for Swami’s Kalyanotsavam, transport is arranged for devotees coming to Mallavaram. With the cooperation of Nagarjuna Degree College, Ongole, a bus departs from Rajiv Nagar Brahmin Old Age Home at 8:00 AM.",
+    te:
+      "కార్యక్రమములు • తేది. 26.04.2026 ఆదివారం : అంకురార్పణ • తేది. 27.04.2026 సోమవారం : ధ్వజారోహణము, శేష వాహనము • తేది. 28.04.2026 మంగళవారం : హంస వాహనము • తేది. 29.04.2026 బుధవారం : సింహ వాహనము • తేది. 30.04.2026 గురువారం : హనుమంత వాహనము • తేది. 01.05.2026 శుక్రవారం : మోహినీ ఉత్సవము, గరుడ వాహన సేవ • తేది. 02.05.2026 శనివారం : గజోత్సవము • తేది. 03.05.2026 ఆదివారం : కళ్యాణ మహోత్సవము, తెప్పోత్సవము, రథోత్సవము • తేది. 04.05.2026 సోమవారం : అశ్వ వాహనము • తేది. 05.05.2026 మంగళవారం : ధ్వజ అవరోహణము, పూర్ణాహుతి • తేది. 06.05.2026 బుధవారం : చక్రతీర్థం, ఏకాంత సేవ • 03-05-2026 న స్వామివారి కళ్యాణోత్సవం రోజున మల్లవరం వచ్చు భక్తుల కోసం వాహన సౌకర్యం కల్పించడం అయినది. నాగార్జున డిగ్రీ కాలేజ్ ఒంగోలు వారి సహకారంతో రాజీవ్ నగర్ బ్రాహ్మణ వృద్ధాశ్రమం నుండి ఉదయం 8 గంటలకు బస్సు బయలుదేరును."
+  },
   about_title: {
     en: "About Brahmana Satram",
     te: "సంస్థ గురించి"
@@ -191,7 +198,7 @@ export const CONFIG_SECTIONS: Record<string, (keyof typeof tMap)[]> = {
     "nav_contact",
     "nav_configure"
   ],
-    "Hero": ["hero_heading", "hero_subtitle", "live_feed_text"],
+    "Hero": ["hero_heading", "live_feed_text", "home_brahmotsavam_ticker"],
   "About": ["about_title", "about_body"],
   "Annadanam": ["annadanam_title", "annadanam_body", "annadanam_stats"],
   "Activities": ["activities_title"],

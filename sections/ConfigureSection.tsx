@@ -1228,17 +1228,24 @@ export function ConfigureSection() {
                 {keys.map((key) => {
                   const keyStr = String(key);
                   const val = getEffective(draft, keyStr);
-                  const multiline = keyStr === "live_feed_text";
+                  const multiline =
+                    keyStr === "live_feed_text" || keyStr === "home_brahmotsavam_ticker";
                   const fieldClass =
                     "w-full rounded-xl border border-maroon/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-maroon bg-sandal/40";
                   return (
                     <div key={keyStr} className="grid gap-2">
                       <label className="text-xs font-medium text-text-dark/70 uppercase tracking-wide">
                         {keyStr}
-                        {multiline ? (
+                        {multiline && keyStr === "live_feed_text" ? (
                           <span className="block font-normal normal-case text-text-dark/60 mt-0.5">
                             Shown on the home ticker (multicolor by word). Leading, trailing, and multiple spaces are
                             kept. Save with <strong>Save Hero</strong>.
+                          </span>
+                        ) : null}
+                        {multiline && keyStr === "home_brahmotsavam_ticker" ? (
+                          <span className="block font-normal normal-case text-text-dark/60 mt-0.5">
+                            Scrolling strip at the bottom of the home hero (one long line; use • between items). Save
+                            with <strong>Save Hero</strong>.
                           </span>
                         ) : null}
                       </label>
