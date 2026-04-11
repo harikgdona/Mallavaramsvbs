@@ -36,7 +36,7 @@ function RainbowWords({ text }: { text: string }) {
           <span
             key={i}
             style={{ color }}
-            className="shrink-0 font-heading text-sm font-semibold whitespace-nowrap md:text-[0.95rem] leading-tight"
+            className="shrink-0 font-heading text-xs font-semibold whitespace-nowrap leading-tight md:text-sm"
           >
             {token}
           </span>
@@ -48,7 +48,7 @@ function RainbowWords({ text }: { text: string }) {
 
 /**
  * Horizontal ticker in the main column only (starts after the left sidebar on desktop).
- * Visible on the Home section: 45px-tall strip (~10% shorter than prior 50px), 5px below the header block; scrolls left → right.
+ * Visible on the Home section: 36px-tall strip, 5px below the header block; scrolls left → right.
  */
 export function LiveFeedStrip() {
   const t = useTranslate();
@@ -62,11 +62,11 @@ export function LiveFeedStrip() {
 
   return (
     <div
-      className="live-feed-strip-shell relative z-10 mt-[5px] h-[45px] w-full max-w-full shrink-0 overflow-hidden border-y border-maroon/20 bg-gradient-to-r from-white/95 via-sandal/90 to-white/95 shadow-sm"
+      className="live-feed-strip-shell relative z-10 mt-[5px] h-9 w-full max-w-full shrink-0 overflow-hidden border-y border-maroon/20 bg-gradient-to-r from-white/95 via-sandal/90 to-white/95 shadow-sm"
       role="region"
       aria-label={language === "te" ? "లైవ్ ఫీడ్" : "Live feed"}
     >
-      <div className="live-feed-marquee-track flex h-[45px] items-center">
+      <div className="live-feed-marquee-track flex h-9 items-center">
         <div className="flex shrink-0 items-center px-6 md:px-8">
           <RainbowWords text={message} />
         </div>
