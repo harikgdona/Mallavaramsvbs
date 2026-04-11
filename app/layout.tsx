@@ -10,6 +10,7 @@ import { TopHeader } from "@/components/TopHeader";
 import { Header } from "@/components/Header";
 import { BottomRightActions } from "@/components/BottomRightActions";
 import { LayoutViewportOffsets } from "@/components/LayoutViewportOffsets";
+import { LiveFeedStrip } from "@/components/LiveFeedStrip";
 import { TypographyTheme } from "@/components/TypographyTheme";
 import { TYPOGRAPHY_PRESET_GOOGLE_FONTS_STYLESHEET } from "@/lib/typographyFontPresets";
 
@@ -70,6 +71,7 @@ export default function RootLayout({
                   <Header />
                   <MainContentColumn>
                     <main className="relative flex min-h-0 min-w-0 w-full max-w-full flex-1 flex-col overflow-x-hidden overflow-y-auto">
+                      <LiveFeedStrip />
                       {children}
                     </main>
                   </MainContentColumn>

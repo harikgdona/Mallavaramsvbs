@@ -1,0 +1,78 @@
+"use client";
+
+import { useSectionTabs } from "@/components/SectionTabs";
+import { useLanguage } from "@/components/LanguageProvider";
+
+const WORD_COLORS = [
+  "#7B1E1E",
+  "#D4AF37",
+  "#047857",
+  "#1D4ED8",
+  "#B45309",
+  "#7C3AED",
+  "#BE123C",
+  "#0D9488",
+  "#C2410C",
+  "#4338CA"
+];
+
+const FEED_EN =
+  "Live feed — Sri Mallavaram Brahmana Samajamu — Daily Annadanam — Brahmana Satram seva — Support our community — Temple updates and auspicious events — Namo Venkatesaya —";
+
+const FEED_TE =
+  "లైవ్ ఫీడ్ — శ్రీ మల్లవరం బ్రాహ్మణ సమాజము — ప్రతిరోజూ అన్నదానం — బ్రాహ్మణ సత్రం సేవ — మన సమాజానికి మద్దతు — ఆలయ అప్‌డేట్లు మరియు శుభ కార్యక్రమాలు — నమో వెంకటేశాయ —";
+
+function RainbowWords({ text }: { text: string }) {
+  const tokens = text.split(/(\s+)/).filter(Boolean);
+  let colorIndex = 0;
+  return (
+    <>
+      {tokens.map((token, i) => {
+        if (/^\s+$/.test(token)) {
+          return <span key={i}>{token}</span>;
+        }
+        const color = WORD_COLORS[colorIndex % WORD_COLORS.length];
+        colorIndex += 1;
+        return (
+          <span
+            key={i}
+            style={{ color }}
+            className="font-heading text-sm font-semibold whitespace-nowrap md:text-[0.95rem] leading-tight"
+          >
+            {token}
+          </span>
+        );
+      })}
+    </>
+  );
+}
+
+/**
+ * Horizontal ticker in the main column only (starts after the left sidebar on desktop).
+ * Visible on the Home section: 50px-tall strip, 5px below the header block, multicolor words, scrolls left → right.
+ */
+export function LiveFeedStrip() {
+  const { activeSection } = useSectionTabs();
+  const { language } = useLanguage();
+
+  if (activeSection !== "home") return null;
+
+  const message = language === "te" ? FEED_TE : FEED_EN;
+
+  return (
+    <div
+      className="live-feed-strip-shell relative z-10 mt-[5px] h-[50px] w-full max-w-full shrink-0 overflow-hidden border-y border-maroon/20 bg-gradient-to-r from-white/95 via-sandal/90 to-white/95 shadow-sm"
+      role="region"
+      aria-label={language === "te" ? "లైవ్ ఫీడ్" : "Live feed"}
+    >
+      <div className="live-feed-marquee-track flex h-[50px] items-center">
+        <div className="flex shrink-0 items-center px-6 md:px-8">
+          <RainbowWords text={message} />
+        </div>
+        <div className="flex shrink-0 items-center px-6 md:px-8" aria-hidden>
+          <RainbowWords text={message} />
+        </div>
+      </div>
+    </div>
+  );
+}

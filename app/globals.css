@@ -91,6 +91,42 @@ a {
   @apply inline-flex items-center justify-center px-5 py-3 rounded-full bg-green-600 text-white font-semibold text-sm md:text-base shadow-lg hover:bg-green-700 transition focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-sandal;
 }
 
+/* Live feed ticker: seamless loop; reverse = motion left → right */
+@keyframes live-feed-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.live-feed-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: live-feed-marquee 55s linear infinite reverse;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-feed-strip-shell {
+    height: auto;
+    min-height: 50px;
+    overflow: visible;
+  }
+
+  .live-feed-marquee-track {
+    animation: none;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+    row-gap: 0.125rem;
+    padding: 0.25rem 0.5rem;
+    height: auto;
+    min-height: 2.5rem;
+  }
+}
+
 /* Bevel effect for menu and header text */
 .text-bevel {
   text-shadow:

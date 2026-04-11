@@ -247,7 +247,14 @@ export function ConfigureSection() {
         ? prev
         : [
             ...prev,
-            { src: "", nameEn: "", nameTe: "", designationEn: "", designationTe: "" }
+            {
+              src: "",
+              nameEn: "",
+              nameTe: "",
+              designationEn: "",
+              designationTe: "",
+              group: "working"
+            }
           ]
     );
   }, []);
@@ -1271,6 +1278,21 @@ export function ConfigureSection() {
                                   />
                                   Upload photo
                                 </label>
+                              </div>
+                              <div>
+                                <span className="text-xs text-maroon/80 block mb-1">Section</span>
+                                <select
+                                  value={row.group ?? "working"}
+                                  onChange={(e) =>
+                                    updateCommitteeMember(i, {
+                                      group: e.target.value === "honorary" ? "honorary" : "working"
+                                    })
+                                  }
+                                  className="w-full max-w-xs rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white"
+                                >
+                                  <option value="honorary">Honorary (one summary line)</option>
+                                  <option value="working">Working committee (table)</option>
+                                </select>
                               </div>
                               <div className="grid sm:grid-cols-2 gap-2 pt-1">
                                 <div>

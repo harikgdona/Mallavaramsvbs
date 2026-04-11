@@ -146,6 +146,22 @@ export const tMap: Translations = {
     en: "Trust office bearers and committee members.",
     te: "ట్రస్ట్ పదాధికారులు మరియు కమిటీ సభ్యులు."
   },
+  committee_honorary_heading: {
+    en: "Honorary Members",
+    te: "గౌరవ సభ్యులు"
+  },
+  committee_working_heading: {
+    en: "Working Committee Members",
+    te: "కార్యనిర్వహణ కమిటీ సభ్యులు"
+  },
+  committee_table_designation: {
+    en: "Designation",
+    te: "హోదా"
+  },
+  committee_table_name: {
+    en: "Name",
+    te: "పేరు"
+  },
   contact_title: {
     en: "Contact",
     te: "సంప్రదించండి"
@@ -187,7 +203,14 @@ export const CONFIG_SECTIONS: Record<string, (keyof typeof tMap)[]> = {
   "Gallery": ["gallery_title"],
   "Volunteer": ["volunteer_title", "volunteer_subtitle"],
   "Transparency": ["transparency_title"],
-  "Committee": ["committee_title", "committee_subtitle"],
+  "Committee": [
+    "committee_title",
+    "committee_subtitle",
+    "committee_honorary_heading",
+    "committee_working_heading",
+    "committee_table_designation",
+    "committee_table_name"
+  ],
   "Contact": ["contact_title"]
 };
 

@@ -3,12 +3,16 @@ export const COMMITTEE_STORAGE_KEY = "mallavaram-committee-config";
 /** Max members (localStorage); keep reasonable for uploads */
 export const MAX_COMMITTEE_MEMBERS = 24;
 
+export type CommitteeGroup = "honorary" | "working";
+
 export type CommitteeMemberConfig = {
   src: string;
   nameEn: string;
   nameTe: string;
   designationEn: string;
   designationTe: string;
+  /** Honorary members render as one summary line; working members appear in the table below. */
+  group?: CommitteeGroup;
 };
 
 export function defaultCommitteeMembers(): CommitteeMemberConfig[] {
@@ -26,7 +30,8 @@ export function normalizeCommitteeMembers(raw: unknown): CommitteeMemberConfig[]
       nameEn: typeof o.nameEn === "string" ? o.nameEn : legacyName,
       nameTe: typeof o.nameTe === "string" ? o.nameTe : "",
       designationEn: typeof o.designationEn === "string" ? o.designationEn : legacyDesig,
-      designationTe: typeof o.designationTe === "string" ? o.designationTe : ""
+      designationTe: typeof o.designationTe === "string" ? o.designationTe : "",
+      group: o.group === "honorary" ? "honorary" : "working"
     };
   });
 }
