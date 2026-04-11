@@ -78,10 +78,10 @@ export const tMap: Translations = {
     en: "Join Annadanam Seva",
     te: "అన్నదాన సేవలో చేరండి"
   },
-  /** Home ticker (multicolor words); use spaces between phrases. Editable in Configure → Hero. */
+  /** Home ticker (multicolor words). Spaces are preserved; editable in Configure → Hero. */
   live_feed_text: {
-    en: "Live feed — Sri Mallavaram Brahmana Samajamu — Daily Annadanam — Brahmana Satram seva — Support our community — Temple updates and auspicious events — Namo Venkatesaya —",
-    te: "లైవ్ ఫీడ్ — శ్రీ మల్లవరం బ్రాహ్మణ సమాజము — ప్రతిరోజూ అన్నదానం — బ్రాహ్మణ సత్రం సేవ — మన సమాజానికి మద్దతు — ఆలయ అప్‌డేట్లు మరియు శుభ కార్యక్రమాలు — నమో వెంకటేశాయ —"
+    en: " Om Namo Venkateshaya. *** Welcome to Shri Prasannna Venkateshwara Swamy Vaari Brahmotsvalu *** Subharambham on 26th April.",
+    te: " ఓం నమో వేంకటేశాయ. *** శ్రీ ప్రసన్న వెంకటేశ్వర స్వామి వారి బ్రహ్మోత్సవాలకు స్వాగతం *** ఏప్రిల్ 26న శుభారంభం."
   },
   about_title: {
     en: "About Brahmana Satram",

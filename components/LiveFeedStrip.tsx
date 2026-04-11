@@ -21,10 +21,14 @@ function RainbowWords({ text }: { text: string }) {
   const tokens = text.split(/(\s+)/).filter(Boolean);
   let colorIndex = 0;
   return (
-    <>
+    <span className="inline-flex flex-none flex-row flex-nowrap items-baseline">
       {tokens.map((token, i) => {
         if (/^\s+$/.test(token)) {
-          return <span key={i}>{token}</span>;
+          return (
+            <span key={i} className="shrink-0 whitespace-pre">
+              {token}
+            </span>
+          );
         }
         const color = WORD_COLORS[colorIndex % WORD_COLORS.length];
         colorIndex += 1;
@@ -32,13 +36,13 @@ function RainbowWords({ text }: { text: string }) {
           <span
             key={i}
             style={{ color }}
-            className="font-heading text-sm font-semibold whitespace-nowrap md:text-[0.95rem] leading-tight"
+            className="shrink-0 font-heading text-sm font-semibold whitespace-nowrap md:text-[0.95rem] leading-tight"
           >
             {token}
           </span>
         );
       })}
-    </>
+    </span>
   );
 }
 
@@ -53,7 +57,8 @@ export function LiveFeedStrip() {
 
   if (activeSection !== "home") return null;
 
-  const message = t("live_feed_text").trim() || "—";
+  const messageRaw = t("live_feed_text");
+  const message = messageRaw.length > 0 ? messageRaw : "—";
 
   return (
     <div

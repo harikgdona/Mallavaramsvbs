@@ -4,6 +4,8 @@
 
 :root {
   color-scheme: light;
+  /* Subtracted from viewport-based min-heights so the shell is slightly shorter than full dvh/svh. */
+  --viewport-page-trim: 0px;
   /*
    * Fallbacks before JS runs; LayoutViewportOffsets overwrites with real px from #site-mobile-nav-bar-top
    * and #site-desktop-top-header. You can still override in DevTools on <html> if needed.
@@ -47,7 +49,8 @@ body {
 }
 
 body {
-  min-height: 100vh;
+  min-height: calc(100svh - var(--viewport-page-trim, 0px));
+  min-height: calc(100dvh - var(--viewport-page-trim, 0px));
   font-weight: var(--app-font-body-weight, 400);
   font-style: var(--app-font-body-style, normal);
 }
@@ -136,6 +139,11 @@ a {
 
 /* Same min-height as Hero — use on sections when you want each block ≈ one viewport (optional). */
 @layer utilities {
+  /* Root column: one viewport minus trim (matches body min-height). */
+  .min-h-viewport-page {
+    min-height: calc(100svh - var(--viewport-page-trim, 0px));
+    min-height: calc(100dvh - var(--viewport-page-trim, 0px));
+  }
   /* Extends Tailwind `font-heading` (family) with configurable weight/style */
   .font-heading {
     font-weight: var(--app-font-heading-weight, 600);
@@ -145,7 +153,8 @@ a {
     min-height: max(
       0px,
       calc(
-        100dvh - var(--section-viewport-offset-mobile, 3.5rem) - var(--section-viewport-extra-trim, 1.5cm)
+        100dvh - var(--viewport-page-trim, 0px) - var(--section-viewport-offset-mobile, 3.5rem) -
+          var(--section-viewport-extra-trim, 1.5cm)
       )
     );
   }
@@ -154,7 +163,7 @@ a {
       min-height: max(
         0px,
         calc(
-          100dvh - var(--section-viewport-offset-desktop, 10rem) -
+          100dvh - var(--viewport-page-trim, 0px) - var(--section-viewport-offset-desktop, 10rem) -
             var(--section-viewport-extra-trim, 1.5cm) -
             var(--section-viewport-hero-shrink-desktop, 3.25rem)
         )

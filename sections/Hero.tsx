@@ -22,7 +22,7 @@ export function Hero() {
   return (
     <section
       id="home"
-      className="relative flex flex-1 flex-col overflow-hidden bg-beige"
+      className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-beige"
       aria-label="Hero section"
     >
       {heroBg ? (
@@ -53,7 +53,7 @@ export function Hero() {
         aria-hidden
       />
 
-      <div className="relative z-10 mx-auto flex w-full min-w-0 max-w-6xl flex-1 flex-col justify-center px-4 py-10 sm:px-6 sm:py-14 md:py-12 lg:px-8 lg:py-14">
+      <div className="relative z-10 mx-auto flex min-h-0 w-full min-w-0 max-w-6xl flex-1 flex-col justify-center px-4 py-10 sm:px-6 sm:py-14 md:py-12 lg:px-8 lg:py-14">
         <div className="mx-auto min-w-0 max-w-xl break-words text-center text-text-dark lg:mx-0 lg:max-w-none lg:text-left">
           <p className="mb-5 inline-block max-w-full break-words rounded-full border border-maroon/15 bg-white/75 px-4 py-1.5 text-xs tracking-wide text-maroon/90 shadow-sm backdrop-blur-sm md:text-sm">
             Sri Mallavaram Venkateswara Annadaana Samajamu mariyu Brahmana Satramu

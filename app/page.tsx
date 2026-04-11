@@ -32,7 +32,7 @@ export default function HomePage() {
   const ActiveComponent = sections[activeSection];
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
       <ActiveComponent />
     </div>
   );

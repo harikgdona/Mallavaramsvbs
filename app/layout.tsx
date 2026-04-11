@@ -63,8 +63,8 @@ export default function RootLayout({
             <TypographyTheme />
             <AdminAuthProvider>
               <SectionTabsProvider>
-              {/* min-h-dvh on outer column so TopHeader + main row = one viewport (avoids min-h-screen stacking past 100vh). */}
-              <div className="flex min-h-[100dvh] min-h-[100svh] flex-col">
+              {/* min-h-viewport-page: TopHeader + main row ≈ one viewport minus --viewport-page-trim (avoids stacking past 100vh). */}
+              <div className="flex min-h-viewport-page flex-col">
                 {/* Desktop-only ornate banner; mobile uses the compact bar inside Header. */}
                 <TopHeader />
                 <div className="flex min-h-0 flex-1 flex-col md:flex-row">

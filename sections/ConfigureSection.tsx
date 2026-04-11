@@ -9,14 +9,17 @@ import { tMap, CONFIG_SECTIONS } from "@/i18n/config";
 import {
   defaultGallerySlots,
   MAX_GALLERY_PHOTOS,
+  normalizeGallerySlots,
   resolveGalleryImageSrc,
   type GallerySlotConfig
 } from "@/lib/galleryConfig";
 import {
   defaultCommitteeMembers,
   MAX_COMMITTEE_MEMBERS,
+  normalizeCommitteeMembers,
   type CommitteeMemberConfig
 } from "@/lib/committeeConfig";
+import publicSiteContent from "@/lib/publicSiteContent.json";
 import { withBasePath } from "@/lib/basePath";
 import {
   SITE_MANUAL_DEFAULTS,
@@ -26,7 +29,9 @@ import {
 } from "@/lib/siteManualSchema";
 import { ConfigureColorField } from "@/components/ConfigureColorField";
 import { ConfigureFontPresetPicker } from "@/components/ConfigureFontPresetPicker";
+import { CommitteeFolderImage } from "@/components/CommitteeFolderImage";
 import { POPULAR_BODY_FONTS, POPULAR_HEADING_FONTS } from "@/lib/typographyFontPresets";
+import { getCommitteeMemberPhotoStem } from "@/lib/committeeMemberPhotoStem";
 
 type Overrides = Record<string, { en: string; te: string }>;
 
@@ -34,6 +39,10 @@ const MAX_IMAGE_FILE_MB = 1.5;
 
 /** Session-only: admins can reveal full layout / toranam / typography controls */
 const ADVANCED_LAYOUT_SESSION_KEY = "mallavaram-configure-advanced-layout";
+
+/** Same baseline as ConfigProvider after reset (repo `lib/publicSiteContent.json`). */
+const RESET_GALLERY_BASELINE = normalizeGallerySlots(publicSiteContent.gallerySlots);
+const RESET_COMMITTEE_BASELINE = normalizeCommitteeMembers(publicSiteContent.committeeMembers);
 
 function getEffective(sectionOverrides: Overrides, key: string): { en: string; te: string } {
   return (
@@ -319,13 +328,31 @@ export function ConfigureSection() {
     if (
       typeof window !== "undefined" &&
       window.confirm(
-        "Reset all text, gallery, committee, and site layout or header settings to defaults?"
+        "Reset all text, gallery, committee, and site layout or header settings to defaults? " +
+          "This clears saved data in this browser (localStorage + Configure session flags)."
       )
     ) {
       resetOverrides();
+      try {
+        sessionStorage.removeItem(ADVANCED_LAYOUT_SESSION_KEY);
+        if (typeof caches !== "undefined") {
+          void caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k))));
+        }
+      } catch {
+        // ignore private mode / blocked storage
+      }
+      setShowAdvancedSiteLayout(false);
       setDraft({});
-      setGalleryDraft(defaultGallerySlots());
-      setCommitteeDraft(defaultCommitteeMembers());
+      setGalleryDraft(
+        RESET_GALLERY_BASELINE.length
+          ? RESET_GALLERY_BASELINE.map((s) => ({ ...s }))
+          : defaultGallerySlots()
+      );
+      setCommitteeDraft(
+        RESET_COMMITTEE_BASELINE.length
+          ? RESET_COMMITTEE_BASELINE.map((m) => ({ ...m }))
+          : defaultCommitteeMembers()
+      );
       setSiteLayoutDirty(false);
       setSiteManualDraft(cloneSiteManual(SITE_MANUAL_DEFAULTS));
       setSaveFlash(null);
@@ -1210,7 +1237,8 @@ export function ConfigureSection() {
                         {keyStr}
                         {multiline ? (
                           <span className="block font-normal normal-case text-text-dark/60 mt-0.5">
-                            Shown on the home ticker (multicolor by word). Save with <strong>Save Hero</strong>.
+                            Shown on the home ticker (multicolor by word). Leading, trailing, and multiple spaces are
+                            kept. Save with <strong>Save Hero</strong>.
                           </span>
                         ) : null}
                       </label>
@@ -1272,8 +1300,15 @@ export function ConfigureSection() {
                       </button>
                     </div>
                     <p className="text-xs text-text-dark/65">
-                      Photo path, URL, or upload (this browser only; under ~{MAX_IMAGE_FILE_MB} MB). Name and
-                      designation in English and Telugu. You must click{" "}
+                      Default headshots load from{" "}
+                      <code className="bg-sandal/60 px-1 rounded">public/images/Committee_members/</code> using the
+                      English designation as the file name (e.g. <code className="bg-sandal/60 px-1">president.jpg</code>
+                      , <code className="bg-sandal/60 px-1">vice-president-1.jpg</code> for multiple Vice Presidents,{" "}
+                      <code className="bg-sandal/60 px-1">members-1.jpg</code> … for Members). Extensions{" "}
+                      <code className="bg-sandal/60 px-1">.jpg</code>, <code className="bg-sandal/60 px-1">.jpeg</code>,{" "}
+                      <code className="bg-sandal/60 px-1">.png</code>, or <code className="bg-sandal/60 px-1">.webp</code>{" "}
+                      are tried in order. Leave Photo URL empty to use those files; otherwise paste a path/URL or
+                      upload (under ~{MAX_IMAGE_FILE_MB} MB). You must click{" "}
                       <strong>Save Committee (text &amp; members)</strong> below or deploy exports will not include new
                       members (draft rows are not written to localStorage until then).
                     </p>
@@ -1282,7 +1317,12 @@ export function ConfigureSection() {
                         No members yet. Click Add member to start.
                       </p>
                     ) : (
-                      committeeDraft.map((row, i) => (
+                      committeeDraft.map((row, i) => {
+                        const honoraryPeers = committeeDraft.filter((m) => (m.group ?? "working") === "honorary");
+                        const workingPeers = committeeDraft.filter((m) => (m.group ?? "working") === "working");
+                        const peers = (row.group ?? "working") === "honorary" ? honoraryPeers : workingPeers;
+                        const folderStem = getCommitteeMemberPhotoStem(row, peers);
+                        return (
                         <div
                           key={i}
                           className="rounded-xl border border-maroon/15 bg-sandal/30 p-3 md:p-4 space-y-3"
@@ -1299,7 +1339,15 @@ export function ConfigureSection() {
                           </div>
                           <div className="grid md:grid-cols-[100px_1fr] gap-4 items-start">
                             <div className="relative h-24 w-24 rounded-lg overflow-hidden border border-maroon/20 bg-white shrink-0 mx-auto md:mx-0">
-                              <GalleryThumb src={row.src} />
+                              {row.src.trim() ? (
+                                <GalleryThumb src={row.src} />
+                              ) : (
+                                <CommitteeFolderImage
+                                  stem={folderStem}
+                                  alt=""
+                                  className="absolute inset-0 h-full w-full object-cover object-top"
+                                />
+                              )}
                             </div>
                             <div className="space-y-2 min-w-0">
                               <label className="text-xs text-text-dark/70 block">Photo URL or path</label>
@@ -1404,7 +1452,8 @@ export function ConfigureSection() {
                             </div>
                           </div>
                         </div>
-                      ))
+                      );
+                      })
                     )}
                   </div>
                 )}
