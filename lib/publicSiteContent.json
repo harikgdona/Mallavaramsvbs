@@ -1,22 +1,5 @@
 {
-  "textOverrides": {
-    "hero_heading": {
-      "en": "Serving Dharma. Supporting Brahmin Families.",
-      "te": "ధర్మ సేవ. బ్రాహ్మణ కుటుంబాల ఆదరాభిమానాలు."
-    },
-    "hero_subtitle": {
-      "en": "Sri Mallavaram Venkateswara Annadaana Samajamu mariyu Brahmana Satramu serves poor Brahmin families in Mallavaram village through daily Annadanam and dharmic activities.",
-      "te": "శ్రీ మల్లవరం వెంకటేశ్వర అన్నదాన సమాజము మరియు బ్రాహ్మణ సత్రం మల్లవరం గ్రామంలోని పేద బ్రాహ్మణ కుటుంబాలకు ప్రతిరోజూ అన్నదానం మరియు ధార్మిక కార్యకలాపాల ద్వారా సేవ చేస్తోంది."
-    },
-    "hero_join_annadanam": {
-      "en": "Join Annadanam Seva",
-      "te": "అన్నదాన సేవలో చేరండి"
-    },
-    "live_feed_text": {
-      "en": "Om Namo Venkateshaya",
-      "te": ""
-    }
-  },
+  "textOverrides": {},
   "gallerySlots": [],
   "committeeMembers": []
 }
