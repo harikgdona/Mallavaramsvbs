@@ -1,8 +1,10 @@
 # Mallavaram — requirements for one-shot deploy on a new computer
 #
-# After cloning the repo, run from the repo root:
-#   .\Deploy-Mallavaram.ps1
-# That runs npm ci (or npm install), playwright install chromium, and npm run deploy-from-browser.
+# After cloning the repo, from the repo root:
+#   .\Mallavaram-Workflows.ps1 -PlaywrightExportThenPushToGitHub
+# (optional -AutoStartDevServerIfLocalhost if using localhost) — runs npm ci, playwright install, deploy-from-browser + publish-site.
+# Or use "Download for deploy" in Configure then:
+#   .\Mallavaram-Workflows.ps1 -MergeDownloadedBundleAndPushToGitHub
 #
 # Exact npm versions are pinned in package-lock.json — always commit the lockfile and use npm ci.
 
@@ -16,7 +18,7 @@
   Git         Required for npm run publish-site (commit + push to origin).
               https://git-scm.com/
 
-  Windows     PowerShell 5.1 or later (Deploy-Mallavaram.ps1 uses #Requires 5.1).
+  Windows     PowerShell 5.1 or later (Mallavaram-Workflows.ps1 uses #Requires 5.1).
               Included with Windows 10/11.
 
   Optional    Git remote + credentials configured for your GitHub repo (HTTPS or SSH).
@@ -62,7 +64,7 @@
 --------------------------------------------------------------------------------
 
   Chromium    Installed with: npx playwright install chromium
-              Deploy-Mallavaram.ps1 runs this automatically unless -SkipPlaywrightInstall.
+              Mallavaram-Workflows.ps1 -PlaywrightExportThenPushToGitHub runs this unless -SkipPlaywrightChromiumInstall (-SkipPlaywrightInstall).
               Large download; requires network access on first run.
 
 --------------------------------------------------------------------------------

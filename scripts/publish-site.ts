@@ -4,9 +4,11 @@
  * lib/siteManualSchema.ts and lib/publicSiteContent.json, commits, pushes.
  *
  *   npm run publish-site
+ *   npm run publish-site:local   — same as publish-site but --no-git (updates lib/ only)
  *
  * Legacy: site-manual-from-browser.json (flat) still updates layout only.
  * Optional: --file=C:\path\export.json (bundle or flat manual)
+ * Optional: --no-git (or MALLAVARAM_PUBLISH_NO_GIT=1) — write lib files, do not commit/push
  */
 
 import { execFileSync } from "child_process";
@@ -148,6 +150,15 @@ function publishVerbose(): boolean {
   return process.env.MALLAVARAM_PUBLISH_VERBOSE === "1" || /^true$/i.test(process.env.MALLAVARAM_PUBLISH_VERBOSE ?? "");
 }
 
+/** Apply bundle to lib/* only; skip git (for local `next dev` / `next build` using baked defaults). */
+function publishNoGit(): boolean {
+  return (
+    process.argv.includes("--no-git") ||
+    process.env.MALLAVARAM_PUBLISH_NO_GIT === "1" ||
+    /^true$/i.test(process.env.MALLAVARAM_PUBLISH_NO_GIT ?? "")
+  );
+}
+
 function logPublish(msg: string) {
   console.log(`[publish ${new Date().toISOString()}] ${msg}`);
 }
@@ -224,6 +235,12 @@ function main() {
         "If you edited Committee/Gallery/text on the site but still see this: (1) Click the section Save button — e.g. \"Save Committee (text & members)\" — so localStorage updates, then re-run export. (2) Use the same hostname in the browser and in MALLAVARAM_SITE_URL (www vs non-www are different storage)."
       );
     }
+    process.exit(0);
+  }
+
+  if (publishNoGit()) {
+    console.log("\nApplied bundle to repo files (no git commit/push).");
+    console.log("Next: restart `npm run dev` if running, or run `npm run build` — baked content is in lib/.");
     process.exit(0);
   }
 

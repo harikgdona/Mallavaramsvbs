@@ -78,6 +78,11 @@ export const tMap: Translations = {
     en: "Join Annadanam Seva",
     te: "అన్నదాన సేవలో చేరండి"
   },
+  /** Home ticker (multicolor words); use spaces between phrases. Editable in Configure → Hero. */
+  live_feed_text: {
+    en: "Live feed — Sri Mallavaram Brahmana Samajamu — Daily Annadanam — Brahmana Satram seva — Support our community — Temple updates and auspicious events — Namo Venkatesaya —",
+    te: "లైవ్ ఫీడ్ — శ్రీ మల్లవరం బ్రాహ్మణ సమాజము — ప్రతిరోజూ అన్నదానం — బ్రాహ్మణ సత్రం సేవ — మన సమాజానికి మద్దతు — ఆలయ అప్‌డేట్లు మరియు శుభ కార్యక్రమాలు — నమో వెంకటేశాయ —"
+  },
   about_title: {
     en: "About Brahmana Satram",
     te: "సంస్థ గురించి"
@@ -186,7 +191,7 @@ export const CONFIG_SECTIONS: Record<string, (keyof typeof tMap)[]> = {
     "nav_contact",
     "nav_configure"
   ],
-  "Hero": ["hero_heading", "hero_subtitle", "hero_join_annadanam"],
+  "Hero": ["hero_heading", "hero_subtitle", "hero_join_annadanam", "live_feed_text"],
   "About": ["about_title", "about_body"],
   "Annadanam": ["annadanam_title", "annadanam_body", "annadanam_stats"],
   "Activities": ["activities_title"],

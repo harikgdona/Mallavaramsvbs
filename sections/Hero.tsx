@@ -8,17 +8,16 @@ import { withBasePath } from "@/lib/basePath";
 import { resolveGalleryImageSrc } from "@/lib/galleryConfig";
 import { useSectionTabs } from "@/components/SectionTabs";
 
-const HERO_BG_FALLBACK = "/images/Satram-illuminated.jpeg";
-
 export function Hero() {
   const t = useTranslate();
   const { siteManual: c } = useSiteManual();
   const { language } = useLanguage();
   const { setActiveSection } = useSectionTabs();
-  const heroBg = resolveGalleryImageSrc(
-    c.homeHeroBackgroundSrc.trim() || HERO_BG_FALLBACK,
-    withBasePath(HERO_BG_FALLBACK)
-  );
+  const heroSrc = c.homeHeroBackgroundSrc.trim();
+  const heroBg =
+    heroSrc !== ""
+      ? resolveGalleryImageSrc(heroSrc, withBasePath("/images/placeholder.svg"))
+      : null;
 
   return (
     <section
@@ -26,24 +25,27 @@ export function Hero() {
       className="relative flex flex-1 flex-col overflow-hidden bg-beige"
       aria-label="Hero section"
     >
-      {/* Full-viewport background photo (JPEG has no alpha; “transparency” is via opacity + scrim). */}
-      <div className="pointer-events-none absolute inset-0 z-0">
-        <Image
-          src={heroBg.src}
-          alt=""
-          fill
-          className="object-cover object-center opacity-90"
-          priority
-          quality={95}
-          sizes="100vw"
-          unoptimized={heroBg.unoptimized}
-          aria-hidden
-        />
-      </div>
+      {heroBg ? (
+        <div className="pointer-events-none absolute inset-0 z-0">
+          <Image
+            src={heroBg.src}
+            alt=""
+            fill
+            className="object-cover object-center opacity-90"
+            priority
+            quality={95}
+            sizes="100vw"
+            unoptimized={heroBg.unoptimized}
+            aria-hidden
+          />
+        </div>
+      ) : null}
 
-      {/* Light scrim so maroon copy stays readable while the photo shows through. */}
+      {/* Light scrim so maroon copy stays readable (stronger when there is no background photo). */}
       <div
-        className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-b from-white/60 via-white/45 to-beige/92"
+        className={`pointer-events-none absolute inset-0 z-[1] bg-gradient-to-b to-beige/92 ${
+          heroBg ? "from-white/60 via-white/45" : "from-white/85 via-white/70"
+        }`}
         aria-hidden
       />
       <div

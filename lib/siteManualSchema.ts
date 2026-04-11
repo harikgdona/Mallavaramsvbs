@@ -118,7 +118,7 @@ export const SITE_MANUAL_DEFAULTS: SiteManualConfig = {
   headerToranamTileCount: 3,
   headerToranamLeftPullPx: 60,
   headerToranamShiftUpPx: 10,
-  homeHeroBackgroundSrc: "/images/Satram-illuminated.jpeg",
+  homeHeroBackgroundSrc: "",
   typographyHtmlFontPx: 16,
   typographyBodyFontFamily: "var(--font-site-body), system-ui, sans-serif",
   typographyHeadingFontFamily: "'Merriweather', Georgia, serif",

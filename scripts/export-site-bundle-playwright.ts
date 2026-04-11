@@ -196,7 +196,28 @@ async function main() {
 
   await page.setViewportSize({ width: 1280, height: 900 });
 
-  await page.goto(siteUrl, { waitUntil: "load", timeout: 120_000 });
+  try {
+    await page.goto(siteUrl, { waitUntil: "load", timeout: 120_000 });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    const local =
+      /\blocalhost\b|127\.0\.0\.1/i.test(siteUrl) || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/i.test(siteUrl);
+    if (local && /ERR_CONNECTION_REFUSED|ECONNREFUSED|net::ERR_/i.test(msg)) {
+      console.error("\n---");
+      console.error("Cannot reach the site (e.g. connection refused). Playwright needs a running server.");
+      console.error("Removing images in Configure does not start the server — you must run Next.js locally.");
+      console.error("");
+      console.error("  Terminal 1:  npm run dev");
+      console.error("  Terminal 2:  npm run export-site-bundle     (or: npm run deploy-from-browser)");
+      console.error("");
+      console.error("Windows one-shot (starts dev, exports, stops dev):");
+      console.error(
+        "  .\\Mallavaram-Workflows.ps1 -PlaywrightExportThenPushToGitHub -AutoStartDevServerIfLocalhost"
+      );
+      console.error("---\n");
+    }
+    throw e;
+  }
   logStep(`after goto page.url=${page.url()}`);
 
   const configureRoot = page.locator("#configure").first();

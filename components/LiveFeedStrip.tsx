@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslate } from "@/components/ConfigProvider";
 import { useSectionTabs } from "@/components/SectionTabs";
 import { useLanguage } from "@/components/LanguageProvider";
 
@@ -15,12 +16,6 @@ const WORD_COLORS = [
   "#C2410C",
   "#4338CA"
 ];
-
-const FEED_EN =
-  "Live feed — Sri Mallavaram Brahmana Samajamu — Daily Annadanam — Brahmana Satram seva — Support our community — Temple updates and auspicious events — Namo Venkatesaya —";
-
-const FEED_TE =
-  "లైవ్ ఫీడ్ — శ్రీ మల్లవరం బ్రాహ్మణ సమాజము — ప్రతిరోజూ అన్నదానం — బ్రాహ్మణ సత్రం సేవ — మన సమాజానికి మద్దతు — ఆలయ అప్‌డేట్లు మరియు శుభ కార్యక్రమాలు — నమో వెంకటేశాయ —";
 
 function RainbowWords({ text }: { text: string }) {
   const tokens = text.split(/(\s+)/).filter(Boolean);
@@ -52,12 +47,13 @@ function RainbowWords({ text }: { text: string }) {
  * Visible on the Home section: 50px-tall strip, 5px below the header block, multicolor words, scrolls left → right.
  */
 export function LiveFeedStrip() {
+  const t = useTranslate();
   const { activeSection } = useSectionTabs();
   const { language } = useLanguage();
 
   if (activeSection !== "home") return null;
 
-  const message = language === "te" ? FEED_TE : FEED_EN;
+  const message = t("live_feed_text").trim() || "—";
 
   return (
     <div

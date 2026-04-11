@@ -68,19 +68,30 @@ function HeaderImageField({
   hint,
   value,
   fallbackPath,
-  onChange
+  onChange,
+  allowClear = true,
+  emptyThumbMode = "fallback"
 }: {
   label: string;
   hint?: string;
   value: string;
   fallbackPath: string;
   onChange: (next: string) => void;
+  /** Show a control that clears the field (empty string). */
+  allowClear?: boolean;
+  /** When the value is empty: show bundled default in preview, or a neutral “no image” tile. */
+  emptyThumbMode?: "fallback" | "none";
 }) {
   const ph = withBasePath(fallbackPath);
-  const { src: thumbSrc, unoptimized } = resolveGalleryImageSrc(
-    value.trim() || fallbackPath,
-    ph
-  );
+  const placeholderTile = withBasePath("/images/placeholder.svg");
+  const trimmed = value.trim();
+  const previewPath =
+    trimmed !== ""
+      ? trimmed
+      : emptyThumbMode === "none"
+        ? placeholderTile
+        : fallbackPath;
+  const { src: thumbSrc, unoptimized } = resolveGalleryImageSrc(previewPath, ph);
 
   return (
     <div className="rounded-xl border border-maroon/15 bg-sandal/25 p-3 md:p-4 space-y-2">
@@ -128,6 +139,15 @@ function HeaderImageField({
             <button type="button" className="text-xs text-maroon/80 underline" onClick={() => onChange(fallbackPath)}>
               Use default file
             </button>
+            {allowClear ? (
+              <button
+                type="button"
+                className="text-xs text-red-800 underline font-medium"
+                onClick={() => onChange("")}
+              >
+                Delete picture
+              </button>
+            ) : null}
           </div>
         </div>
       </div>
@@ -455,7 +475,13 @@ export function ConfigureSection() {
         <p className="section-subtitle mb-6">
           Each block has its own Save button (this browser only, localStorage). Header images are saved with{" "}
           <strong>Save layout & header</strong>. To push changes to everyone on the public site, use{" "}
-          <strong>Download for public site</strong> and run <code className="text-xs bg-sandal/60 px-1 rounded">npm run publish-site</code> from the project folder. Password hash: localStorage key{" "}
+          <strong>Download for deploy</strong>, then from the project folder run{" "}
+          <code className="text-xs bg-sandal/60 px-1 rounded">
+            .\Mallavaram-Workflows.ps1 -MergeDownloadedBundleAndPushToGitHub
+          </code>{" "}
+          (or <code className="text-xs bg-sandal/60 px-1 rounded">npm run publish-site</code>). For lib-only (no Git):{" "}
+          <code className="text-xs bg-sandal/60 px-1 rounded">-MergeDownloadedBundleIntoLibNoGit</code> (alias{" "}
+          <code className="text-xs bg-sandal/60 px-1 rounded">-ApplyConfigureLocal</code>). Password hash: localStorage key{" "}
           <code className="text-xs bg-sandal/60 px-1 rounded">mallavaram-admin-credentials</code>.
         </p>
 
@@ -501,13 +527,15 @@ export function ConfigureSection() {
           <fieldset className="border border-maroon/20 rounded-2xl p-4 md:p-5">
             <legend className="font-heading text-lg text-maroon px-2 font-bold">Home page hero</legend>
             <p className="text-sm text-text-dark/75 mt-2 mb-4">
-              Full-screen background behind the welcome text on the home section (#home).
+              Optional full-screen photo behind the welcome text. Leave empty (or use <strong>Delete picture</strong>) for
+              a gradient-only hero with no background image.
             </p>
             <HeaderImageField
-              label="Hero background image"
-              hint="Same rules as header images: path, URL, or upload."
+              label="Hero background image (optional)"
+              hint="Path, URL, or upload. Empty = no background photo on the home page."
               value={siteManualDraft.homeHeroBackgroundSrc}
               fallbackPath="/images/Satram-illuminated.jpeg"
+              emptyThumbMode="none"
               onChange={(v) => patchLayoutDraft((p) => ({ ...p, homeHeroBackgroundSrc: v }))}
             />
             <p className="text-xs text-text-dark/65 mt-4">
@@ -1155,7 +1183,11 @@ export function ConfigureSection() {
                 <code className="bg-white/80 px-1.5 py-0.5 rounded text-[0.7rem] font-mono border border-maroon/15">
                   npm run deploy-from-browser
                 </code>{" "}
-                for export and publish in one step.
+                , or{" "}
+                <code className="bg-white/80 px-1.5 py-0.5 rounded text-[0.7rem] font-mono border border-maroon/15">
+                  .\Mallavaram-Workflows.ps1 -PlaywrightExportThenPushToGitHub -AutoStartDevServerIfLocalhost
+                </code>{" "}
+                for export + publish in one step.
               </p>
             </div>
           </fieldset>
@@ -1169,29 +1201,55 @@ export function ConfigureSection() {
                 {keys.map((key) => {
                   const keyStr = String(key);
                   const val = getEffective(draft, keyStr);
+                  const multiline = keyStr === "live_feed_text";
+                  const fieldClass =
+                    "w-full rounded-xl border border-maroon/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-maroon bg-sandal/40";
                   return (
                     <div key={keyStr} className="grid gap-2">
                       <label className="text-xs font-medium text-text-dark/70 uppercase tracking-wide">
                         {keyStr}
+                        {multiline ? (
+                          <span className="block font-normal normal-case text-text-dark/60 mt-0.5">
+                            Shown on the home ticker (multicolor by word). Save with <strong>Save Hero</strong>.
+                          </span>
+                        ) : null}
                       </label>
                       <div className="grid sm:grid-cols-2 gap-3">
                         <div>
                           <span className="text-xs text-maroon/80 block mb-1">English</span>
-                          <input
-                            type="text"
-                            value={val.en}
-                            onChange={(e) => updateDraft(keyStr, "en", e.target.value)}
-                            className="w-full rounded-xl border border-maroon/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-maroon bg-sandal/40"
-                          />
+                          {multiline ? (
+                            <textarea
+                              rows={4}
+                              value={val.en}
+                              onChange={(e) => updateDraft(keyStr, "en", e.target.value)}
+                              className={`${fieldClass} min-h-[5rem] resize-y font-mono text-xs md:text-sm`}
+                            />
+                          ) : (
+                            <input
+                              type="text"
+                              value={val.en}
+                              onChange={(e) => updateDraft(keyStr, "en", e.target.value)}
+                              className={fieldClass}
+                            />
+                          )}
                         </div>
                         <div>
                           <span className="text-xs text-maroon/80 block mb-1">Telugu</span>
-                          <input
-                            type="text"
-                            value={val.te}
-                            onChange={(e) => updateDraft(keyStr, "te", e.target.value)}
-                            className="w-full rounded-xl border border-maroon/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-maroon bg-sandal/40"
-                          />
+                          {multiline ? (
+                            <textarea
+                              rows={4}
+                              value={val.te}
+                              onChange={(e) => updateDraft(keyStr, "te", e.target.value)}
+                              className={`${fieldClass} min-h-[5rem] resize-y font-mono text-xs md:text-sm`}
+                            />
+                          ) : (
+                            <input
+                              type="text"
+                              value={val.te}
+                              onChange={(e) => updateDraft(keyStr, "te", e.target.value)}
+                              className={fieldClass}
+                            />
+                          )}
                         </div>
                       </div>
                     </div>
@@ -1278,6 +1336,13 @@ export function ConfigureSection() {
                                   />
                                   Upload photo
                                 </label>
+                                <button
+                                  type="button"
+                                  className="text-xs text-red-800 underline font-medium"
+                                  onClick={() => updateCommitteeMember(i, { src: "" })}
+                                >
+                                  Delete picture
+                                </button>
                               </div>
                               <div>
                                 <span className="text-xs text-maroon/80 block mb-1">Section</span>
@@ -1422,6 +1487,13 @@ export function ConfigureSection() {
                                   />
                                   Upload file
                                 </label>
+                                <button
+                                  type="button"
+                                  className="text-xs text-red-800 underline font-medium"
+                                  onClick={() => updateGallerySlot(i, { src: "" })}
+                                >
+                                  Delete picture
+                                </button>
                               </div>
                               <div className="grid sm:grid-cols-2 gap-2 pt-1">
                                 <div>
@@ -1476,8 +1548,15 @@ export function ConfigureSection() {
           <button type="button" onClick={handleDownload} className="btn-primary">
             Download for deploy
           </button>
-          <p className="text-xs text-text-dark/60 max-w-sm">
-            Downloads <code className="bg-sandal/60 px-1 rounded">site-bundle-from-browser.json</code> — move it to your project root then run <code className="bg-sandal/60 px-1 rounded">npm run publish-site</code> to push to the live site.
+          <p className="text-xs text-text-dark/60 max-w-xl">
+            Downloads <code className="bg-sandal/60 px-1 rounded">site-bundle-from-browser.json</code>. Repo root or
+            Downloads is fine. Then:{" "}
+            <code className="bg-sandal/60 px-1 rounded">
+              .\Mallavaram-Workflows.ps1 -MergeDownloadedBundleAndPushToGitHub
+            </code>{" "}
+            for the public site, or{" "}
+            <code className="bg-sandal/60 px-1 rounded">-MergeDownloadedBundleIntoLibNoGit</code> to update{" "}
+            <code className="bg-sandal/60 px-1 rounded">lib/</code> only (no Git).
           </p>
           <div className="w-full border-t border-maroon/10 pt-3 mt-1">
             <button type="button" onClick={handleReset} className="btn-outline text-sm">

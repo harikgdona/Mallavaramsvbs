@@ -12,6 +12,7 @@
     "export-site-bundle": "tsx scripts/export-site-bundle-playwright.ts",
     "deploy-from-browser": "npm run export-site-bundle && npm run publish-site",
     "publish-site": "tsx scripts/publish-site.ts",
+    "publish-site:local": "tsx scripts/publish-site.ts --no-git",
     "publish-config": "tsx scripts/publish-site.ts"
   },
   "dependencies": {
