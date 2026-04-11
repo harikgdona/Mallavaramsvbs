@@ -191,7 +191,7 @@ export const CONFIG_SECTIONS: Record<string, (keyof typeof tMap)[]> = {
     "nav_contact",
     "nav_configure"
   ],
-  "Hero": ["hero_heading", "hero_subtitle", "hero_join_annadanam", "live_feed_text"],
+    "Hero": ["hero_heading", "hero_subtitle", "live_feed_text"],
   "About": ["about_title", "about_body"],
   "Annadanam": ["annadanam_title", "annadanam_body", "annadanam_stats"],
   "Activities": ["activities_title"],
