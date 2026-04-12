@@ -38,7 +38,7 @@ function ColoredTickerLine({ text }: { text: string }) {
   }
 
   return (
-    <span className="inline-flex flex-row flex-nowrap items-baseline whitespace-nowrap font-heading text-sm leading-snug sm:text-base md:text-lg">
+    <span className="inline-flex flex-row flex-nowrap items-baseline whitespace-nowrap font-heading text-base leading-snug sm:text-base md:text-lg">
       {segments.map((segment, i) => (
         <span key={i} className="inline-flex shrink-0 flex-nowrap items-baseline">
           {i > 0 ? (
