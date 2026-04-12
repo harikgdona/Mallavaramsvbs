@@ -35,5 +35,21 @@
     {"src":"/images/uploads/svbs_image59.jpeg","altEn":"Satram photo 32","altTe":"Satram photo 32"},
     {"src":"/images/uploads/svbs_image60.jpeg","altEn":"Satram photo 33","altTe":"Satram photo 33"}
   ],
-  "committeeMembers": []
+  "committeeMembers": [
+    {"src":"","nameEn":"Sri Neelamraju Subba Santha Rao","nameTe":"","designationEn":"President","designationTe":""},
+    {"src":"","nameEn":"Sri Gali Venkata Rambabu","nameTe":"","designationEn":"Vice President-1","designationTe":""},
+    {"src":"","nameEn":"Sri Neelamraju Venkata Subba Rao","nameTe":"","designationEn":"Vice President-2","designationTe":""},
+    {"src":"","nameEn":"Sri Damaraju Venkata Laxmi Raghava Rao","nameTe":"","designationEn":"Vice President-3","designationTe":""},
+    {"src":"","nameEn":"Sri Rachapudi Sri Krishna","nameTe":"","designationEn":"Secretary","designationTe":""},
+    {"src":"","nameEn":"Sri Gali Satya Rama Koteswara Rao","nameTe":"","designationEn":"Treasurer","designationTe":""},
+    {"src":"","nameEn":"Sri Neelamraju Rama Krishna","nameTe":"","designationEn":"Joint Secretary 1","designationTe":""},
+    {"src":"","nameEn":"Sri Gali Suneel","nameTe":"","designationEn":"Joint Secretary 2","designationTe":""},
+    {"src":"","nameEn":"Sri Doddavarapu Srinivas Siva Rama Krishna","nameTe":"","designationEn":"Member","designationTe":""},
+    {"src":"","nameEn":"Sri Dhenuvakonda Seshagiri Rao","nameTe":"","designationEn":"Member","designationTe":""},
+    {"src":"","nameEn":"Sri Gali Venkata Ramakrishna","nameTe":"","designationEn":"Member","designationTe":""},
+    {"src":"","nameEn":"Sri Gali Balaram Revanth Kumar","nameTe":"","designationEn":"Member","designationTe":""},
+    {"src":"","nameEn":"Sri Neelamraju Raghavendra Rao","nameTe":"","designationEn":"Member","designationTe":""},
+    {"src":"","nameEn":"Sri G.V.S. Chalapathi","nameTe":"","designationEn":"Member","designationTe":""},
+    {"src":"","nameEn":"Sri Neelamraju Venkata Ramana Kumar","nameTe":"","designationEn":"Member","designationTe":""}
+  ]
 }

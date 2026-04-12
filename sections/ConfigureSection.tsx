@@ -386,22 +386,6 @@ export function ConfigureSection() {
     }
   }, [resetOverrides]);
 
-  const handleDownload = useCallback(() => {
-    const bundle = {
-      siteManual: JSON.parse(localStorage.getItem("mallavaram-site-manual-config") ?? "null"),
-      textOverrides: JSON.parse(localStorage.getItem("mallavaram-text-config") ?? "{}"),
-      gallerySlots: JSON.parse(localStorage.getItem("mallavaram-gallery-photos") ?? "[]"),
-      committeeMembers: JSON.parse(localStorage.getItem("mallavaram-committee-config") ?? "[]"),
-    };
-    const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "site-bundle-from-browser.json";
-    a.click();
-    URL.revokeObjectURL(url);
-  }, []);
-
   const handleGoogleLogin = useCallback(async () => {
     setLoginErr(null);
     setLoginBusy(true);
@@ -456,8 +440,8 @@ export function ConfigureSection() {
         </p>
 
         <div className="space-y-8">
-          <fieldset className="border border-maroon/20 rounded-2xl p-4 md:p-5">
-            <legend className="font-heading text-lg text-maroon px-2 font-bold">Header images</legend>
+          <details className="border border-maroon/20 rounded-2xl p-4 md:p-5 group">
+            <summary className="font-heading text-lg text-maroon px-2 font-bold cursor-pointer list-none flex items-center justify-between">Header images <span className="text-xs text-maroon/50 group-open:rotate-90 transition-transform"></span></summary>
             <p className="text-sm text-text-dark/75 mt-2 mb-4">
               Current previews below. Use a site path like <code className="text-xs bg-sandal/60 px-1 rounded">/images/logo.png</code>, a full URL, or upload (stored in this browser only).
             </p>
@@ -496,10 +480,10 @@ export function ConfigureSection() {
               Use <strong>Save layout & header</strong> at the bottom of the next block to persist these images with the
               rest of the header settings.
             </p>
-          </fieldset>
+          </details>
 
-          <fieldset className="border border-maroon/20 rounded-2xl p-4 md:p-5">
-            <legend className="font-heading text-lg text-maroon px-2 font-bold">Home page hero</legend>
+          <details className="border border-maroon/20 rounded-2xl p-4 md:p-5 group">
+            <summary className="font-heading text-lg text-maroon px-2 font-bold cursor-pointer list-none flex items-center justify-between">Home page hero <span className="text-xs text-maroon/50 group-open:rotate-90 transition-transform"></span></summary>
             <p className="text-sm text-text-dark/75 mt-2 mb-4">
               Optional full-screen photo behind the welcome text. Leave empty (or use <strong>Delete picture</strong>) for
               a gradient-only hero with no background image.
@@ -516,12 +500,12 @@ export function ConfigureSection() {
             <p className="text-xs text-text-dark/65 mt-4">
               Saved with <strong>Save layout & header</strong> below.
             </p>
-          </fieldset>
+          </details>
 
-          <fieldset className="border border-maroon/20 rounded-2xl p-4 md:p-5">
-            <legend className="font-heading text-lg text-maroon px-2 font-bold">
+          <details className="border border-maroon/20 rounded-2xl p-4 md:p-5 group">
+            <summary className="font-heading text-lg text-maroon px-2 font-bold cursor-pointer list-none flex items-center justify-between">
               Site layout and header
-            </legend>
+             <span className="text-xs text-maroon/50 group-open:rotate-90 transition-transform"></span></summary>
             <p className="text-sm text-text-dark/75 mt-2 mb-4">
               By default only <strong>colors</strong> (and matching mobile colors) are shown. Use{" "}
               <strong>Show advanced layout &amp; header options</strong> for sidebar width, banner height, toranams,
@@ -1130,19 +1114,13 @@ export function ConfigureSection() {
                 {saveFlash === "site-layout" ? "Saved" : "Save layout & header"}
               </button>
             </div>
-            <div className="rounded-xl border border-maroon/15 bg-sandal/25 px-3 py-2.5 mt-3 max-w-2xl">
-              <p className="text-xs font-semibold text-maroon mb-1">Update the live site for everyone</p>
-              <p className="text-xs text-text-dark/75 leading-relaxed">
-                Save each block you changed. Changes are saved to this browser. Use <strong>Download for deploy</strong> and the deploy script to push to the public site.
-              </p>
-            </div>
-          </fieldset>
+          </details>
 
           {Object.entries(CONFIG_SECTIONS).map(([headerName, keys]) => (
-            <fieldset key={headerName} className="border border-maroon/20 rounded-2xl p-4 md:p-5">
-              <legend className="font-heading text-lg text-maroon px-2 font-bold">
+            <details key={headerName} className="border border-maroon/20 rounded-2xl p-4 md:p-5 group">
+              <summary className="font-heading text-lg text-maroon px-2 font-bold cursor-pointer list-none flex items-center justify-between">
                 {headerName}
-              </legend>
+               <span className="text-xs text-maroon/50 group-open:rotate-90 transition-transform"></span></summary>
               <div className="space-y-4 mt-2">
                 {keys.map((key) => {
                   const keyStr = String(key);
@@ -1505,29 +1483,14 @@ export function ConfigureSection() {
                         : `Save ${headerName}`}
                 </button>
               </div>
-            </fieldset>
+            </details>
           ))}
         </div>
 
         <div className="flex flex-wrap items-center gap-3 mt-8 pt-6 border-t border-maroon/10">
-          <button type="button" onClick={handleDownload} className="btn-primary">
-            Download for deploy
+          <button type="button" onClick={handleReset} className="btn-outline text-sm">
+            Reset everything to defaults
           </button>
-          <p className="text-xs text-text-dark/60 max-w-xl">
-            Downloads <code className="bg-sandal/60 px-1 rounded">site-bundle-from-browser.json</code>. Repo root or
-            Downloads is fine. Then:{" "}
-            <code className="bg-sandal/60 px-1 rounded">
-              .\Mallavaram-Workflows.ps1 -MergeDownloadedBundleAndPushToGitHub
-            </code>{" "}
-            for the public site, or{" "}
-            <code className="bg-sandal/60 px-1 rounded">-MergeDownloadedBundleIntoLibNoGit</code> to update{" "}
-            <code className="bg-sandal/60 px-1 rounded">lib/</code> only (no Git).
-          </p>
-          <div className="w-full border-t border-maroon/10 pt-3 mt-1">
-            <button type="button" onClick={handleReset} className="btn-outline text-sm">
-              Reset everything to defaults
-            </button>
-          </div>
         </div>
       </div>
     </SectionContainer>
