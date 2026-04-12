@@ -2,66 +2,77 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import {
-  clearAdminSession,
-  hasAdminCredentials,
-  isAdminSession,
-  setAdminPassword,
-  setAdminSession,
-  verifyAdminLogin
-} from "@/lib/adminAuth";
+  onAuthStateChanged,
+  signInWithPopup,
+  signOut,
+  GoogleAuthProvider,
+  type User,
+} from "firebase/auth";
+import { auth } from "@/lib/firebase";
+
+// Only these emails can access the Configure panel
+const ADMIN_EMAILS = [
+  "harikgdona@gmail.com",
+  "kote_rao@yahoo.com",
+];
 
 type AdminAuthContextType = {
   ready: boolean;
   authed: boolean;
-  /** True when no password has been set yet in this browser (first-time setup). */
-  needsSetup: boolean;
-  login: (username: string, password: string) => Promise<{ ok: boolean; error?: string }>;
-  setupPassword: (password: string) => Promise<{ ok: boolean; error?: string }>;
+  user: User | null;
+  login: () => Promise<{ ok: boolean; error?: string }>;
   logout: () => void;
 };
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefined);
 
+function isAdminEmail(email: string | null): boolean {
+  if (!email) return false;
+  return ADMIN_EMAILS.includes(email.toLowerCase());
+}
+
 export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
   const [authed, setAuthed] = useState(false);
-  // Start as false on both server and client — useEffect sets the real value
-  const [needsSetup, setNeedsSetup] = useState(false);
 
   useEffect(() => {
-    setNeedsSetup(!hasAdminCredentials());
-    setAuthed(isAdminSession());
-    setReady(true);
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser && isAdminEmail(firebaseUser.email)) {
+        setUser(firebaseUser);
+        setAuthed(true);
+      } else {
+        setUser(null);
+        setAuthed(false);
+      }
+      setReady(true);
+    });
+    return unsubscribe;
   }, []);
 
-  const login = useCallback(async (username: string, password: string) => {
-    const ok = await verifyAdminLogin(username, password);
-    if (ok) {
-      setAdminSession();
-      setAuthed(true);
+  const login = useCallback(async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      if (!isAdminEmail(result.user.email)) {
+        await signOut(auth);
+        return { ok: false, error: "This Google account is not authorized as admin." };
+      }
       return { ok: true };
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Sign-in failed.";
+      return { ok: false, error: msg };
     }
-    return { ok: false, error: "Invalid username or password." };
-  }, []);
-
-  const setupPassword = useCallback(async (password: string) => {
-    if (password.length < 8) {
-      return { ok: false, error: "Password must be at least 8 characters." };
-    }
-    await setAdminPassword(password);
-    setNeedsSetup(false);
-    setAdminSession();
-    setAuthed(true);
-    return { ok: true };
   }, []);
 
   const logout = useCallback(() => {
-    clearAdminSession();
+    signOut(auth);
+    setUser(null);
     setAuthed(false);
   }, []);
 
   return (
-    <AdminAuthContext.Provider value={{ ready, authed, needsSetup, login, setupPassword, logout }}>
+    <AdminAuthContext.Provider value={{ ready, authed, user, login, logout }}>
       {children}
     </AdminAuthContext.Provider>
   );

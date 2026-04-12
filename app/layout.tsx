@@ -59,9 +59,9 @@ export default function RootLayout({
       </head>
       <body>
         <LanguageProvider>
-          <ConfigProvider>
-            <TypographyTheme />
-            <AdminAuthProvider>
+          <AdminAuthProvider>
+            <ConfigProvider>
+              <TypographyTheme />
               <SectionTabsProvider>
               {/* min-h-viewport-page: TopHeader + main row ≈ one viewport minus --viewport-page-trim (avoids stacking past 100vh). */}
               <div className="flex min-h-viewport-page flex-col">
@@ -80,8 +80,8 @@ export default function RootLayout({
               <LayoutViewportOffsets />
               <BottomRightActions />
               </SectionTabsProvider>
-            </AdminAuthProvider>
-          </ConfigProvider>
+            </ConfigProvider>
+          </AdminAuthProvider>
         </LanguageProvider>
       </body>
     </html>

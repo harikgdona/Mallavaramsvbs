@@ -29,9 +29,7 @@ import {
 } from "@/lib/siteManualSchema";
 import { ConfigureColorField } from "@/components/ConfigureColorField";
 import { ConfigureFontPresetPicker } from "@/components/ConfigureFontPresetPicker";
-import { CommitteeFolderImage } from "@/components/CommitteeFolderImage";
 import { POPULAR_BODY_FONTS, POPULAR_HEADING_FONTS } from "@/lib/typographyFontPresets";
-import { getCommitteeMemberPhotoStem } from "@/lib/committeeMemberPhotoStem";
 
 type Overrides = Record<string, { en: string; te: string }>;
 
@@ -72,6 +70,19 @@ function cloneSiteManual(cfg: SiteManualConfig): SiteManualConfig {
   return { ...cfg, toranamImagePaths: [...cfg.toranamImagePaths] };
 }
 
+function readFileAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const r = reader.result;
+      if (typeof r === "string") resolve(r);
+      else reject(new Error("Could not read file"));
+    };
+    reader.onerror = () => reject(reader.error ?? new Error("Read failed"));
+    reader.readAsDataURL(file);
+  });
+}
+
 function HeaderImageField({
   label,
   hint,
@@ -79,7 +90,8 @@ function HeaderImageField({
   fallbackPath,
   onChange,
   allowClear = true,
-  emptyThumbMode = "fallback"
+  emptyThumbMode = "fallback",
+  resolveUploadedFile
 }: {
   label: string;
   hint?: string;
@@ -90,6 +102,8 @@ function HeaderImageField({
   allowClear?: boolean;
   /** When the value is empty: show bundled default in preview, or a neutral “no image” tile. */
   emptyThumbMode?: "fallback" | "none";
+  /** When set (e.g. Firebase signed-in admin), uploads return a public URL instead of a large data URL. */
+  resolveUploadedFile?: (file: File) => Promise<string>;
 }) {
   const ph = withBasePath(fallbackPath);
   const placeholderTile = withBasePath("/images/placeholder.svg");
@@ -135,12 +149,17 @@ function HeaderImageField({
                     );
                     return;
                   }
-                  const reader = new FileReader();
-                  reader.onload = () => {
-                    const r = reader.result;
-                    if (typeof r === "string") onChange(r);
-                  };
-                  reader.readAsDataURL(file);
+                  if (resolveUploadedFile) {
+                    void resolveUploadedFile(file)
+                      .then(onChange)
+                      .catch((err: unknown) => {
+                        window.alert(err instanceof Error ? err.message : String(err));
+                      });
+                    return;
+                  }
+                  void readFileAsDataUrl(file).then(onChange).catch((err: unknown) => {
+                    window.alert(err instanceof Error ? err.message : String(err));
+                  });
                 }}
               />
               Upload
@@ -165,7 +184,7 @@ function HeaderImageField({
 }
 
 export function ConfigureSection() {
-  const { ready, authed, needsSetup, login, setupPassword, logout } = useAdminAuth();
+  const { ready, authed, login, logout } = useAdminAuth();
   const {
     overrides,
     saveOverrides,
@@ -177,14 +196,8 @@ export function ConfigureSection() {
     setSiteManual
   } = useConfig();
   const { siteManual } = useSiteManual();
-  const [loginUser, setLoginUser] = useState("admin");
-  const [loginPass, setLoginPass] = useState("");
   const [loginErr, setLoginErr] = useState<string | null>(null);
   const [loginBusy, setLoginBusy] = useState(false);
-  const [setupPass, setSetupPass] = useState("");
-  const [setupPass2, setSetupPass2] = useState("");
-  const [setupErr, setSetupErr] = useState<string | null>(null);
-  const [setupBusy, setSetupBusy] = useState(false);
   const [draft, setDraft] = useState<Overrides>(() => ({ ...overrides }));
   const [galleryDraft, setGalleryDraft] = useState<GallerySlotConfig[]>(() => defaultGallerySlots());
   const [committeeDraft, setCommitteeDraft] = useState<CommitteeMemberConfig[]>(() =>
@@ -197,6 +210,13 @@ export function ConfigureSection() {
   const [siteLayoutDirty, setSiteLayoutDirty] = useState(false);
   const [saveFlash, setSaveFlash] = useState<string | null>(null);
   const [showAdvancedSiteLayout, setShowAdvancedSiteLayout] = useState(false);
+
+  const resolveUploadedFile = useCallback(
+    async (file: File) => {
+      return readFileAsDataUrl(file);
+    },
+    []
+  );
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -299,14 +319,14 @@ export function ConfigureSection() {
     }, 2000);
   }, []);
 
-  const saveSiteLayout = useCallback(() => {
+  const saveSiteLayout = useCallback(async () => {
     setSiteManual(siteManualDraft);
     setSiteLayoutDirty(false);
     runFlash("site-layout");
   }, [siteManualDraft, setSiteManual, runFlash]);
 
   const saveTextSection = useCallback(
-    (headerName: string, keys: readonly (keyof typeof tMap)[]) => {
+    async (headerName: string, keys: readonly (keyof typeof tMap)[]) => {
       const updates: Overrides = {};
       for (const k of keys) {
         const keyStr = String(k);
@@ -321,15 +341,22 @@ export function ConfigureSection() {
       }
       runFlash(`section-${headerName}`);
     },
-    [draft, galleryDraft, committeeDraft, saveOverrides, setGallerySlots, setCommitteeMembers, runFlash]
+    [
+      draft,
+      galleryDraft,
+      committeeDraft,
+      saveOverrides,
+      setGallerySlots,
+      setCommitteeMembers,
+      runFlash
+    ]
   );
 
   const handleReset = useCallback(() => {
     if (
       typeof window !== "undefined" &&
       window.confirm(
-        "Reset all text, gallery, committee, and site layout or header settings to defaults? " +
-          "This clears saved data in this browser (localStorage + Configure session flags)."
+        "Reset all text, gallery, committee, and site layout or header settings to defaults?"
       )
     ) {
       resetOverrides();
@@ -375,35 +402,13 @@ export function ConfigureSection() {
     URL.revokeObjectURL(url);
   }, []);
 
-  const submitLogin = useCallback(
-    async (e: FormEvent) => {
-      e.preventDefault();
-      setLoginErr(null);
-      setLoginBusy(true);
-      const r = await login(loginUser, loginPass);
-      setLoginBusy(false);
-      if (!r.ok) setLoginErr(r.error ?? "Sign-in failed.");
-      else setLoginPass("");
-    },
-    [login, loginUser, loginPass]
-  );
-
-  const submitSetup = useCallback(
-    async (e: FormEvent) => {
-      e.preventDefault();
-      setSetupErr(null);
-      if (setupPass !== setupPass2) {
-        setSetupErr("Passwords do not match.");
-        return;
-      }
-      setSetupBusy(true);
-      const r = await setupPassword(setupPass);
-      setSetupBusy(false);
-      if (!r.ok) setSetupErr(r.error ?? "Setup failed.");
-      else { setSetupPass(""); setSetupPass2(""); }
-    },
-    [setupPassword, setupPass, setupPass2]
-  );
+  const handleGoogleLogin = useCallback(async () => {
+    setLoginErr(null);
+    setLoginBusy(true);
+    const r = await login();
+    setLoginBusy(false);
+    if (!r.ok) setLoginErr(r.error ?? "Sign-in failed.");
+  }, [login]);
 
   if (!ready) {
     return (
@@ -416,75 +421,20 @@ export function ConfigureSection() {
   if (!authed) {
     return (
       <SectionContainer id="configure">
-        <div className="bg-white rounded-3xl border border-maroon/20 shadow-md p-6 md:p-8 max-w-md mx-auto">
-          {needsSetup ? (
-            <>
-              <h2 className="section-heading text-2xl">Configure — set password</h2>
-              <p className="text-sm text-text-dark/75 mb-4">
-                No admin password has been set in this browser yet. Create one to access the Configure panel.
-                The password is stored as a one-way hash in localStorage — it never leaves your browser.
-              </p>
-              <form className="space-y-4" onSubmit={submitSetup}>
-                <label className="grid gap-1 text-sm font-medium text-text-dark/80">
-                  New password (min 8 characters)
-                  <input
-                    type="password"
-                    autoComplete="new-password"
-                    value={setupPass}
-                    onChange={(e) => setSetupPass(e.target.value)}
-                    className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-sandal/30"
-                  />
-                </label>
-                <label className="grid gap-1 text-sm font-medium text-text-dark/80">
-                  Confirm password
-                  <input
-                    type="password"
-                    autoComplete="new-password"
-                    value={setupPass2}
-                    onChange={(e) => setSetupPass2(e.target.value)}
-                    className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-sandal/30"
-                  />
-                </label>
-                {setupErr ? <p className="text-sm text-red-700">{setupErr}</p> : null}
-                <button type="submit" disabled={setupBusy} className="btn-primary w-full sm:w-auto">
-                  {setupBusy ? "Setting up…" : "Set password & sign in"}
-                </button>
-              </form>
-            </>
-          ) : (
-            <>
-              <h2 className="section-heading text-2xl">Configure — sign in</h2>
-              <p className="text-sm text-text-dark/75 mb-4">
-                Admin access only. The password is verified in your browser using a one-way hash stored in localStorage.
-              </p>
-              <form className="space-y-4" onSubmit={submitLogin}>
-                <label className="grid gap-1 text-sm font-medium text-text-dark/80">
-                  Username
-                  <input
-                    type="text"
-                    autoComplete="username"
-                    value={loginUser}
-                    onChange={(e) => setLoginUser(e.target.value)}
-                    className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-sandal/30"
-                  />
-                </label>
-                <label className="grid gap-1 text-sm font-medium text-text-dark/80">
-                  Password
-                  <input
-                    type="password"
-                    autoComplete="current-password"
-                    value={loginPass}
-                    onChange={(e) => setLoginPass(e.target.value)}
-                    className="rounded-xl border border-maroon/20 px-3 py-2 text-sm bg-sandal/30"
-                  />
-                </label>
-                {loginErr ? <p className="text-sm text-red-700">{loginErr}</p> : null}
-                <button type="submit" disabled={loginBusy} className="btn-primary w-full sm:w-auto">
-                  {loginBusy ? "Signing in…" : "Sign in"}
-                </button>
-              </form>
-            </>
-          )}
+        <div className="bg-white rounded-3xl border border-maroon/20 shadow-md p-6 md:p-8 max-w-md mx-auto text-center">
+          <h2 className="section-heading text-2xl">Configure — sign in</h2>
+          <p className="text-sm text-text-dark/75 mb-6">
+            Admin access only. Sign in with an authorized Google account.
+          </p>
+          {loginErr ? <p className="text-sm text-red-700 mb-4">{loginErr}</p> : null}
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            disabled={loginBusy}
+            className="btn-primary w-full sm:w-auto"
+          >
+            {loginBusy ? "Signing in…" : "Sign in with Google"}
+          </button>
         </div>
       </SectionContainer>
     );
@@ -500,16 +450,9 @@ export function ConfigureSection() {
           </button>
         </div>
         <p className="section-subtitle mb-6">
-          Each block has its own Save button (this browser only, localStorage). Header images are saved with{" "}
-          <strong>Save layout & header</strong>. To push changes to everyone on the public site, use{" "}
-          <strong>Download for deploy</strong>, then from the project folder run{" "}
-          <code className="text-xs bg-sandal/60 px-1 rounded">
-            .\Mallavaram-Workflows.ps1 -MergeDownloadedBundleAndPushToGitHub
-          </code>{" "}
-          (or <code className="text-xs bg-sandal/60 px-1 rounded">npm run publish-site</code>). For lib-only (no Git):{" "}
-          <code className="text-xs bg-sandal/60 px-1 rounded">-MergeDownloadedBundleIntoLibNoGit</code> (alias{" "}
-          <code className="text-xs bg-sandal/60 px-1 rounded">-ApplyConfigureLocal</code>). Password hash: localStorage key{" "}
-          <code className="text-xs bg-sandal/60 px-1 rounded">mallavaram-admin-credentials</code>.
+          Each block has its own Save button. Changes are saved to Firestore and visible to everyone on refresh.
+              Each block has its own Save button (this browser only, localStorage). Header images are saved with{" "}
+              <strong>Save layout & header</strong>. To push changes to everyone on the public site, use{" "}
         </p>
 
         <div className="space-y-8">
@@ -525,24 +468,28 @@ export function ConfigureSection() {
                 value={siteManualDraft.topHeaderLogoSrc}
                 fallbackPath="/images/logo.png"
                 onChange={(v) => patchLayoutDraft((p) => ({ ...p, topHeaderLogoSrc: v }))}
+                resolveUploadedFile={resolveUploadedFile}
               />
               <HeaderImageField
                 label="Left lamp"
                 value={siteManualDraft.topHeaderLeftLampSrc}
                 fallbackPath="/images/lamp-left.png"
                 onChange={(v) => patchLayoutDraft((p) => ({ ...p, topHeaderLeftLampSrc: v }))}
+                resolveUploadedFile={resolveUploadedFile}
               />
               <HeaderImageField
                 label="Right lamp"
                 value={siteManualDraft.topHeaderRightLampSrc}
                 fallbackPath="/images/lamp-right.png"
                 onChange={(v) => patchLayoutDraft((p) => ({ ...p, topHeaderRightLampSrc: v }))}
+                resolveUploadedFile={resolveUploadedFile}
               />
               <HeaderImageField
                 label="Moola virat"
                 value={siteManualDraft.topHeaderMoolaViratSrc}
                 fallbackPath="/images/moola-virat.png"
                 onChange={(v) => patchLayoutDraft((p) => ({ ...p, topHeaderMoolaViratSrc: v }))}
+                resolveUploadedFile={resolveUploadedFile}
               />
             </div>
             <p className="text-xs text-text-dark/65 mt-4">
@@ -564,6 +511,7 @@ export function ConfigureSection() {
               fallbackPath="/images/Satram-illuminated.jpeg"
               emptyThumbMode="none"
               onChange={(v) => patchLayoutDraft((p) => ({ ...p, homeHeroBackgroundSrc: v }))}
+              resolveUploadedFile={resolveUploadedFile}
             />
             <p className="text-xs text-text-dark/65 mt-4">
               Saved with <strong>Save layout & header</strong> below.
@@ -1178,43 +1126,14 @@ export function ConfigureSection() {
             ) : null}
 
             <div className="flex flex-wrap items-center gap-3 mt-6 pt-4 border-t border-maroon/10">
-              <button type="button" onClick={saveSiteLayout} className="btn-primary">
+              <button type="button" onClick={() => void saveSiteLayout()} className="btn-primary">
                 {saveFlash === "site-layout" ? "Saved" : "Save layout & header"}
               </button>
             </div>
             <div className="rounded-xl border border-maroon/15 bg-sandal/25 px-3 py-2.5 mt-3 max-w-2xl">
               <p className="text-xs font-semibold text-maroon mb-1">Update the live site for everyone</p>
               <p className="text-xs text-text-dark/75 leading-relaxed">
-                Save each block you changed (layout, Gallery, Committee, section text, etc.). On your PC, put admin
-                credentials in{" "}
-                <code className="bg-white/80 px-1.5 py-0.5 rounded text-[0.7rem] font-mono border border-maroon/15">
-                  .env.local
-                </code>{" "}
-                (see{" "}
-                <code className="bg-white/80 px-1.5 py-0.5 rounded text-[0.7rem] font-mono border border-maroon/15">
-                  .env.example
-                </code>
-                ) and run{" "}
-                <code className="bg-white/80 px-1.5 py-0.5 rounded text-[0.7rem] font-mono border border-maroon/15">
-                  npm run export-site-bundle
-                </code>{" "}
-                — it signs in headlessly and writes{" "}
-                <code className="bg-white/80 px-1.5 py-0.5 rounded text-[0.7rem] font-mono border border-maroon/15">
-                  site-bundle-from-browser.json
-                </code>
-                . Without creds, a browser opens for manual sign-in. Then run{" "}
-                <code className="bg-white/80 px-1.5 py-0.5 rounded text-[0.7rem] font-mono border border-maroon/15">
-                  npm run publish-site
-                </code>{" "}
-                or{" "}
-                <code className="bg-white/80 px-1.5 py-0.5 rounded text-[0.7rem] font-mono border border-maroon/15">
-                  npm run deploy-from-browser
-                </code>{" "}
-                , or{" "}
-                <code className="bg-white/80 px-1.5 py-0.5 rounded text-[0.7rem] font-mono border border-maroon/15">
-                  .\Mallavaram-Workflows.ps1 -PlaywrightExportThenPushToGitHub -AutoStartDevServerIfLocalhost
-                </code>{" "}
-                for export + publish in one step.
+                Save each block you changed. Changes are saved to this browser. Use <strong>Download for deploy</strong> and the deploy script to push to the public site.
               </p>
             </div>
           </fieldset>
@@ -1325,10 +1244,6 @@ export function ConfigureSection() {
                       </p>
                     ) : (
                       committeeDraft.map((row, i) => {
-                        const honoraryPeers = committeeDraft.filter((m) => (m.group ?? "working") === "honorary");
-                        const workingPeers = committeeDraft.filter((m) => (m.group ?? "working") === "working");
-                        const peers = (row.group ?? "working") === "honorary" ? honoraryPeers : workingPeers;
-                        const folderStem = getCommitteeMemberPhotoStem(row, peers);
                         return (
                         <div
                           key={i}
@@ -1349,11 +1264,7 @@ export function ConfigureSection() {
                               {row.src.trim() ? (
                                 <GalleryThumb src={row.src} />
                               ) : (
-                                <CommitteeFolderImage
-                                  stem={folderStem}
-                                  alt=""
-                                  className="absolute inset-0 h-full w-full object-cover object-top"
-                                />
+                                <div className="absolute inset-0 flex items-center justify-center text-text-dark/30 text-xs">No photo</div>
                               )}
                             </div>
                             <div className="space-y-2 min-w-0">
@@ -1381,12 +1292,11 @@ export function ConfigureSection() {
                                         );
                                         return;
                                       }
-                                      const reader = new FileReader();
-                                      reader.onload = () => {
-                                        const r = reader.result;
-                                        if (typeof r === "string") updateCommitteeMember(i, { src: r });
-                                      };
-                                      reader.readAsDataURL(file);
+                                      void resolveUploadedFile(file)
+                                        .then((url) => updateCommitteeMember(i, { src: url }))
+                                        .catch((err: unknown) => {
+                                          window.alert(err instanceof Error ? err.message : String(err));
+                                        });
                                     }}
                                   />
                                   Upload photo
@@ -1533,12 +1443,11 @@ export function ConfigureSection() {
                                         );
                                         return;
                                       }
-                                      const reader = new FileReader();
-                                      reader.onload = () => {
-                                        const r = reader.result;
-                                        if (typeof r === "string") updateGallerySlot(i, { src: r });
-                                      };
-                                      reader.readAsDataURL(file);
+                                      void resolveUploadedFile(file)
+                                        .then((url) => updateGallerySlot(i, { src: url }))
+                                        .catch((err: unknown) => {
+                                          window.alert(err instanceof Error ? err.message : String(err));
+                                        });
                                     }}
                                   />
                                   Upload file
@@ -1584,7 +1493,7 @@ export function ConfigureSection() {
               <div className="flex flex-wrap gap-3 mt-6 pt-4 border-t border-maroon/10">
                 <button
                   type="button"
-                  onClick={() => saveTextSection(headerName, keys)}
+                  onClick={() => void saveTextSection(headerName, keys)}
                   className="btn-primary"
                 >
                   {saveFlash === `section-${headerName}`
