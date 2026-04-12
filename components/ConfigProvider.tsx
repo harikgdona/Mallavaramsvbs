@@ -160,25 +160,21 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
       const remote = await readSiteConfig();
       if (cancelled) return;
       if (remote) {
-        if (remote.textOverrides) {
+        if (remote.textOverrides && Object.keys(remote.textOverrides).length > 0) {
           const merged = { ...bakedText, ...remote.textOverrides };
           setOverrides(merged);
-          saveToStorage(merged);
         }
-        if (remote.gallerySlots) {
+        if (remote.gallerySlots && Array.isArray(remote.gallerySlots) && remote.gallerySlots.length > 0) {
           const g = normalizeGallerySlots(remote.gallerySlots);
           setGallerySlotsState(g);
-          saveGalleryToStorage(g);
         }
-        if (remote.committeeMembers) {
+        if (remote.committeeMembers && Array.isArray(remote.committeeMembers) && remote.committeeMembers.length > 0) {
           const c = normalizeCommitteeMembers(remote.committeeMembers);
           setCommitteeMembersState(c);
-          saveCommitteeToStorage(c);
         }
-        if (remote.siteManual) {
+        if (remote.siteManual && Object.keys(remote.siteManual).length > 0) {
           const s = mergeSiteManual(remote.siteManual);
           setSiteManualState(s);
-          saveSiteManualToStorage(s);
         }
         setFirebaseLoaded(true);
       } else {
