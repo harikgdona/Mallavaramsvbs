@@ -71,7 +71,7 @@ export function HomeHeroFooterTicker() {
       role="region"
       aria-label={language === "te" ? "బ్రహ్మోత్సవ కార్యక్రమములు" : "Brahmotsavam programs and announcements"}
     >
-      <div className="home-hero-footer-marquee-track flex min-h-[2.25rem] items-center py-1.5 sm:py-2">
+      <div className="home-hero-footer-marquee-track flex min-h-[4.5rem] items-center py-3 sm:py-4">
         <div className="flex shrink-0 items-center px-8 md:px-12">
           <ColoredTickerLine text={message} />
         </div>

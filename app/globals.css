@@ -226,10 +226,15 @@ a {
 
 /* Ticker text flicker every 10 seconds */
 @keyframes ticker-flicker {
-  0%, 90%, 100% { opacity: 1; }
-  93% { opacity: 0.2; }
-  96% { opacity: 1; }
-  98% { opacity: 0.3; }
+  0%, 69%, 100% { opacity: 1; }
+  70% { opacity: 0.15; }
+  73% { opacity: 1; }
+  76% { opacity: 0.15; }
+  79% { opacity: 1; }
+  82% { opacity: 0.15; }
+  85% { opacity: 1; }
+  88% { opacity: 0.15; }
+  91% { opacity: 1; }
 }
 .animate-ticker-flicker {
   animation: ticker-flicker 10s ease-in-out infinite;
