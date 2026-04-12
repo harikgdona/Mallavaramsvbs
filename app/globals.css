@@ -177,7 +177,7 @@ a {
     row-gap: 0.125rem;
     padding: 0.25rem 0.5rem;
     height: auto;
-    min-height: 2.25rem;
+    min-height: 4rem;
   }
 }
 
@@ -237,5 +237,5 @@ a {
   91% { opacity: 1; }
 }
 .animate-ticker-flicker {
-  animation: ticker-flicker 10s ease-in-out infinite;
+  animation: ticker-flicker 5s ease-in-out infinite;
 }
