@@ -5,7 +5,6 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-  useRef,
   useState
 } from "react";
 import { useLanguage } from "./LanguageProvider";
@@ -30,18 +29,11 @@ import {
   type CommitteeMemberConfig
 } from "@/lib/committeeConfig";
 import publicSiteContent from "@/lib/publicSiteContent.json";
-import { isFirebaseConfigured } from "@/lib/firebaseClient";
-import {
-  subscribeRemoteSiteBundle,
-  writeRemoteSiteBundle,
-  type RemoteSiteBundle
-} from "@/lib/firebaseSiteBundle";
+import { readSiteConfig, writeSiteConfig } from "@/lib/firestoreConfig";
 
 const STORAGE_KEY = "mallavaram-text-config";
 
 type Overrides = Record<string, { en: string; te: string }>;
-
-type PublishLiveResult = { ok: boolean; error?: string; skipped?: boolean };
 
 type ConfigContextType = {
   overrides: Overrides;
@@ -159,102 +151,98 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     ...SITE_MANUAL_DEFAULTS,
     toranamImagePaths: [...SITE_MANUAL_DEFAULTS.toranamImagePaths]
   }));
-  const [firebaseRemoteReady, setFirebaseRemoteReady] = useState(!isFirebaseConfigured());
-  const [firebaseRemoteError, setFirebaseRemoteError] = useState<string | null>(null);
+  const [firebaseLoaded, setFirebaseLoaded] = useState(false);
 
-  const overridesRef = useRef(overrides);
-  const galleryRef = useRef(gallerySlots);
-  const committeeRef = useRef(committeeMembers);
-  const siteManualRef = useRef(siteManual);
-
+  // Load from Firestore on mount, fall back to localStorage/baked defaults
   useEffect(() => {
-    overridesRef.current = overrides;
-  }, [overrides]);
-  useEffect(() => {
-    galleryRef.current = gallerySlots;
-  }, [gallerySlots]);
-  useEffect(() => {
-    committeeRef.current = committeeMembers;
-  }, [committeeMembers]);
-  useEffect(() => {
-    siteManualRef.current = siteManual;
-  }, [siteManual]);
-
-  useEffect(() => {
-    setOverrides(loadFromStorage());
-    setGallerySlotsState(loadGalleryFromStorage());
-    setCommitteeMembersState(loadCommitteeFromStorage());
-    setSiteManualState(loadSiteManualFromStorage());
-  }, []);
-
-  useEffect(() => {
-    if (!isFirebaseConfigured()) return;
-    const unsub = subscribeRemoteSiteBundle(
-      (partial) => {
-        setFirebaseRemoteReady(true);
-        setFirebaseRemoteError(null);
-        if (partial.textOverrides !== undefined) {
-          const merged = { ...bakedText, ...partial.textOverrides };
+    let cancelled = false;
+    (async () => {
+      const remote = await readSiteConfig();
+      if (cancelled) return;
+      if (remote) {
+        if (remote.textOverrides) {
+          const merged = { ...bakedText, ...remote.textOverrides };
           setOverrides(merged);
           saveToStorage(merged);
         }
-        if (partial.gallerySlots !== undefined) {
-          setGallerySlotsState(partial.gallerySlots);
-          saveGalleryToStorage(partial.gallerySlots);
+        if (remote.gallerySlots) {
+          const g = normalizeGallerySlots(remote.gallerySlots);
+          setGallerySlotsState(g);
+          saveGalleryToStorage(g);
         }
-        if (partial.committeeMembers !== undefined) {
-          setCommitteeMembersState(partial.committeeMembers);
-          saveCommitteeToStorage(partial.committeeMembers);
+        if (remote.committeeMembers) {
+          const c = normalizeCommitteeMembers(remote.committeeMembers);
+          setCommitteeMembersState(c);
+          saveCommitteeToStorage(c);
         }
-        if (partial.siteManual !== undefined) {
-          setSiteManualState(partial.siteManual);
-          saveSiteManualToStorage(partial.siteManual);
+        if (remote.siteManual) {
+          const s = mergeSiteManual(remote.siteManual);
+          setSiteManualState(s);
+          saveSiteManualToStorage(s);
         }
-      },
-      (err) => {
-        setFirebaseRemoteReady(true);
-        setFirebaseRemoteError(err.message);
+        setFirebaseLoaded(true);
+      } else {
+        // No Firestore data — use localStorage
+        setOverrides(loadFromStorage());
+        setGallerySlotsState(loadGalleryFromStorage());
+        setCommitteeMembersState(loadCommitteeFromStorage());
+        setSiteManualState(loadSiteManualFromStorage());
+        setFirebaseLoaded(true);
       }
-    );
-    return () => unsub();
+    })();
+    return () => { cancelled = true; };
   }, []);
+
+  // Helper: sync current state to Firestore (called after any save when admin is logged in)
+  const { authed, user } = useAdminAuth();
+  const syncToFirestore = useCallback(async (
+    ov: Overrides,
+    gs: GallerySlotConfig[],
+    cm: CommitteeMemberConfig[],
+    sm: SiteManualConfig
+  ) => {
+    if (!authed || !user?.email) return;
+    await writeSiteConfig(
+      {
+        textOverrides: ov,
+        gallerySlots: gs,
+        committeeMembers: cm,
+        siteManual: sm as unknown as Record<string, unknown>,
+      },
+      user.email
+    );
+  }, [authed, user]);
 
   const saveOverrides = useCallback((updates: Overrides) => {
     setOverrides((prev) => {
       const next = { ...prev, ...updates };
       saveToStorage(next);
+      // Sync to Firestore with latest state
+      syncToFirestore(next, gallerySlots, committeeMembers, siteManual);
       return next;
     });
-  }, []);
+  }, [syncToFirestore, gallerySlots, committeeMembers, siteManual]);
 
   const setGallerySlots = useCallback((slots: GallerySlotConfig[]) => {
     const normalized = normalizeGallerySlots(slots);
     setGallerySlotsState(normalized);
     saveGalleryToStorage(normalized);
-  }, []);
+    syncToFirestore(overrides, normalized, committeeMembers, siteManual);
+  }, [syncToFirestore, overrides, committeeMembers, siteManual]);
 
   const setCommitteeMembers = useCallback((rows: CommitteeMemberConfig[]) => {
     const normalized = normalizeCommitteeMembers(rows);
     setCommitteeMembersState(normalized);
-    if (!saveCommitteeToStorage(normalized) && typeof window !== "undefined") {
-      window.alert(
-        "Could not save committee data in this browser (storage quota exceeded is common when photos are embedded as very large base64). " +
-          "Use a file under /public/images, a hosted URL, or Firebase upload when signed in. " +
-          "Until this saves, deploy export will not include your new members."
-      );
-    }
-  }, []);
+    saveCommitteeToStorage(normalized);
+    syncToFirestore(overrides, gallerySlots, normalized, siteManual);
+  }, [syncToFirestore, overrides, gallerySlots, siteManual]);
 
   const setSiteManual = useCallback((next: SiteManualConfig) => {
     const normalized = mergeSiteManual(next);
     setSiteManualState(normalized);
-    if (!saveSiteManualToStorage(normalized) && typeof window !== "undefined") {
-      window.alert(
-        "Could not save layout settings to this browser (storage full, private mode, or blocked). " +
-          "The header may update until you refresh."
-      );
-    }
-  }, []);
+    saveSiteManualToStorage(normalized);
+    syncToFirestore(overrides, gallerySlots, committeeMembers, normalized);
+  }, [syncToFirestore, overrides, gallerySlots, committeeMembers]);
 
   const resetOverrides = useCallback(() => {
     if (typeof window !== "undefined") {

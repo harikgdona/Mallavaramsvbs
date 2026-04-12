@@ -1,0 +1,14 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Site config: anyone can read, only authorized admins can write
+    match /config/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && request.auth.token.email in [
+          'harikgdona@gmail.com',
+          'kote_rao@yahoo.com'
+        ];
+    }
+  }
+}
