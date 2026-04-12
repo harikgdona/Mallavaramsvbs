@@ -22,11 +22,11 @@ export function Hero() {
   return (
     <section
       id="home"
-      className="relative flex flex-col bg-beige"
+      className="relative flex flex-col bg-maroon"
       aria-label="Hero section"
     >
       {/* Heading */}
-      <div className="px-4 py-2 text-center">
+      <div className="px-4 py-2 text-center bg-beige">
         <h1 className="font-heading text-lg leading-tight text-maroon sm:text-xl lg:text-2xl">
           {t("hero_heading")}
         </h1>
@@ -39,7 +39,7 @@ export function Hero() {
 
       {/* Poster image — inline, not background */}
       {heroBg ? (
-        <div className="relative w-full flex-1 min-h-0">
+        <div className="relative w-full flex-1 min-h-0 bg-beige">
           <img
             src={heroBg.src}
             alt="Sri Mallavaram Brahmana Satram"
