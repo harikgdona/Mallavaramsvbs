@@ -25,12 +25,11 @@ export function Hero() {
     >
       {heroBg ? (
         <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-beige">
-          {/* Full edge-to-edge width & height of section; object-cover removes side letterboxing */}
           <Image
             src={heroBg.src}
             alt=""
             fill
-            className="object-cover object-center opacity-100"
+            className="object-contain object-top opacity-100"
             priority
             quality={95}
             sizes="100vw"
