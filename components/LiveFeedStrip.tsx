@@ -36,7 +36,7 @@ function RainbowWords({ text }: { text: string }) {
           <span
             key={i}
             style={{ color }}
-            className="shrink-0 font-heading text-xs font-semibold whitespace-nowrap leading-tight md:text-sm"
+            className="shrink-0 font-heading text-sm font-semibold whitespace-nowrap leading-tight md:text-base"baseS"
           >
             {token}
           </span>
@@ -66,7 +66,7 @@ export function LiveFeedStrip() {
       role="region"
       aria-label={language === "te" ? "లైవ్ ఫీడ్" : "Live feed"}
     >
-      <div className="live-feed-marquee-track flex h-9 items-center">
+      <div className="live-feed-marquee-track flex h-12 items-center">>
         <div className="flex shrink-0 items-center px-6 md:px-8">
           <RainbowWords text={message} />
         </div>
