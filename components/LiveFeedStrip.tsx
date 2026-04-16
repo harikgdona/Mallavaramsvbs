@@ -36,7 +36,7 @@ function RainbowWords({ text }: { text: string }) {
           <span
             key={i}
             style={{ color }}
-            className="shrink-0 font-heading text-sm font-semibold whitespace-nowrap leading-tight md:text-base"baseS"
+            className="shrink-0 font-heading text-sm font-semibold whitespace-nowrap leading-tight md:text-base"
           >
             {token}
           </span>
