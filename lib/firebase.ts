@@ -3,13 +3,13 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCx1URqykD4zlQT3k2m8wNYmrGJ3kL3ex4",
-  authDomain: "mallavaramsvbs.firebaseapp.com",
-  projectId: "mallavaramsvbs",
-  storageBucket: "mallavaramsvbs.firebasestorage.app",
-  messagingSenderId: "265064758379",
-  appId: "1:265064758379:web:975fa492bcb00078f4852e",
-  measurementId: "G-VWJBVWYKXB",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyCx1URqykD4zlQT3k2m8wNYmrGJ3kL3ex4",
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "mallavaramsvbs.firebaseapp.com",
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "mallavaramsvbs",
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "mallavaramsvbs.firebasestorage.app",
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "265064758379",
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:265064758379:web:975fa492bcb00078f4852e",
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || "G-VWJBVWYKXB",
 };
 
 // Initialize Firebase only once (avoid duplicate app errors in dev hot reload)

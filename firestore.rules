@@ -8,7 +8,16 @@ service cloud.firestore {
         && request.auth.token.email in [
           'harikgdona@gmail.com',
           'koteswara_gali@gmail.com'
-        ];
+        ]
+        // Rate limit: max 1 write per second per user
+        && (!exists(/databases/$(database)/documents/config/$(document))
+            || resource.data.updatedAt == null
+            || request.time > timestamp.value(resource.data.updatedAt) + duration.value(1, 's'));
+    }
+
+    // Block all other collections
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
