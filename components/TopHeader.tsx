@@ -274,8 +274,8 @@ export function TopHeader() {
               style={{ fontSize: topHeaderTitleFontSizeCss(c) }}
             >
               {language === "te"
-                ? "శ్రీ మల్లవరం వెంకటేశ్వర అన్నదాన సమాజం మరియు బ్రాహ్మణ సత్రం."
-                : "Sri Mallavaram Brahmana Samajamu and Annadanam Satramu"}
+                ? "శ్రీ మల్లవరం వెంకటేశ్వర అన్నదాన సమాజం మరియు బ్రాహ్మణ సత్రం"
+                : "Sri Mallavaram Venkateshwara Brahmana Samajamu and Annadanam Satram"}
             </h1>
             <p
               className={`w-full max-w-full break-words whitespace-normal px-1 text-center text-maroon/95 leading-tight ${
