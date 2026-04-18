@@ -68,7 +68,7 @@ export default function RootLayout({
               <TypographyTheme />
               <SectionTabsProvider>
               {/* TopHeader and Header are sticky; content scrolls below */}
-              <div className="flex flex-col pt-[var(--header-height)]">
+              <div className="flex flex-col pt-[3.5rem] md:pt-[10rem]">
                 {/* Desktop-only ornate banner; mobile uses the compact bar inside Header. */}
                 <TopHeader />
                 <div className="flex flex-col md:flex-row">
