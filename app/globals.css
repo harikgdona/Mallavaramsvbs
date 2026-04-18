@@ -6,6 +6,8 @@
   color-scheme: light;
   /* Subtracted from viewport-based min-heights so the shell is slightly shorter than full dvh/svh. */
   --viewport-page-trim: 0px;
+  /* Header height for fixed positioning offset */
+  --header-height: 10rem;
   /*
    * Fallbacks before JS runs; LayoutViewportOffsets overwrites with real px from #site-mobile-nav-bar-top
    * and #site-desktop-top-header. You can still override in DevTools on <html> if needed.

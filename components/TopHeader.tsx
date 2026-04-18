@@ -81,7 +81,7 @@ export function TopHeader() {
   return (
     <header
       id="site-desktop-top-header"
-      className={`hidden w-full flex-shrink-0 overflow-hidden border-b border-maroon/20 z-30 sticky top-0 md:block ${TOP_HEADER_HEIGHT_CLASSES}`}
+      className={`hidden w-full flex-shrink-0 overflow-hidden border-b border-maroon/20 z-30 fixed top-0 md:block ${TOP_HEADER_HEIGHT_CLASSES}`}
       style={{ backgroundColor: SITE_TOP_HEADER_BACKGROUND }}
       suppressHydrationWarning
     >

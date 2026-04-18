@@ -67,14 +67,14 @@ export default function RootLayout({
             <ConfigProvider>
               <TypographyTheme />
               <SectionTabsProvider>
-              {/* min-h-viewport-page: TopHeader + main row ≈ one viewport minus --viewport-page-trim (avoids stacking past 100vh). */}
-              <div className="flex min-h-viewport-page flex-col">
+              {/* TopHeader and Header are sticky; content scrolls below */}
+              <div className="flex flex-col pt-[var(--header-height)]">
                 {/* Desktop-only ornate banner; mobile uses the compact bar inside Header. */}
                 <TopHeader />
-                <div className="flex min-h-0 flex-1 flex-col md:flex-row">
+                <div className="flex flex-col md:flex-row">
                   <Header />
                   <MainContentColumn>
-                    <main className="relative flex min-h-0 min-w-0 w-full max-w-full flex-1 flex-col overflow-x-hidden">
+                    <main className="relative flex min-w-0 w-full max-w-full flex-1 flex-col overflow-x-hidden">
                       <LiveFeedStrip />
                       {children}
                     </main>
