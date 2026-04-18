@@ -7,7 +7,7 @@ import { WhatsAppButton } from "@/components/WhatsAppButton";
 
 // TODO: replace with the actual trust phone number
 const PHONE_DISPLAY = "+91 98851 17126";
-const PHONE_TEL = "+91 98851 17126";
+const PHONE_TEL = "+919885117126";
 const EMAIL = "mallavarambrahmanasatram@gmail.com";
 // Mallavaram village, Maddipadu mandal, Prakasam district, AP (15.5167°N 79.9167°E approx)
 const MAP_EMBED_SRC =
