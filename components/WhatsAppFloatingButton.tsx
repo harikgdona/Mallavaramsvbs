@@ -2,7 +2,7 @@
 
 import { FaWhatsapp } from "react-icons/fa";
 
-const WHATSAPP_NUMBER = "YOUR_NUMBER";
+const WHATSAPP_NUMBER = "919885117126";
 const PREFILLED_MESSAGE =
   "I have made a donation to Mallavaram Brahmana Satram";
 
