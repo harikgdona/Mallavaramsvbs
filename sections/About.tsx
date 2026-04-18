@@ -43,6 +43,24 @@ export function About() {
       {/* Elastic layout: 60/40 with images, 100% without */}
       <div className={`flex gap-6 mt-4 ${hasImages ? "flex-col md:flex-row" : ""}`}>
 
+        {/* Images column — on mobile shows ABOVE text, on desktop shows on the RIGHT */}
+        {hasImages ? (
+          <div className="md:hidden space-y-3 mb-4">
+            {filledImages.map((src, i) => {
+              const img = resolveGalleryImageSrc(src, ph);
+              return (
+                <div key={i} className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-maroon/15 shadow-sm bg-sandal/30">
+                  {img.src.startsWith("data:") ? (
+                    <img src={img.src} alt={`About photo ${i + 1}`} className="absolute inset-0 h-full w-full object-cover" />
+                  ) : (
+                    <Image src={img.src} alt={`About photo ${i + 1}`} fill className="object-cover" sizes="100vw" unoptimized={img.unoptimized} />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ) : null}
+
         {/* Text column — 60% when images present, 100% otherwise */}
         <div className={hasImages ? "md:w-3/5" : "w-full"}>
           {/* About intro */}
@@ -70,9 +88,9 @@ export function About() {
           </div>
         </div>
 
-        {/* Images column — 40%, only shown when images exist */}
+        {/* Images column — desktop only (mobile version shown above) */}
         {hasImages ? (
-          <div className="md:w-2/5 space-y-3">
+          <div className="hidden md:block md:w-2/5 space-y-3">
             {filledImages.map((src, i) => {
               const img = resolveGalleryImageSrc(src, ph);
               return (
