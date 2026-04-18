@@ -44,7 +44,7 @@ export async function writeSiteConfig(
       ...data,
       updatedAt: new Date().toISOString(),
       updatedBy: userEmail,
-    });
+    }, { merge: true });
     return { ok: true };
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
