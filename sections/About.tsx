@@ -75,6 +75,21 @@ export function About() {
               : "The satram offers a simple, clean and devotional space where pilgrims, Veda pandits and local families can rest, receive prasadam and participate in traditional dharmic activities with dignity and respect."}
           </p>
 
+          {/* YouTube link */}
+          <p className="text-sm md:text-base text-text-dark/80 mb-4">
+            {language === "te"
+              ? "ఆలయ వీక్షణ మరియు కార్యక్రమాల వివరాల కోసం, దయచేసి క్రింది లింక్‌లోని వీడియోను చూడండి: "
+              : "For Temple view and programmes in detail, please watch the video in the following link: "}
+            <a
+              href="https://youtu.be/OalXu5h44a8?si=PSvPRTCC5yJc8NOD"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-maroon underline underline-offset-2 hover:text-maroon/70 break-all"
+            >
+              https://youtu.be/OalXu5h44a8?si=PSvPRTCC5yJc8NOD
+            </a>
+          </p>
+
           {/* History — in same container, flowing below intro */}
           <h3 className="font-heading text-base md:text-lg text-maroon mb-3">
             {language === "te"
