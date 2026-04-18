@@ -46,7 +46,7 @@ type ConfigContextType = {
   siteManual: SiteManualConfig;
   setSiteManual: (next: SiteManualConfig) => void;
   aboutImages: string[];
-  setAboutImages: (images: string[]) => void;
+  setAboutImages: (images: string[]) => Promise<void>;
 };
 
 const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
@@ -246,12 +246,11 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     syncToFirestore(overrides, gallerySlots, committeeMembers, normalized);
   }, [syncToFirestore, overrides, gallerySlots, committeeMembers]);
 
-  const setAboutImages = useCallback((images: string[]) => {
+  const setAboutImages = useCallback(async (images: string[]) => {
     const limited = images.slice(0, 5);
     setAboutImagesState(limited);
-    // Sync to Firestore directly
     if (authed && user?.email) {
-      writeSiteConfig({ aboutImages: limited }, user.email);
+      await writeSiteConfig({ aboutImages: limited }, user.email);
     }
   }, [authed, user]);
 

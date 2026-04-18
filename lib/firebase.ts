@@ -18,6 +18,12 @@ const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0
 // App Check — verifies requests come from your actual website, not bots
 if (typeof window !== "undefined") {
   try {
+    // Use debug token on localhost/dev, reCAPTCHA on production
+    const debugToken = process.env.NEXT_PUBLIC_APPCHECK_DEBUG_TOKEN;
+    if (debugToken) {
+      // @ts-expect-error — Firebase debug token global
+      self.FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken;
+    }
     initializeAppCheck(app, {
       provider: new ReCaptchaV3Provider("6LeRyr0sAAAAAPN6BMzjROQdlaXVvyKo38FRVzhS"),
       isTokenAutoRefreshEnabled: true,

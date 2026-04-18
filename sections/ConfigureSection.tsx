@@ -319,7 +319,7 @@ export function ConfigureSection() {
     setSaveFlash(id);
     setTimeout(() => {
       setSaveFlash((cur) => (cur === id ? null : cur));
-    }, 2000);
+    }, 3000);
   }, []);
 
   const saveSiteLayout = useCallback(async () => {
@@ -1187,8 +1187,9 @@ export function ConfigureSection() {
               ))}
               <button
                 type="button"
-                onClick={() => {
-                  setAboutImages(aboutImagesDraft.filter((s) => s.trim() !== ""));
+                onClick={async () => {
+                  const filtered = aboutImagesDraft.filter((s) => s.trim() !== "");
+                  await setAboutImages(filtered);
                   runFlash("about-images");
                 }}
                 className="btn-primary mt-2"
