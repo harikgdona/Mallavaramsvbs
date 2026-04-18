@@ -1126,19 +1126,63 @@ export function ConfigureSection() {
              <span className="text-xs text-maroon/50 group-open:rotate-90 transition-transform">▶</span></summary>
             <div className="space-y-3 mt-4">
               {[0, 1, 2, 3, 4].map((i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <span className="text-xs text-text-dark/60 w-6 shrink-0">{i + 1}.</span>
-                  <input
-                    type="text"
-                    value={aboutImagesDraft[i] || ""}
-                    onChange={(e) => {
-                      const next = [...aboutImagesDraft];
-                      next[i] = e.target.value;
-                      setAboutImagesDraft(next);
-                    }}
-                    placeholder="/images/uploads/your-photo.jpg"
-                    className="flex-1 rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white font-mono"
-                  />
+                <div key={i} className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-text-dark/60 w-6 shrink-0">{i + 1}.</span>
+                    <input
+                      type="text"
+                      value={aboutImagesDraft[i] || ""}
+                      onChange={(e) => {
+                        const next = [...aboutImagesDraft];
+                        next[i] = e.target.value;
+                        setAboutImagesDraft(next);
+                      }}
+                      placeholder="/images/uploads/your-photo.jpg"
+                      className="flex-1 rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white font-mono"
+                    />
+                    <label className="text-xs text-maroon/90 cursor-pointer btn-outline py-1.5 px-3 shrink-0">
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/gif"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          e.target.value = "";
+                          if (!file) return;
+                          if (file.size > 1.5 * 1024 * 1024) {
+                            window.alert("File too large. Use an image under 1.5 MB.");
+                            return;
+                          }
+                          const reader = new FileReader();
+                          reader.onload = () => {
+                            if (typeof reader.result === "string") {
+                              const next = [...aboutImagesDraft];
+                              next[i] = reader.result;
+                              setAboutImagesDraft(next);
+                            }
+                          };
+                          reader.readAsDataURL(file);
+                        }}
+                      />
+                      Upload
+                    </label>
+                    {aboutImagesDraft[i] ? (
+                      <button
+                        type="button"
+                        className="text-xs text-maroon/60 underline shrink-0"
+                        onClick={() => {
+                          const next = [...aboutImagesDraft];
+                          next[i] = "";
+                          setAboutImagesDraft(next);
+                        }}
+                      >
+                        Clear
+                      </button>
+                    ) : null}
+                  </div>
+                  {aboutImagesDraft[i]?.startsWith("data:") ? (
+                    <img src={aboutImagesDraft[i]} alt="" className="h-16 rounded-lg object-cover ml-8" />
+                  ) : null}
                 </div>
               ))}
               <button
