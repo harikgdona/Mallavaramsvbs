@@ -74,7 +74,7 @@ export default function RootLayout({
                 <div className="flex min-h-0 flex-1 flex-col md:flex-row">
                   <Header />
                   <MainContentColumn>
-                    <main className="relative flex min-h-0 min-w-0 w-full max-w-full flex-1 flex-col overflow-x-hidden overflow-y-auto">
+                    <main className="relative flex min-h-0 min-w-0 w-full max-w-full flex-1 flex-col overflow-x-hidden">
                       <LiveFeedStrip />
                       {children}
                     </main>
