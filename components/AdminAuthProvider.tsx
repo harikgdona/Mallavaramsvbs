@@ -13,7 +13,7 @@ import { auth } from "@/lib/firebase";
 // Only these emails can access the Configure panel
 const ADMIN_EMAILS = [
   "harikgdona@gmail.com",
-  "koteswara_gali@gmail.com",
+  "koteswaragali@gmail.com",
 ];
 
 type AdminAuthContextType = {

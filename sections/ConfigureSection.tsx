@@ -193,13 +193,16 @@ export function ConfigureSection() {
     setGallerySlots,
     committeeMembers,
     setCommitteeMembers,
-    setSiteManual
+    setSiteManual,
+    aboutImages,
+    setAboutImages
   } = useConfig();
   const { siteManual } = useSiteManual();
   const [loginErr, setLoginErr] = useState<string | null>(null);
   const [loginBusy, setLoginBusy] = useState(false);
   const [draft, setDraft] = useState<Overrides>(() => ({ ...overrides }));
   const [galleryDraft, setGalleryDraft] = useState<GallerySlotConfig[]>(() => defaultGallerySlots());
+  const [aboutImagesDraft, setAboutImagesDraft] = useState<string[]>(() => aboutImages || []);
   const [committeeDraft, setCommitteeDraft] = useState<CommitteeMemberConfig[]>(() =>
     defaultCommitteeMembers()
   );
@@ -1112,6 +1115,41 @@ export function ConfigureSection() {
             <div className="flex flex-wrap items-center gap-3 mt-6 pt-4 border-t border-maroon/10">
               <button type="button" onClick={() => void saveSiteLayout()} className="btn-primary">
                 {saveFlash === "site-layout" ? "Saved" : "Save layout & header"}
+              </button>
+            </div>
+          </details>
+
+          {/* About Images (up to 5) */}
+          <details className="border border-maroon/20 rounded-2xl p-4 md:p-5 group">
+            <summary className="font-heading text-lg text-maroon px-2 font-bold cursor-pointer list-none flex items-center justify-between">
+              About Page Images (up to 5)
+             <span className="text-xs text-maroon/50 group-open:rotate-90 transition-transform">▶</span></summary>
+            <div className="space-y-3 mt-4">
+              {[0, 1, 2, 3, 4].map((i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <span className="text-xs text-text-dark/60 w-6 shrink-0">{i + 1}.</span>
+                  <input
+                    type="text"
+                    value={aboutImagesDraft[i] || ""}
+                    onChange={(e) => {
+                      const next = [...aboutImagesDraft];
+                      next[i] = e.target.value;
+                      setAboutImagesDraft(next);
+                    }}
+                    placeholder="/images/uploads/your-photo.jpg"
+                    className="flex-1 rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white font-mono"
+                  />
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => {
+                  setAboutImages(aboutImagesDraft.filter((s) => s.trim() !== ""));
+                  runFlash("about-images");
+                }}
+                className="btn-primary mt-2"
+              >
+                {saveFlash === "about-images" ? "Saved" : "Save About Images"}
               </button>
             </div>
           </details>

@@ -45,6 +45,8 @@ type ConfigContextType = {
   setCommitteeMembers: (rows: CommitteeMemberConfig[]) => void;
   siteManual: SiteManualConfig;
   setSiteManual: (next: SiteManualConfig) => void;
+  aboutImages: string[];
+  setAboutImages: (images: string[]) => void;
 };
 
 const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
@@ -151,6 +153,7 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     ...SITE_MANUAL_DEFAULTS,
     toranamImagePaths: [...SITE_MANUAL_DEFAULTS.toranamImagePaths]
   }));
+  const [aboutImages, setAboutImagesState] = useState<string[]>([]);
   const [firebaseLoaded, setFirebaseLoaded] = useState(false);
 
   // Load from Firestore on mount, fall back to localStorage/baked defaults
@@ -175,6 +178,9 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
         if (remote.siteManual && Object.keys(remote.siteManual).length > 0) {
           const s = mergeSiteManual(remote.siteManual);
           setSiteManualState(s);
+        }
+        if (remote.aboutImages && Array.isArray(remote.aboutImages) && remote.aboutImages.length > 0) {
+          setAboutImagesState(remote.aboutImages);
         }
         setFirebaseLoaded(true);
       } else {
@@ -240,6 +246,15 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     syncToFirestore(overrides, gallerySlots, committeeMembers, normalized);
   }, [syncToFirestore, overrides, gallerySlots, committeeMembers]);
 
+  const setAboutImages = useCallback((images: string[]) => {
+    const limited = images.slice(0, 5);
+    setAboutImagesState(limited);
+    // Sync to Firestore directly
+    if (authed && user?.email) {
+      writeSiteConfig({ aboutImages: limited }, user.email);
+    }
+  }, [authed, user]);
+
   const resetOverrides = useCallback(() => {
     if (typeof window !== "undefined") {
       try {
@@ -268,7 +283,9 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
         committeeMembers,
         setCommitteeMembers,
         siteManual,
-        setSiteManual
+        setSiteManual,
+        aboutImages,
+        setAboutImages
       }}
     >
       {children}

@@ -17,6 +17,7 @@ export type FirestoreSiteConfig = {
   gallerySlots?: unknown[];
   committeeMembers?: unknown[];
   siteManual?: Record<string, unknown>;
+  aboutImages?: string[];
   updatedAt?: string;
   updatedBy?: string;
 };
