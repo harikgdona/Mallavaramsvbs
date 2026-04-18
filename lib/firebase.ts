@@ -1,7 +1,6 @@
 import { initializeApp, getApps } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyCx1URqykD4zlQT3k2m8wNYmrGJ3kL3ex4",
@@ -15,23 +14,8 @@ const firebaseConfig = {
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
-// App Check — verifies requests come from your actual website, not bots
-if (typeof window !== "undefined") {
-  try {
-    // Use debug token on localhost/dev, reCAPTCHA on production
-    const debugToken = process.env.NEXT_PUBLIC_APPCHECK_DEBUG_TOKEN;
-    if (debugToken) {
-      // @ts-expect-error — Firebase debug token global
-      self.FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken;
-    }
-    initializeAppCheck(app, {
-      provider: new ReCaptchaV3Provider("6LeRyr0sAAAAAPN6BMzjROQdlaXVvyKo38FRVzhS"),
-      isTokenAutoRefreshEnabled: true,
-    });
-  } catch {
-    // App Check may already be initialized (hot reload)
-  }
-}
+// App Check disabled — enforcement is off in Firebase Console
+// If you need to re-enable App Check, complete reCAPTCHA domain verification first
 
 export const db = getFirestore(app);
 export const auth = getAuth(app);
