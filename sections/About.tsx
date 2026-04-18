@@ -46,9 +46,9 @@ function AboutImageWithZoom({
         onClick={() => setIsZoomed(true)}
       >
         {src.startsWith("data:") ? (
-          <img src={src} alt={alt} className="absolute inset-0 h-full w-full object-cover" />
+          <img src={src} alt={alt} className="absolute inset-0 h-full w-full object-cover object-center" />
         ) : (
-          <Image src={src} alt={alt} fill className="object-cover" sizes="(max-width: 768px) 100vw, 40vw" unoptimized={unoptimized} />
+          <Image src={src} alt={alt} fill className="object-cover object-center" sizes="(max-width: 768px) 100vw, 40vw" unoptimized={unoptimized} />
         )}
       </div>
 

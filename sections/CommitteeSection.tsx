@@ -50,15 +50,13 @@ function MemberCard({ nameEn, nameTe, designationEn, designationTe, src, languag
   const designation = language === "te" ? designationTe : designationEn;
   const ph = withBasePath("/images/placeholder.svg");
   const hasSrc = src && src.trim();
-  const img = hasSrc ? resolveGalleryImageSrc(src, ph) : null;
+  const img = hasSrc ? resolveGalleryImageSrc(src, ph) : { src: ph, unoptimized: false };
 
   return (
     <li className="rounded-2xl border border-maroon/15 bg-white/80 p-4 shadow-sm text-center">
-      {img ? (
-        <div className="relative mx-auto mb-3 w-20 h-20 overflow-hidden rounded-full border-2 border-gold/50 bg-sandal/50">
-          <MemberImage src={img.src} alt={name} unoptimized={img.unoptimized} />
-        </div>
-      ) : null}
+      <div className="relative mx-auto mb-3 w-20 h-20 overflow-hidden rounded-full border-2 border-gold/50 bg-sandal/50">
+        <MemberImage src={img.src} alt={name} unoptimized={img.unoptimized} />
+      </div>
       <p className="font-heading text-base font-bold text-maroon">{name}</p>
       <p className="mt-1 text-sm text-text-dark/80">{designation}</p>
     </li>

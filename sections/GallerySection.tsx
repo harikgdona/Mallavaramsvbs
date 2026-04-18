@@ -16,7 +16,7 @@ function GalleryImage({ src, alt, unoptimized }: { src: string; alt: string; uno
       <img
         src={src}
         alt={alt}
-        className="absolute inset-0 h-full w-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
+        className="absolute inset-0 h-full w-full object-cover object-center cursor-pointer hover:opacity-90 transition-opacity"
       />
     );
   }
@@ -25,7 +25,7 @@ function GalleryImage({ src, alt, unoptimized }: { src: string; alt: string; uno
       src={src}
       alt={alt}
       fill
-      className="object-cover cursor-pointer hover:opacity-90 transition-opacity"
+      className="object-cover object-center cursor-pointer hover:opacity-90 transition-opacity"
       sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
       unoptimized={unoptimized}
     />
