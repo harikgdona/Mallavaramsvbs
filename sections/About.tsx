@@ -33,31 +33,47 @@ export function About() {
   const { aboutImages } = useConfig();
   const history = language === "te" ? historyTe : historyEn;
   const ph = withBasePath("/images/placeholder.svg");
-  const filledImages = aboutImages.filter((s) => s.trim() !== "");
+  const filledImages = (aboutImages || []).filter((s) => s.trim() !== "");
+  const hasImages = filledImages.length > 0;
 
   return (
     <SectionContainer id="about">
       <h2 className="section-heading">{t("about_title")}</h2>
 
-      <div className="grid md:grid-cols-[3fr_2fr] gap-6 mt-4">
-        {/* 60% — Text content */}
-        <div>
+      {/* Elastic layout: 60/40 with images, 100% without */}
+      <div className={`flex gap-6 mt-4 ${hasImages ? "flex-col md:flex-row" : ""}`}>
+
+        {/* Text column — 60% when images present, 100% otherwise */}
+        <div className={hasImages ? "md:w-3/5" : "w-full"}>
+          {/* About intro */}
           <p className="text-sm md:text-base text-text-dark/80 mb-4">
             {language === "te"
               ? "ఆంధ్రప్రదేశ్, ప్రకాశం జిల్లా, మల్లవరం గ్రామంలో ఉన్న శ్రీ మల్లవరం వెంకటేశ్వర అన్నదాన సమాజం మరియు బ్రాహ్మణ సత్రం అనేది పేద బ్రాహ్మణ కుటుంబాలను అన్నదానం, ఆధ్యాత్మిక సేవలు మరియు సమాజ సహాయం ద్వారా మద్దతు ఇవ్వడానికి అంకితమైన చారిటబుల్ ట్రస్ట్."
               : "Located in Mallavaram village, Prakasam district, Andhra Pradesh, Sri Mallavaram Venkateswara Annadaana Samajamu mariyu Brahmana Satramu is a charitable trust dedicated to supporting poor Brahmin families through daily Annadanam, spiritual services, and community support."}
           </p>
-          <p className="text-sm md:text-base text-text-dark/80 mb-4">
+          <p className="text-sm md:text-base text-text-dark/80 mb-6">
             {language === "te"
               ? "బ్రాహ్మణ సత్రం ఒక మంచి సాంక్షిప్తమైన మరియు భక్తిపూర్ణమైన స్థలాన్ని అందిస్తుంది, ఇక్కడ యాత్రికులు, వేద పండితులు మరియు స్థానిక కుటుంబాలు విశ్రాంతి పొందవచ్చు, ప్రసాదం పొందవచ్చు మరియు సంప్రదాయ ధార్మిక కార్యకలాపాలలో గౌరవం మరియు మర్యాదతో పాల్గొనవచ్చు."
               : "The satram offers a simple, clean and devotional space where pilgrims, Veda pandits and local families can rest, receive prasadam and participate in traditional dharmic activities with dignity and respect."}
           </p>
+
+          {/* History — in same container, flowing below intro */}
+          <h3 className="font-heading text-base md:text-lg text-maroon mb-3">
+            {language === "te"
+              ? "శ్రీ మల్లవరం బ్రాహ్మణ సత్రం చరిత్ర"
+              : "History of Sri Mallavaram Brahmana Satram"}
+          </h3>
+          <div className="space-y-3 text-sm md:text-base text-text-dark/85 leading-relaxed">
+            {history.map((para, i) => (
+              <p key={i}>{para}</p>
+            ))}
+          </div>
         </div>
 
-        {/* 40% — Images */}
-        <div className="space-y-3">
-          {filledImages.length > 0 ? (
-            filledImages.map((src, i) => {
+        {/* Images column — 40%, only shown when images exist */}
+        {hasImages ? (
+          <div className="md:w-2/5 space-y-3">
+            {filledImages.map((src, i) => {
               const img = resolveGalleryImageSrc(src, ph);
               return (
                 <div key={i} className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-maroon/15 shadow-sm bg-sandal/30">
@@ -68,27 +84,9 @@ export function About() {
                   )}
                 </div>
               );
-            })
-          ) : (
-            <p className="text-sm text-text-dark/50 italic text-center py-8">
-              {language === "te" ? "చిత్రాలు Configure లో జోడించవచ్చు" : "Images can be added in Configure"}
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* History section */}
-      <div className="mt-8 bg-white rounded-3xl border border-maroon/10 shadow-sm p-5 md:p-8">
-        <h3 className="font-heading text-lg md:text-xl text-maroon mb-5">
-          {language === "te"
-            ? "శ్రీ మల్లవరం బ్రాహ్మణ సత్రం చరిత్ర"
-            : "History of Sri Mallavaram Brahmana Satram"}
-        </h3>
-        <div className="space-y-4 text-sm md:text-base text-text-dark/85 leading-relaxed">
-          {history.map((para, i) => (
-            <p key={i}>{para}</p>
-          ))}
-        </div>
+            })}
+          </div>
+        ) : null}
       </div>
     </SectionContainer>
   );
