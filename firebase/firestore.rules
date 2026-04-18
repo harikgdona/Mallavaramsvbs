@@ -1,27 +1,19 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    /** One-time: create `admins/{uid}` in Firebase Console with { "role": "admin" } for each editor UID. */
-    function isContentAdmin() {
-      return isSignedIn()
-        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
-        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'admin';
-    }
-
-    match /config/{docId} {
+    // Site config: anyone can read, only authorized admins can write
+    match /config/{document=**} {
       allow read: if true;
-      allow write: if docId == 'public' && isContentAdmin();
+      allow write: if request.auth != null
+        && request.auth.token.email in [
+          'harikgdona@gmail.com',
+          'koteswaragali@gmail.com'
+        ];
     }
 
-    match /admins/{uid} {
-      allow read: if false;
-      allow write: if false;
+    // Block all other collections
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
