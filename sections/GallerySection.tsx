@@ -66,12 +66,21 @@ export function GallerySection() {
               language === "te" && slot.altTe.trim()
                 ? slot.altTe.trim()
                 : slot.altEn.trim() || `Gallery photo ${i + 1}`;
+            const caption =
+              language === "te" && slot.descriptionTe?.trim()
+                ? slot.descriptionTe.trim()
+                : slot.descriptionEn?.trim() || "";
             return (
               <div
                 key={`${slot.src}-${i}`}
-                className="relative aspect-square sm:aspect-[5/4] md:aspect-square max-h-52 sm:max-h-none rounded-2xl overflow-hidden border border-maroon/15 shadow-sm"
+                className="group relative aspect-square sm:aspect-[5/4] md:aspect-square max-h-52 sm:max-h-none rounded-2xl overflow-hidden border border-maroon/15 shadow-sm"
               >
                 <GalleryImage src={src} alt={alt} unoptimized={unoptimized} />
+                {caption ? (
+                  <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-200 bg-maroon/80 px-2 py-1.5">
+                    <p className="text-white text-[0.65rem] leading-snug text-center line-clamp-3">{caption}</p>
+                  </div>
+                ) : null}
               </div>
             );
           })}

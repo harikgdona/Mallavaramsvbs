@@ -279,7 +279,7 @@ export function ConfigureSection() {
     setGalleryDraft((prev) =>
       prev.length >= MAX_GALLERY_PHOTOS
         ? prev
-        : [...prev, { src: "", altEn: "", altTe: "" }]
+        : [...prev, { src: "", altEn: "", altTe: "", descriptionEn: "", descriptionTe: "" }]
     );
   }, []);
 
@@ -1539,6 +1539,28 @@ export function ConfigureSection() {
                                     value={slot.altTe}
                                     onChange={(e) => updateGallerySlot(i, { altTe: e.target.value })}
                                     placeholder="వివరణ"
+                                    className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white"
+                                  />
+                                </div>
+                              </div>
+                              <div className="grid sm:grid-cols-2 gap-2 pt-1">
+                                <div>
+                                  <span className="text-xs text-maroon/80 block mb-1">Caption (English)</span>
+                                  <input
+                                    type="text"
+                                    value={slot.descriptionEn ?? ""}
+                                    onChange={(e) => updateGallerySlot(i, { descriptionEn: e.target.value })}
+                                    placeholder="Shown on hover over the photo"
+                                    className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white"
+                                  />
+                                </div>
+                                <div>
+                                  <span className="text-xs text-maroon/80 block mb-1">Caption (Telugu)</span>
+                                  <input
+                                    type="text"
+                                    value={slot.descriptionTe ?? ""}
+                                    onChange={(e) => updateGallerySlot(i, { descriptionTe: e.target.value })}
+                                    placeholder="హోవర్ చేసినప్పుడు చూపబడుతుంది"
                                     className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white"
                                   />
                                 </div>

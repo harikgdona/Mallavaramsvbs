@@ -14,6 +14,9 @@ export type GallerySlotConfig = {
   src: string;
   altEn: string;
   altTe: string;
+  /** Optional caption shown below the photo in the gallery. */
+  descriptionEn: string;
+  descriptionTe: string;
 };
 
 /** Slots that use header toranam asset paths are dropped (toranams stay in the header only). */
@@ -40,7 +43,9 @@ export function normalizeGallerySlots(raw: unknown): GallerySlotConfig[] {
       const slot: GallerySlotConfig = {
         src: typeof o.src === "string" ? o.src : "",
         altEn: typeof o.altEn === "string" ? o.altEn : "",
-        altTe: typeof o.altTe === "string" ? o.altTe : ""
+        altTe: typeof o.altTe === "string" ? o.altTe : "",
+        descriptionEn: typeof o.descriptionEn === "string" ? o.descriptionEn : "",
+        descriptionTe: typeof o.descriptionTe === "string" ? o.descriptionTe : "",
       };
       if (!isHeaderToranamSrc(slot.src)) {
         out.push(slot);
