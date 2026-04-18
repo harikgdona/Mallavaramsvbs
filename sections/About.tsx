@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { SectionContainer } from "@/components/SectionContainer";
 import { useTranslate, useConfig } from "@/components/ConfigProvider";
@@ -27,6 +28,77 @@ const historyTe = [
   `*** నమో వెంకటేశాయ ***`,
 ];
 
+function AboutImageWithZoom({
+  src,
+  alt,
+  unoptimized
+}: {
+  src: string;
+  alt: string;
+  unoptimized: boolean;
+}) {
+  const [isZoomed, setIsZoomed] = useState(false);
+
+  return (
+    <>
+      <div
+        className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-maroon/15 shadow-sm bg-sandal/30 cursor-pointer hover:shadow-md transition-shadow"
+        onClick={() => setIsZoomed(true)}
+      >
+        {src.startsWith("data:") ? (
+          <img src={src} alt={alt} className="absolute inset-0 h-full w-full object-cover" />
+        ) : (
+          <Image src={src} alt={alt} fill className="object-cover" sizes="(max-width: 768px) 100vw, 40vw" unoptimized={unoptimized} />
+        )}
+      </div>
+
+      {isZoomed && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+          onClick={() => setIsZoomed(false)}
+        >
+          <button
+            onClick={() => setIsZoomed(false)}
+            className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors"
+            aria-label="Close zoom"
+          >
+            <svg
+              className="w-8 h-8"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+          <div
+            className="relative w-full h-full max-w-4xl max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {src.startsWith("data:") ? (
+              <img src={src} alt={alt} className="w-full h-full object-contain" />
+            ) : (
+              <Image
+                src={src}
+                alt={alt}
+                fill
+                className="object-contain"
+                unoptimized={unoptimized}
+                sizes="90vw"
+              />
+            )}
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 export function About() {
   const t = useTranslate();
   const { language } = useLanguage();
@@ -49,13 +121,12 @@ export function About() {
             {filledImages.map((src, i) => {
               const img = resolveGalleryImageSrc(src, ph);
               return (
-                <div key={i} className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-maroon/15 shadow-sm bg-sandal/30">
-                  {img.src.startsWith("data:") ? (
-                    <img src={img.src} alt={`About photo ${i + 1}`} className="absolute inset-0 h-full w-full object-cover" />
-                  ) : (
-                    <Image src={img.src} alt={`About photo ${i + 1}`} fill className="object-cover" sizes="100vw" unoptimized={img.unoptimized} />
-                  )}
-                </div>
+                <AboutImageWithZoom
+                  key={i}
+                  src={img.src}
+                  alt={`About photo ${i + 1}`}
+                  unoptimized={img.unoptimized}
+                />
               );
             })}
           </div>
@@ -74,23 +145,6 @@ export function About() {
               ? "బ్రాహ్మణ సత్రం ఒక మంచి సాంక్షిప్తమైన మరియు భక్తిపూర్ణమైన స్థలాన్ని అందిస్తుంది, ఇక్కడ యాత్రికులు, వేద పండితులు మరియు స్థానిక కుటుంబాలు విశ్రాంతి పొందవచ్చు, ప్రసాదం పొందవచ్చు మరియు సంప్రదాయ ధార్మిక కార్యకలాపాలలో గౌరవం మరియు మర్యాదతో పాల్గొనవచ్చు."
               : "The satram offers a simple, clean and devotional space where pilgrims, Veda pandits and local families can rest, receive prasadam and participate in traditional dharmic activities with dignity and respect."}
           </p>
-
-          {/* YouTube link box */}
-          <div className="mb-4 rounded-xl border border-maroon/25 bg-sandal/40 px-4 py-3 shadow-sm">
-            <p className="text-sm md:text-base font-bold italic text-maroon/90">
-              {language === "te"
-                ? "ఆలయ వీక్షణ మరియు కార్యక్రమాల వివరాల కోసం, దయచేసి క్రింది లింక్‌లోని వీడియోను చూడండి:"
-                : "For Temple view and programmes in detail, please watch the video in the following link:"}
-            </p>
-            <a
-              href="https://youtu.be/OalXu5h44a8?si=PSvPRTCC5yJc8NOD"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-1 inline-block text-sm md:text-base font-bold italic text-maroon underline underline-offset-2 hover:text-maroon/70 break-all"
-            >
-              https://youtu.be/OalXu5h44a8?si=PSvPRTCC5yJc8NOD
-            </a>
-          </div>
 
           {/* History — in same container, flowing below intro */}
           <h3 className="font-heading text-base md:text-lg text-maroon mb-3">
@@ -111,13 +165,12 @@ export function About() {
             {filledImages.map((src, i) => {
               const img = resolveGalleryImageSrc(src, ph);
               return (
-                <div key={i} className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-maroon/15 shadow-sm bg-sandal/30">
-                  {img.src.startsWith("data:") ? (
-                    <img src={img.src} alt={`About photo ${i + 1}`} className="absolute inset-0 h-full w-full object-cover" />
-                  ) : (
-                    <Image src={img.src} alt={`About photo ${i + 1}`} fill className="object-cover" sizes="(max-width: 768px) 100vw, 40vw" unoptimized={img.unoptimized} />
-                  )}
-                </div>
+                <AboutImageWithZoom
+                  key={i}
+                  src={img.src}
+                  alt={`About photo ${i + 1}`}
+                  unoptimized={img.unoptimized}
+                />
               );
             })}
           </div>

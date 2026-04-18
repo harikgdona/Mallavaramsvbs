@@ -11,7 +11,8 @@ import {
   MAX_GALLERY_PHOTOS,
   normalizeGallerySlots,
   resolveGalleryImageSrc,
-  type GallerySlotConfig
+  type GallerySlotConfig,
+  type TempleHistoryImageConfig
 } from "@/lib/galleryConfig";
 import {
   defaultCommitteeMembers,
@@ -195,7 +196,9 @@ export function ConfigureSection() {
     setCommitteeMembers,
     setSiteManual,
     aboutImages,
-    setAboutImages
+    setAboutImages,
+    templeHistoryImages,
+    setTempleHistoryImages
   } = useConfig();
   const { siteManual } = useSiteManual();
   const [loginErr, setLoginErr] = useState<string | null>(null);
@@ -213,6 +216,7 @@ export function ConfigureSection() {
   const [siteLayoutDirty, setSiteLayoutDirty] = useState(false);
   const [saveFlash, setSaveFlash] = useState<string | null>(null);
   const [showAdvancedSiteLayout, setShowAdvancedSiteLayout] = useState(false);
+  const [templeHistoryDraft, setTempleHistoryDraft] = useState<TempleHistoryImageConfig[]>(() => templeHistoryImages);
 
   const resolveUploadedFile = useCallback(
     async (file: File) => {
@@ -259,6 +263,10 @@ export function ConfigureSection() {
     setSiteManualDraft(cloneSiteManual(siteManual));
   }, [siteManual, siteLayoutDirty]);
 
+  useEffect(() => {
+    setTempleHistoryDraft(templeHistoryImages);
+  }, [templeHistoryImages]);
+
   const updateDraft = useCallback((key: string, lang: "en" | "te", value: string) => {
     setDraft((prev) => ({
       ...prev,
@@ -285,6 +293,23 @@ export function ConfigureSection() {
 
   const removeGalleryPhoto = useCallback((index: number) => {
     setGalleryDraft((prev) => prev.filter((_, j) => j !== index));
+  }, []);
+
+  const updateTempleHistoryImage = useCallback((index: number, patch: Partial<TempleHistoryImageConfig>) => {
+    setTempleHistoryDraft((prev) =>
+      prev.map((row, j) => (j === index ? { ...row, ...patch } : row))
+    );
+  }, []);
+
+  const addTempleHistoryImage = useCallback(() => {
+    setTempleHistoryDraft((prev) => [
+      ...prev,
+      { src: "", descriptionEn: "", descriptionTe: "" }
+    ]);
+  }, []);
+
+  const removeTempleHistoryImage = useCallback((index: number) => {
+    setTempleHistoryDraft((prev) => prev.filter((_, j) => j !== index));
   }, []);
 
   const updateCommitteeMember = useCallback((index: number, patch: Partial<CommitteeMemberConfig>) => {
@@ -321,6 +346,11 @@ export function ConfigureSection() {
       setSaveFlash((cur) => (cur === id ? null : cur));
     }, 3000);
   }, []);
+
+  const saveTempleHistoryImages = useCallback(async () => {
+    setTempleHistoryImages(templeHistoryDraft);
+    runFlash("temple-history-images");
+  }, [templeHistoryDraft, setTempleHistoryImages, runFlash]);
 
   const saveSiteLayout = useCallback(async () => {
     setSiteManual(siteManualDraft);
@@ -1591,6 +1621,118 @@ export function ConfigureSection() {
             </details>
           ))}
         </div>
+
+        <details className="border border-maroon/20 rounded-2xl p-4 md:p-5 group">
+          <summary className="font-heading text-lg text-maroon px-2 font-bold cursor-pointer list-none flex items-center justify-between">
+            Temple History Images
+            <span className="text-xs text-maroon/50 group-open:rotate-90 transition-transform"></span>
+          </summary>
+          <p className="text-sm text-text-dark/75 mt-2 mb-4">
+            Configure the images shown in the Temple History section. Each image can have descriptions in English and Telugu that appear on hover.
+          </p>
+          <div className="space-y-4">
+            {templeHistoryDraft.map((img, i) => (
+              <div key={i} className="rounded-xl border border-maroon/15 bg-sandal/20 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-maroon">Image {i + 1}</p>
+                  <button
+                    type="button"
+                    onClick={() => removeTempleHistoryImage(i)}
+                    className="text-xs text-red-800 underline font-medium"
+                  >
+                    Remove
+                  </button>
+                </div>
+                <div className="grid md:grid-cols-[100px_1fr] gap-4 items-start">
+                  <div className="relative h-24 w-24 rounded-lg overflow-hidden border border-maroon/20 bg-white shrink-0 mx-auto md:mx-0">
+                    <GalleryThumb src={img.src} />
+                  </div>
+                  <div className="space-y-2 min-w-0">
+                    <label className="text-xs text-text-dark/70 block">Image URL or path</label>
+                    <input
+                      type="text"
+                      value={img.src}
+                      onChange={(e) => updateTempleHistoryImage(i, { src: e.target.value })}
+                      placeholder="https://... or /images/temple-history/photo.jpg"
+                      className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-maroon bg-white"
+                    />
+                    <div className="flex flex-wrap items-center gap-2">
+                      <label className="text-xs text-maroon/90 cursor-pointer btn-outline py-1.5 px-3">
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            e.target.value = "";
+                            if (!file) return;
+                            if (file.size > MAX_IMAGE_FILE_MB * 1024 * 1024) {
+                              window.alert(
+                                `File is too large. Please use an image under ${MAX_IMAGE_FILE_MB} MB or host it online and paste the URL.`
+                              );
+                              return;
+                            }
+                            void resolveUploadedFile(file)
+                              .then((url) => updateTempleHistoryImage(i, { src: url }))
+                              .catch((err: unknown) => {
+                                window.alert(err instanceof Error ? err.message : String(err));
+                              });
+                          }}
+                        />
+                        Upload file
+                      </label>
+                      <button
+                        type="button"
+                        className="text-xs text-red-800 underline font-medium"
+                        onClick={() => updateTempleHistoryImage(i, { src: "" })}
+                      >
+                        Delete picture
+                      </button>
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-2 pt-1">
+                      <div>
+                        <span className="text-xs text-maroon/80 block mb-1">Description (English)</span>
+                        <input
+                          type="text"
+                          value={img.descriptionEn ?? ""}
+                          onChange={(e) => updateTempleHistoryImage(i, { descriptionEn: e.target.value })}
+                          placeholder="Shown on hover"
+                          className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white"
+                        />
+                      </div>
+                      <div>
+                        <span className="text-xs text-maroon/80 block mb-1">Description (Telugu)</span>
+                        <input
+                          type="text"
+                          value={img.descriptionTe ?? ""}
+                          onChange={(e) => updateTempleHistoryImage(i, { descriptionTe: e.target.value })}
+                          placeholder="హోవర్ చేసినప్పుడు చూపబడుతుంది"
+                          className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-3 mt-6 pt-4 border-t border-maroon/10">
+            <button
+              type="button"
+              onClick={addTempleHistoryImage}
+              className="btn-outline text-sm"
+            >
+              Add image
+            </button>
+            <button
+              type="button"
+              onClick={() => void saveTempleHistoryImages()}
+              className="btn-primary text-sm"
+            >
+              {saveFlash === "temple-history-images" ? "Saved" : "Save Temple History Images"}
+            </button>
+          </div>
+        </details>
 
         <div className="flex flex-wrap items-center gap-3 mt-8 pt-6 border-t border-maroon/10">
           <button type="button" onClick={handleReset} className="btn-outline text-sm">

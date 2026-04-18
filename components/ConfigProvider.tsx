@@ -14,7 +14,8 @@ import {
   defaultGallerySlots,
   GALLERY_STORAGE_KEY,
   normalizeGallerySlots,
-  type GallerySlotConfig
+  type GallerySlotConfig,
+  type TempleHistoryImageConfig
 } from "@/lib/galleryConfig";
 import {
   mergeSiteManual,
@@ -47,6 +48,8 @@ type ConfigContextType = {
   setSiteManual: (next: SiteManualConfig) => void;
   aboutImages: string[];
   setAboutImages: (images: string[]) => Promise<void>;
+  templeHistoryImages: TempleHistoryImageConfig[];
+  setTempleHistoryImages: (images: TempleHistoryImageConfig[]) => void;
 };
 
 const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
@@ -54,6 +57,14 @@ const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
 const bakedText = (publicSiteContent.textOverrides ?? {}) as Overrides;
 const bakedGallery = normalizeGallerySlots(publicSiteContent.gallerySlots);
 const bakedCommittee = normalizeCommitteeMembers(publicSiteContent.committeeMembers);
+const bakedTempleHistoryImages: TempleHistoryImageConfig[] = [
+  { src: "/images/temple-history/Temple-history-1.jpg", descriptionEn: "", descriptionTe: "" },
+  { src: "/images/temple-history/Temple-history-2.jpg", descriptionEn: "", descriptionTe: "" },
+  { src: "/images/temple-history/Temple-history-3.jpg", descriptionEn: "", descriptionTe: "" },
+  { src: "/images/temple-history/Temple-history-4.jpg", descriptionEn: "", descriptionTe: "" },
+  { src: "/images/temple-history/Temple-history-5.jpg", descriptionEn: "", descriptionTe: "" },
+  { src: "/images/temple-history/Temple-history-6.jpg", descriptionEn: "", descriptionTe: "" },
+];
 
 function loadFromStorage(): Overrides {
   if (typeof window === "undefined") return { ...bakedText };
@@ -154,6 +165,7 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     toranamImagePaths: [...SITE_MANUAL_DEFAULTS.toranamImagePaths]
   }));
   const [aboutImages, setAboutImagesState] = useState<string[]>([]);
+  const [templeHistoryImages, setTempleHistoryImagesState] = useState<TempleHistoryImageConfig[]>(() => bakedTempleHistoryImages);
   const [firebaseLoaded, setFirebaseLoaded] = useState(false);
 
   // Load from Firestore on mount, fall back to localStorage/baked defaults
@@ -181,6 +193,9 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
         }
         if (remote.aboutImages && Array.isArray(remote.aboutImages) && remote.aboutImages.length > 0) {
           setAboutImagesState(remote.aboutImages);
+        }
+        if (remote.templeHistoryImages && Array.isArray(remote.templeHistoryImages) && remote.templeHistoryImages.length > 0) {
+          setTempleHistoryImagesState(remote.templeHistoryImages as TempleHistoryImageConfig[]);
         }
         setFirebaseLoaded(true);
       } else {
@@ -254,6 +269,13 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     }
   }, [authed, user]);
 
+  const setTempleHistoryImages = useCallback((images: TempleHistoryImageConfig[]) => {
+    setTempleHistoryImagesState(images);
+    if (authed && user?.email) {
+      writeSiteConfig({ templeHistoryImages: images }, user.email);
+    }
+  }, [authed, user]);
+
   const resetOverrides = useCallback(() => {
     if (typeof window !== "undefined") {
       try {
@@ -284,7 +306,9 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
         siteManual,
         setSiteManual,
         aboutImages,
-        setAboutImages
+        setAboutImages,
+        templeHistoryImages,
+        setTempleHistoryImages
       }}
     >
       {children}

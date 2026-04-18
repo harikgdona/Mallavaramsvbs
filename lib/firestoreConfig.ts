@@ -18,6 +18,7 @@ export type FirestoreSiteConfig = {
   committeeMembers?: unknown[];
   siteManual?: Record<string, unknown>;
   aboutImages?: string[];
+  templeHistoryImages?: unknown[];
   updatedAt?: string;
   updatedBy?: string;
 };

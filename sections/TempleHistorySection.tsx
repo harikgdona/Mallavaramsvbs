@@ -1,18 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { SectionContainer } from "@/components/SectionContainer";
 import { useLanguage } from "@/components/LanguageProvider";
+import { useConfig } from "@/components/ConfigProvider";
 import { withBasePath } from "@/lib/basePath";
-
-const templeImages = [
-  "/images/temple-history/Temple-history-1.jpg",
-  "/images/temple-history/Temple-history-2.jpg",
-  "/images/temple-history/Temple-history-3.jpg",
-  "/images/temple-history/Temple-history-4.jpg",
-  "/images/temple-history/Temple-history-5.jpg",
-  "/images/temple-history/Temple-history-6.jpg",
-];
+import { resolveGalleryImageSrc } from "@/lib/galleryConfig";
 
 const historyTe = [
   `నారదుడు ప్రతిష్టించిన నారాయణుడు కలియుగ వరదుడైన శ్రీ వేంకటేశ్వరుడు ఎన్నో క్షేత్రాలలో కొలువు తీరి భక్తులకు వరప్రదాయనునిగా దర్శమిస్తున్నారు. మన దేశంలోనే కాదు విదేశాలలో కూడా స్వామి స్థానం ఏర్పరచుకున్నారు.`,
@@ -44,9 +38,88 @@ const historyEn = [
   `Om Namo Venkateshaya!`,
 ];
 
+function TempleHistoryImageWithZoom({
+  src,
+  alt,
+  unoptimized,
+  description
+}: {
+  src: string;
+  alt: string;
+  unoptimized: boolean;
+  description: string;
+}) {
+  const [isZoomed, setIsZoomed] = useState(false);
+
+  return (
+    <>
+      <div
+        className="group relative aspect-[3/2] rounded-2xl overflow-hidden border border-maroon/15 shadow-sm bg-sandal/30 cursor-pointer hover:shadow-md transition-shadow"
+        onClick={() => setIsZoomed(true)}
+      >
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          className="object-contain"
+          sizes="(max-width: 768px) 50vw, 33vw"
+          unoptimized={unoptimized}
+        />
+        {description ? (
+          <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-200 bg-maroon/80 px-2 py-1.5 z-10">
+            <p className="text-white text-[0.65rem] leading-snug text-center line-clamp-3">{description}</p>
+          </div>
+        ) : null}
+      </div>
+
+      {isZoomed && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+          onClick={() => setIsZoomed(false)}
+        >
+          <button
+            onClick={() => setIsZoomed(false)}
+            className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors"
+            aria-label="Close zoom"
+          >
+            <svg
+              className="w-8 h-8"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+          <div
+            className="relative w-full h-full max-w-4xl max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Image
+              src={src}
+              alt={alt}
+              fill
+              className="object-contain"
+              unoptimized={unoptimized}
+              sizes="90vw"
+            />
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 export function TempleHistorySection() {
   const { language } = useLanguage();
+  const { templeHistoryImages } = useConfig();
   const history = language === "te" ? historyTe : historyEn;
+  const placeholder = withBasePath("/images/placeholder.svg");
 
   return (
     <SectionContainer id="temple-history">
@@ -62,18 +135,38 @@ export function TempleHistorySection() {
       </p>
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
-        {templeImages.map((src, i) => (
-          <div key={i} className="relative aspect-[3/2] rounded-2xl overflow-hidden border border-maroon/15 shadow-sm bg-sandal/30">
-            <Image
-              src={withBasePath(src)}
+        {templeHistoryImages.map((img, i) => {
+          const { src, unoptimized } = resolveGalleryImageSrc(img.src, placeholder);
+          const description = language === "te" && img.descriptionTe?.trim()
+            ? img.descriptionTe.trim()
+            : img.descriptionEn?.trim() || "";
+          return (
+            <TempleHistoryImageWithZoom
+              key={i}
+              src={src}
               alt={`Temple history photo ${i + 1}`}
-              fill
-              className="object-contain"
-              sizes="(max-width: 768px) 50vw, 33vw"
-              unoptimized
+              unoptimized={unoptimized}
+              description={description}
             />
-          </div>
-        ))}
+          );
+        })}
+      </div>
+
+      {/* YouTube link box */}
+      <div className="mb-6 rounded-xl border border-maroon/25 bg-sandal/40 px-4 py-3 shadow-sm">
+        <p className="text-sm md:text-base font-bold italic text-maroon/90">
+          {language === "te"
+            ? "ఆలయ వీక్షణ మరియు కార్యక్రమాల వివరాల కోసం, దయచేసి క్రింది లింక్‌లోని వీడియోను చూడండి:"
+            : "For Temple view and programmes in detail, please watch the video in the following link:"}
+        </p>
+        <a
+          href="https://youtu.be/OalXu5h44a8?si=PSvPRTCC5yJc8NOD"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-1 inline-block text-sm md:text-base font-bold italic text-maroon underline underline-offset-2 hover:text-maroon/70 break-all"
+        >
+          https://youtu.be/OalXu5h44a8?si=PSvPRTCC5yJc8NOD
+        </a>
       </div>
 
       <div className="bg-white rounded-3xl border border-maroon/10 shadow-sm p-5 md:p-8">

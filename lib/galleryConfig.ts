@@ -19,6 +19,14 @@ export type GallerySlotConfig = {
   descriptionTe: string;
 };
 
+export type TempleHistoryImageConfig = {
+  /** Image URL, data URL, or site path like /images/photo.jpg. */
+  src: string;
+  /** Optional caption shown on hover. */
+  descriptionEn: string;
+  descriptionTe: string;
+};
+
 /** Slots that use header toranam asset paths are dropped (toranams stay in the header only). */
 function isHeaderToranamSrc(src: string): boolean {
   const t = src.trim();
