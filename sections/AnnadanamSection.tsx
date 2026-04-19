@@ -1,15 +1,16 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import { SectionContainer } from "@/components/SectionContainer";
 import { useLanguage } from "@/components/LanguageProvider";
 import { useConfig } from "@/components/ConfigProvider";
-import { ImageZoom } from "@/components/ImageZoom";
 import { withBasePath } from "@/lib/basePath";
 
 export function AnnadanamSection() {
   const { language } = useLanguage();
   const { annadanamPhotos } = useConfig();
+  const [zoomedPhoto, setZoomedPhoto] = useState<{ src: string; alt: string } | null>(null);
 
   return (
     <SectionContainer id="annadanam" className="bg-sandal/60">
@@ -83,14 +84,17 @@ export function AnnadanamSection() {
               <div className="grid grid-cols-2 gap-3 md:gap-4">
                 {annadanamPhotos.map((photo, idx) => (
                   <div key={idx} className="space-y-2">
-                    <div className="relative h-36 md:h-44 lg:h-52 rounded-3xl overflow-hidden shadow-md border border-maroon/15">
-                      <ImageZoom
+                    <div
+                      className="relative h-36 md:h-44 lg:h-52 rounded-3xl overflow-hidden shadow-md border border-maroon/15 cursor-pointer group"
+                      onClick={() => setZoomedPhoto({
+                        src: photo.src,
+                        alt: language === "te" ? photo.descriptionTe : photo.descriptionEn
+                      })}
+                    >
+                      <img
                         src={photo.src}
                         alt={language === "te" ? photo.descriptionTe : photo.descriptionEn}
-                        fill
-                        sizes="(max-width: 768px) 50vw, 33vw"
-                        className="w-full h-full"
-                        unoptimized
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                       />
                     </div>
                     <p className="text-xs md:text-sm text-text-dark/75 leading-relaxed">
@@ -124,6 +128,44 @@ export function AnnadanamSection() {
           )}
         </div>
       </div>
+
+      {/* Zoom Modal */}
+      {zoomedPhoto && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+          onClick={() => setZoomedPhoto(null)}
+        >
+          <button
+            onClick={() => setZoomedPhoto(null)}
+            className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-51"
+            aria-label="Close zoom"
+          >
+            <svg
+              className="w-8 h-8"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+          <div
+            className="relative w-full h-full max-w-4xl max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={zoomedPhoto.src}
+              alt={zoomedPhoto.alt}
+              className="w-full h-full object-contain"
+            />
+          </div>
+        </div>
+      )}
     </SectionContainer>
   );
 }
