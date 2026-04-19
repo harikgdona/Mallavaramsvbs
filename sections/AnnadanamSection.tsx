@@ -87,6 +87,8 @@ export function AnnadanamSection() {
                       <ImageZoom
                         src={photo.src}
                         alt={language === "te" ? photo.descriptionTe : photo.descriptionEn}
+                        fill
+                        sizes="(max-width: 768px) 50vw, 33vw"
                         className="w-full h-full"
                         unoptimized
                       />
