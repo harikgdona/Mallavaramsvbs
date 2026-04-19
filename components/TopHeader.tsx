@@ -275,7 +275,7 @@ export function TopHeader() {
             >
               {language === "te"
                 ? "శ్రీ మల్లవరం వెంకటేశ్వర అన్నదాన సమాజం మరియు బ్రాహ్మణ సత్రం"
-                : "Sri Mallavaram Venkateshwara Brahmana Samajamu and Annadanam Satram"}
+                : "Sri Mallavaram Venkateswara Annadaana Samajamu and Brahmana Satramu"}
             </h1>
             <p
               className={`w-full max-w-full break-words whitespace-normal px-1 text-center text-maroon/95 leading-tight ${

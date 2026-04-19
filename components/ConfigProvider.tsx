@@ -48,6 +48,10 @@ type ConfigContextType = {
   setSiteManual: (next: SiteManualConfig) => void;
   aboutImages: string[];
   setAboutImages: (images: string[]) => Promise<void>;
+  activitiesPhotos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>;
+  setActivitiesPhotos: (photos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>) => Promise<void>;
+  annadanamPhotos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>;
+  setAnnadanamPhotos: (photos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>) => Promise<void>;
   templeHistoryImages: TempleHistoryImageConfig[];
   setTempleHistoryImages: (images: TempleHistoryImageConfig[]) => void;
 };
@@ -166,6 +170,8 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
   }));
   const [aboutImages, setAboutImagesState] = useState<string[]>([]);
   const [templeHistoryImages, setTempleHistoryImagesState] = useState<TempleHistoryImageConfig[]>(() => bakedTempleHistoryImages);
+  const [activitiesPhotos, setActivitiesPhotosState] = useState<Array<{ src: string; descriptionEn: string; descriptionTe: string }>>([]);
+  const [annadanamPhotos, setAnnadanamPhotosState] = useState<Array<{ src: string; descriptionEn: string; descriptionTe: string }>>([]);
   const [firebaseLoaded, setFirebaseLoaded] = useState(false);
 
   // Load from Firestore on mount, fall back to localStorage/baked defaults
@@ -196,6 +202,12 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
         }
         if (remote.templeHistoryImages && Array.isArray(remote.templeHistoryImages) && remote.templeHistoryImages.length > 0) {
           setTempleHistoryImagesState(remote.templeHistoryImages as TempleHistoryImageConfig[]);
+        }
+        if (remote.activitiesPhotos && Array.isArray(remote.activitiesPhotos) && remote.activitiesPhotos.length > 0) {
+          setActivitiesPhotosState(remote.activitiesPhotos as Array<{ src: string; descriptionEn: string; descriptionTe: string }>);
+        }
+        if (remote.annadanamPhotos && Array.isArray(remote.annadanamPhotos) && remote.annadanamPhotos.length > 0) {
+          setAnnadanamPhotosState(remote.annadanamPhotos as Array<{ src: string; descriptionEn: string; descriptionTe: string }>);
         }
         setFirebaseLoaded(true);
       } else {
@@ -276,6 +288,22 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     }
   }, [authed, user]);
 
+  const setActivitiesPhotos = useCallback(async (photos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>) => {
+    const limited = photos.slice(0, 6);
+    setActivitiesPhotosState(limited);
+    if (authed && user?.email) {
+      await writeSiteConfig({ activitiesPhotos: limited }, user.email);
+    }
+  }, [authed, user]);
+
+  const setAnnadanamPhotos = useCallback(async (photos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>) => {
+    const limited = photos.slice(0, 6);
+    setAnnadanamPhotosState(limited);
+    if (authed && user?.email) {
+      await writeSiteConfig({ annadanamPhotos: limited }, user.email);
+    }
+  }, [authed, user]);
+
   const resetOverrides = useCallback(() => {
     if (typeof window !== "undefined") {
       try {
@@ -307,6 +335,10 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
         setSiteManual,
         aboutImages,
         setAboutImages,
+        activitiesPhotos,
+        setActivitiesPhotos,
+        annadanamPhotos,
+        setAnnadanamPhotos,
         templeHistoryImages,
         setTempleHistoryImages
       }}

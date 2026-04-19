@@ -2,11 +2,13 @@
 
 import { SectionContainer } from "@/components/SectionContainer";
 import { useLanguage } from "@/components/LanguageProvider";
-import { useTranslate } from "@/components/ConfigProvider";
+import { useTranslate, useConfig } from "@/components/ConfigProvider";
+import { ImageZoom } from "@/components/ImageZoom";
 
 export function ActivitiesSection() {
   const { language } = useLanguage();
   const t = useTranslate();
+  const { activitiesPhotos } = useConfig();
 
   return (
     <SectionContainer id="activities">
@@ -47,6 +49,34 @@ export function ActivitiesSection() {
               : "Our Satram can be rented for outside people for performing religious and personal functions like Marriages, Upanayanams etc., at discounted rates for poor Brahmins."}
           </p>
         </div>
+
+        {/* Activities Photos Section */}
+        {activitiesPhotos && activitiesPhotos.length > 0 && (
+          <div className="bg-white rounded-2xl border border-maroon/10 shadow-sm p-5">
+            <h3 className="font-heading text-maroon text-base mb-4">
+              {language === "te"
+                ? "కార్యక్రమ ఫోటోలు"
+                : "Activity Photos"}
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {activitiesPhotos.map((photo, idx) => (
+                <div key={idx} className="space-y-2">
+                  <div className="relative h-40 rounded-lg overflow-hidden border border-maroon/20 bg-gray-100">
+                    <ImageZoom
+                      src={photo.src}
+                      alt={language === "te" ? photo.descriptionTe : photo.descriptionEn}
+                      className="w-full h-full"
+                      unoptimized
+                    />
+                  </div>
+                  <p className="text-xs md:text-sm text-text-dark/75 leading-relaxed">
+                    {language === "te" ? photo.descriptionTe : photo.descriptionEn}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </SectionContainer>
   );

@@ -197,6 +197,10 @@ export function ConfigureSection() {
     setSiteManual,
     aboutImages,
     setAboutImages,
+    activitiesPhotos,
+    setActivitiesPhotos,
+    annadanamPhotos,
+    setAnnadanamPhotos,
     templeHistoryImages,
     setTempleHistoryImages
   } = useConfig();
@@ -206,6 +210,8 @@ export function ConfigureSection() {
   const [draft, setDraft] = useState<Overrides>(() => ({ ...overrides }));
   const [galleryDraft, setGalleryDraft] = useState<GallerySlotConfig[]>(() => defaultGallerySlots());
   const [aboutImagesDraft, setAboutImagesDraft] = useState<string[]>(() => aboutImages || []);
+  const [activitiesPhotosDraft, setActivitiesPhotosDraft] = useState<Array<{ src: string; descriptionEn: string; descriptionTe: string }>>(() => activitiesPhotos || []);
+  const [annadanamPhotosDraft, setAnnadanamPhotosDraft] = useState<Array<{ src: string; descriptionEn: string; descriptionTe: string }>>(() => annadanamPhotos || []);
   const [committeeDraft, setCommitteeDraft] = useState<CommitteeMemberConfig[]>(() =>
     defaultCommitteeMembers()
   );
@@ -267,6 +273,14 @@ export function ConfigureSection() {
     setTempleHistoryDraft(templeHistoryImages);
   }, [templeHistoryImages]);
 
+  useEffect(() => {
+    setActivitiesPhotosDraft(activitiesPhotos);
+  }, [activitiesPhotos]);
+
+  useEffect(() => {
+    setAnnadanamPhotosDraft(annadanamPhotos);
+  }, [annadanamPhotos]);
+
   const updateDraft = useCallback((key: string, lang: "en" | "te", value: string) => {
     setDraft((prev) => ({
       ...prev,
@@ -312,6 +326,42 @@ export function ConfigureSection() {
     setTempleHistoryDraft((prev) => prev.filter((_, j) => j !== index));
   }, []);
 
+  const updateActivitiesPhoto = useCallback((index: number, patch: Partial<{ src: string; descriptionEn: string; descriptionTe: string }>) => {
+    setActivitiesPhotosDraft((prev) =>
+      prev.map((row, j) => (j === index ? { ...row, ...patch } : row))
+    );
+  }, []);
+
+  const addActivitiesPhoto = useCallback(() => {
+    setActivitiesPhotosDraft((prev) =>
+      prev.length >= 6
+        ? prev
+        : [...prev, { src: "", descriptionEn: "", descriptionTe: "" }]
+    );
+  }, []);
+
+  const removeActivitiesPhoto = useCallback((index: number) => {
+    setActivitiesPhotosDraft((prev) => prev.filter((_, j) => j !== index));
+  }, []);
+
+  const updateAnnadanamPhoto = useCallback((index: number, patch: Partial<{ src: string; descriptionEn: string; descriptionTe: string }>) => {
+    setAnnadanamPhotosDraft((prev) =>
+      prev.map((row, j) => (j === index ? { ...row, ...patch } : row))
+    );
+  }, []);
+
+  const addAnnadanamPhoto = useCallback(() => {
+    setAnnadanamPhotosDraft((prev) =>
+      prev.length >= 6
+        ? prev
+        : [...prev, { src: "", descriptionEn: "", descriptionTe: "" }]
+    );
+  }, []);
+
+  const removeAnnadanamPhoto = useCallback((index: number) => {
+    setAnnadanamPhotosDraft((prev) => prev.filter((_, j) => j !== index));
+  }, []);
+
   const updateCommitteeMember = useCallback((index: number, patch: Partial<CommitteeMemberConfig>) => {
     setCommitteeDraft((prev) =>
       prev.map((row, j) => (j === index ? { ...row, ...patch } : row))
@@ -351,6 +401,16 @@ export function ConfigureSection() {
     setTempleHistoryImages(templeHistoryDraft);
     runFlash("temple-history-images");
   }, [templeHistoryDraft, setTempleHistoryImages, runFlash]);
+
+  const saveActivitiesPhotos = useCallback(async () => {
+    await setActivitiesPhotos(activitiesPhotosDraft);
+    runFlash("activities-photos");
+  }, [activitiesPhotosDraft, setActivitiesPhotos, runFlash]);
+
+  const saveAnnadanamPhotos = useCallback(async () => {
+    await setAnnadanamPhotos(annadanamPhotosDraft);
+    runFlash("annadanam-photos");
+  }, [annadanamPhotosDraft, setAnnadanamPhotos, runFlash]);
 
   const saveSiteLayout = useCallback(async () => {
     setSiteManual(siteManualDraft);
@@ -1226,6 +1286,258 @@ export function ConfigureSection() {
               >
                 {saveFlash === "about-images" ? "Saved" : "Save About Images"}
               </button>
+            </div>
+          </details>
+
+          {/* Activities Photos (up to 6) */}
+          <details className="border border-maroon/20 rounded-2xl p-4 md:p-5 group">
+            <summary className="font-heading text-lg text-maroon px-2 font-bold cursor-pointer list-none flex items-center justify-between">
+              Activities Photos (up to 6)
+             <span className="text-xs text-maroon/50 group-open:rotate-90 transition-transform">▶</span></summary>
+            <p className="text-sm text-text-dark/75 mt-2 mb-4">
+              Add photos with descriptions in English and Telugu. Photos will display with zoom and fit-to-frame features.
+            </p>
+            <div className="space-y-4 mt-4">
+              {activitiesPhotosDraft.length === 0 ? (
+                <p className="text-sm text-text-dark/60 italic">No photos yet. Click Add photo to start.</p>
+              ) : (
+                activitiesPhotosDraft.map((photo, i) => (
+                  <div
+                    key={i}
+                    className="rounded-xl border border-maroon/15 bg-sandal/30 p-3 md:p-4 space-y-3"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <p className="text-xs font-semibold text-maroon">Photo {i + 1}</p>
+                      <button
+                        type="button"
+                        className="text-xs text-red-800 underline font-medium"
+                        onClick={() => removeActivitiesPhoto(i)}
+                      >
+                        Remove photo
+                      </button>
+                    </div>
+                    <div className="grid md:grid-cols-[100px_1fr] gap-4 items-start">
+                      <div className="relative h-24 w-24 rounded-lg overflow-hidden border border-maroon/20 bg-white shrink-0 mx-auto md:mx-0">
+                        {photo.src.trim() ? (
+                          <img src={photo.src} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center text-text-dark/30 text-xs">No photo</div>
+                        )}
+                      </div>
+                      <div className="space-y-2 min-w-0">
+                        <label className="text-xs text-text-dark/70 block">Photo URL or path</label>
+                        <input
+                          type="text"
+                          value={photo.src}
+                          onChange={(e) => updateActivitiesPhoto(i, { src: e.target.value })}
+                          placeholder="https://... or /images/activity.jpg"
+                          className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-maroon bg-white"
+                        />
+                        <div className="flex flex-wrap items-center gap-2">
+                          <label className="text-xs text-maroon/90 cursor-pointer btn-outline py-1.5 px-3">
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp,image/gif"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                e.target.value = "";
+                                if (!file) return;
+                                if (file.size > 1.5 * 1024 * 1024) {
+                                  window.alert("File too large. Use an image under 1.5 MB.");
+                                  return;
+                                }
+                                const reader = new FileReader();
+                                reader.onload = () => {
+                                  if (typeof reader.result === "string") {
+                                    updateActivitiesPhoto(i, { src: reader.result });
+                                  }
+                                };
+                                reader.readAsDataURL(file);
+                              }}
+                            />
+                            Upload photo
+                          </label>
+                          {photo.src ? (
+                            <button
+                              type="button"
+                              className="text-xs text-red-800 underline font-medium"
+                              onClick={() => updateActivitiesPhoto(i, { src: "" })}
+                            >
+                              Delete picture
+                            </button>
+                          ) : null}
+                        </div>
+                        <div className="grid sm:grid-cols-2 gap-2 pt-2">
+                          <div>
+                            <span className="text-xs text-maroon/80 block mb-1">Description (English)</span>
+                            <textarea
+                              rows={2}
+                              value={photo.descriptionEn}
+                              onChange={(e) => updateActivitiesPhoto(i, { descriptionEn: e.target.value })}
+                              placeholder="Brief description of this activity..."
+                              className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white resize-y"
+                            />
+                          </div>
+                          <div>
+                            <span className="text-xs text-maroon/80 block mb-1">Description (Telugu)</span>
+                            <textarea
+                              rows={2}
+                              value={photo.descriptionTe}
+                              onChange={(e) => updateActivitiesPhoto(i, { descriptionTe: e.target.value })}
+                              placeholder="ఈ కార్యక్రమం యొక్క సంక్షిప్త వివరణ..."
+                              className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white resize-y"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={addActivitiesPhoto}
+                  disabled={activitiesPhotosDraft.length >= 6}
+                  className="btn-primary text-sm py-2 px-4 disabled:opacity-50 disabled:pointer-events-none"
+                >
+                  Add photo
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void saveActivitiesPhotos()}
+                  className="btn-primary text-sm py-2 px-4"
+                >
+                  {saveFlash === "activities-photos" ? "Saved" : "Save Activities Photos"}
+                </button>
+              </div>
+            </div>
+          </details>
+
+          {/* Annadanam Photos (up to 6) */}
+          <details className="border border-maroon/20 rounded-2xl p-4 md:p-5 group">
+            <summary className="font-heading text-lg text-maroon px-2 font-bold cursor-pointer list-none flex items-center justify-between">
+              Annadanam Photos (up to 6)
+             <span className="text-xs text-maroon/50 group-open:rotate-90 transition-transform">▶</span></summary>
+            <p className="text-sm text-text-dark/75 mt-2 mb-4">
+              Add photos with descriptions in English and Telugu. Photos will display with zoom and fit-to-frame features.
+            </p>
+            <div className="space-y-4 mt-4">
+              {annadanamPhotosDraft.length === 0 ? (
+                <p className="text-sm text-text-dark/60 italic">No photos yet. Click Add photo to start.</p>
+              ) : (
+                annadanamPhotosDraft.map((photo, i) => (
+                  <div
+                    key={i}
+                    className="rounded-xl border border-maroon/15 bg-sandal/30 p-3 md:p-4 space-y-3"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <p className="text-xs font-semibold text-maroon">Photo {i + 1}</p>
+                      <button
+                        type="button"
+                        className="text-xs text-red-800 underline font-medium"
+                        onClick={() => removeAnnadanamPhoto(i)}
+                      >
+                        Remove photo
+                      </button>
+                    </div>
+                    <div className="grid md:grid-cols-[100px_1fr] gap-4 items-start">
+                      <div className="relative h-24 w-24 rounded-lg overflow-hidden border border-maroon/20 bg-white shrink-0 mx-auto md:mx-0">
+                        {photo.src.trim() ? (
+                          <img src={photo.src} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center text-text-dark/30 text-xs">No photo</div>
+                        )}
+                      </div>
+                      <div className="space-y-2 min-w-0">
+                        <label className="text-xs text-text-dark/70 block">Photo URL or path</label>
+                        <input
+                          type="text"
+                          value={photo.src}
+                          onChange={(e) => updateAnnadanamPhoto(i, { src: e.target.value })}
+                          placeholder="https://... or /images/annadanam.jpg"
+                          className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-maroon bg-white"
+                        />
+                        <div className="flex flex-wrap items-center gap-2">
+                          <label className="text-xs text-maroon/90 cursor-pointer btn-outline py-1.5 px-3">
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp,image/gif"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                e.target.value = "";
+                                if (!file) return;
+                                if (file.size > 1.5 * 1024 * 1024) {
+                                  window.alert("File too large. Use an image under 1.5 MB.");
+                                  return;
+                                }
+                                const reader = new FileReader();
+                                reader.onload = () => {
+                                  if (typeof reader.result === "string") {
+                                    updateAnnadanamPhoto(i, { src: reader.result });
+                                  }
+                                };
+                                reader.readAsDataURL(file);
+                              }}
+                            />
+                            Upload photo
+                          </label>
+                          {photo.src ? (
+                            <button
+                              type="button"
+                              className="text-xs text-red-800 underline font-medium"
+                              onClick={() => updateAnnadanamPhoto(i, { src: "" })}
+                            >
+                              Delete picture
+                            </button>
+                          ) : null}
+                        </div>
+                        <div className="grid sm:grid-cols-2 gap-2 pt-2">
+                          <div>
+                            <span className="text-xs text-maroon/80 block mb-1">Description (English)</span>
+                            <textarea
+                              rows={2}
+                              value={photo.descriptionEn}
+                              onChange={(e) => updateAnnadanamPhoto(i, { descriptionEn: e.target.value })}
+                              placeholder="Brief description of this annadanam..."
+                              className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white resize-y"
+                            />
+                          </div>
+                          <div>
+                            <span className="text-xs text-maroon/80 block mb-1">Description (Telugu)</span>
+                            <textarea
+                              rows={2}
+                              value={photo.descriptionTe}
+                              onChange={(e) => updateAnnadanamPhoto(i, { descriptionTe: e.target.value })}
+                              placeholder="ఈ అన్నదానం యొక్క సంక్షిప్త వివరణ..."
+                              className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white resize-y"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={addAnnadanamPhoto}
+                  disabled={annadanamPhotosDraft.length >= 6}
+                  className="btn-primary text-sm py-2 px-4 disabled:opacity-50 disabled:pointer-events-none"
+                >
+                  Add photo
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void saveAnnadanamPhotos()}
+                  className="btn-primary text-sm py-2 px-4"
+                >
+                  {saveFlash === "annadanam-photos" ? "Saved" : "Save Annadanam Photos"}
+                </button>
+              </div>
             </div>
           </details>
 

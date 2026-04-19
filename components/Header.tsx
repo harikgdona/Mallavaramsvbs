@@ -124,7 +124,7 @@ export function Header() {
           <p className="font-heading min-w-0 flex-1 text-center text-sm leading-snug text-maroon break-words">
             {language === "te"
               ? "శ్రీ మల్లవరం వెంకటేశ్వర అన్నదాన సమాజం మరియు బ్రాహ్మణ సత్రం"
-              : "Sri Mallavaram Venkateshwara Brahmana Samajamu and Annadanam Satram"}
+              : "Sri Mallavaram Venkateswara Annadaana Samajamu and Brahmana Satramu"}
           </p>
           <button
             type="button"

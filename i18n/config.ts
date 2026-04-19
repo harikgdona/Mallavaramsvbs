@@ -94,6 +94,22 @@ export const tMap: Translations = {
     en: "About Brahmana Satram",
     te: "సంస్థ గురించి"
   },
+  about_intro_1: {
+    en: "Located in Mallavaram village, Prakasam district, Andhra Pradesh, Sri Mallavaram Venkateswara Annadaana Samajamu mariyu Brahmana Satramu is a charitable trust dedicated to supporting poor Brahmin families through daily Annadanam, spiritual services, and community support.",
+    te: "ఆంధ్రప్రదేశ్, ప్రకాశం జిల్లా, మల్లవరం గ్రామంలో ఉన్న శ్రీ మల్లవరం వెంకటేశ్వర అన్నదాన సమాజం మరియు బ్రాహ్మణ సత్రం అనేది పేద బ్రాహ్మణ కుటుంబాలను అన్నదానం, ఆధ్యాత్మిక సేవలు మరియు సమాజ సహాయం ద్వారా మద్దతు ఇవ్వడానికి అంకితమైన చారిటబుల్ ట్రస్ట్."
+  },
+  about_intro_2: {
+    en: "The satram offers a simple, clean and devotional space where pilgrims, Veda pandits and local families can rest, receive prasadam and participate in traditional dharmic activities with dignity and respect.",
+    te: "బ్రాహ్మణ సత్రం ఒక మంచి సాంక్షిప్తమైన మరియు భక్తిపూర్ణమైన స్థలాన్ని అందిస్తుంది, ఇక్కడ యాత్రికులు, వేద పండితులు మరియు స్థానిక కుటుంబాలు విశ్రాంతి పొందవచ్చు, ప్రసాదం పొందవచ్చు మరియు సంప్రదాయ ధార్మిక కార్యకలాపాలలో గౌరవం మరియు మర్యాదతో పాల్గొనవచ్చు."
+  },
+  about_history_heading: {
+    en: "History of Sri Mallavaram Brahmana Satram",
+    te: "శ్రీ మల్లవరం బ్రాహ్మణ సత్రం చరిత్ర"
+  },
+  about_history: {
+    en: "The Concept and the need of \"Brahmana Satram\" at Mallavaram came during pre-independence days where Brahmins used to visit Mallavaram for Sri Venkateswara Swamy Brahmostavams and there was no place for them to cook and stay.|In 1950's, Sri Late Gullapalli Gopaiah constructed a permanent Brahmin Satram Facility at the footsteps of Mallavaram hill. From that time, the \"Old Brahmin Satram\" accommodated several Brahmin Families during Brahmostavam days.|Sri Late Gali Venkata Subba Rao (\"Perumallu\") popularised Mallavaram temple and Satram, bringing Varshika Daatalu and itemized funding. He built a strong team of relatives and nurtured young talent.|During 2007, due to the Mallavaram Reservoir project, the old satram was taken by Govt. A new satram was built with 2 rooms, 4 bathrooms and an open hall.|After Covid, a new committee was formed under Sri Gali Narasimha Murthy and Sri Neelamraju Santhiah. They modernized the building, added borewell, toilets, stage, and washing basins.|From 2021 onwards, Karthika Samaradhana with Rudrabhishekam was started. In 2024, monthly \"Annadaana Padhakam\" was initiated.|**** Namo Venkatesaya ****",
+    te: "మల్లవరం గ్రామంలో \"బ్రాహ్మణ సత్రం\" అనే ఆలోచన స్వాతంత్ర్యానికి ముందు కాలంలో వచ్చింది. బ్రాహ్మణ కుటుంబాలు బ్రహ్మోత్సవాలకు వచ్చేవారు కానీ వండుకునేందుకు, ఉండేందుకు స్థలం ఉండేది కాదు.|1950 లలో శ్రీ గుళ్ళపల్లి గోపయ్య గారు మల్లవరం కొండ క్రిందన శాశ్వత బ్రాహ్మణ సత్రాన్ని నిర్మించారు. ఆ తరువాత నుండి బ్రహ్మోత్సవాల సమయంలో అనేక కుటుంబాలకు ఆశ్రయం కల్పించింది.|శ్రీ గాలి వెంకట సుబ్బారావు గారు (పెరుమాళ్) మల్లవరం ఆలయం మరియు సత్రాన్ని ప్రజాదరణ పొందేలా చేశారు. వార్షిక దాతలను ఏర్పరచి అన్నదానం కార్యక్రమాన్ని విస్తరించారు.|2007లో రిజర్వాయర్ ప్రాజెక్ట్ కారణంగా పాత సత్రం స్థలం ప్రభుత్వానికి వెళ్లింది. కొత్త సత్రం 2 గదులు, 4 బాత్రూములు మరియు ఓపెన్ హాల్‌తో నిర్మించారు.|కోవిడ్ తరువాత శ్రీ గాలి నరసింహమూర్తి మరియు శ్రీ నీలంరాజు శాంతయ్య గారి మార్గదర్శకత్వంలో కొత్త కమిటీ ఏర్పడింది. సత్రం భవనం ఆధునీకరణ, బోర్‌వెల్, టాయిలెట్లు, స్టేజ్ నిర్మాణం చేశారు.|2021 నుండి కార్తీక సమారాధన రుద్రాభిషేకంతో ప్రారంభించారు. 2024లో నెలవారీ \"అన్నదాన పథకం\" ప్రారంభించారు.|*** నమో వెంకటేశాయ ***"
+  },
   annadanam_title: {
     en: "Annadanam – Feeding with Devotion",
     te: "అన్నదానం – భక్తితో భోజనం"
@@ -199,7 +215,7 @@ export const CONFIG_SECTIONS: Record<string, (keyof typeof tMap)[]> = {
     "nav_configure"
   ],
     "Hero": ["hero_heading", "live_feed_text", "home_brahmotsavam_ticker"],
-  "About": ["about_title", "about_body"],
+  "About": ["about_title", "about_intro_1", "about_intro_2", "about_history_heading", "about_history"],
   "Annadanam": ["annadanam_title", "annadanam_body", "annadanam_stats"],
   "Activities": ["activities_title"],
   "Donation": [

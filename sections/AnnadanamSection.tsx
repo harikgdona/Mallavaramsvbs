@@ -3,10 +3,13 @@
 import Image from "next/image";
 import { SectionContainer } from "@/components/SectionContainer";
 import { useLanguage } from "@/components/LanguageProvider";
+import { useConfig } from "@/components/ConfigProvider";
+import { ImageZoom } from "@/components/ImageZoom";
 import { withBasePath } from "@/lib/basePath";
 
 export function AnnadanamSection() {
   const { language } = useLanguage();
+  const { annadanamPhotos } = useConfig();
 
   return (
     <SectionContainer id="annadanam" className="bg-sandal/60">
@@ -73,25 +76,50 @@ export function AnnadanamSection() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 md:gap-4">
-          <div className="relative h-36 md:h-44 lg:h-52 rounded-3xl overflow-hidden shadow-md border border-maroon/15">
-            <Image
-              src={withBasePath("/images/uploads/svbs_image47.jpeg")}
-              alt="Annadanam serving"
-              fill
-              className="object-cover"
-              unoptimized
-            />
-          </div>
-          <div className="relative h-36 md:h-44 lg:h-52 rounded-3xl overflow-hidden shadow-md border border-maroon/15">
-            <Image
-              src={withBasePath("/images/uploads/svbs_image48.jpeg")}
-              alt="Prasadam distribution"
-              fill
-              className="object-cover"
-              unoptimized
-            />
-          </div>
+        <div>
+          {/* Annadanam Photos Section */}
+          {annadanamPhotos && annadanamPhotos.length > 0 ? (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3 md:gap-4">
+                {annadanamPhotos.map((photo, idx) => (
+                  <div key={idx} className="space-y-2">
+                    <div className="relative h-36 md:h-44 lg:h-52 rounded-3xl overflow-hidden shadow-md border border-maroon/15">
+                      <ImageZoom
+                        src={photo.src}
+                        alt={language === "te" ? photo.descriptionTe : photo.descriptionEn}
+                        className="w-full h-full"
+                        unoptimized
+                      />
+                    </div>
+                    <p className="text-xs md:text-sm text-text-dark/75 leading-relaxed">
+                      {language === "te" ? photo.descriptionTe : photo.descriptionEn}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3 md:gap-4">
+              <div className="relative h-36 md:h-44 lg:h-52 rounded-3xl overflow-hidden shadow-md border border-maroon/15">
+                <Image
+                  src={withBasePath("/images/uploads/svbs_image47.jpeg")}
+                  alt="Annadanam serving"
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
+              <div className="relative h-36 md:h-44 lg:h-52 rounded-3xl overflow-hidden shadow-md border border-maroon/15">
+                <Image
+                  src={withBasePath("/images/uploads/svbs_image48.jpeg")}
+                  alt="Prasadam distribution"
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </SectionContainer>

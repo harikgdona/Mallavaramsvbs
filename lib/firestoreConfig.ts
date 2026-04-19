@@ -19,6 +19,8 @@ export type FirestoreSiteConfig = {
   siteManual?: Record<string, unknown>;
   aboutImages?: string[];
   templeHistoryImages?: unknown[];
+  activitiesPhotos?: Array<{ src: string; descriptionEn: string; descriptionTe: string }>;
+  annadanamPhotos?: Array<{ src: string; descriptionEn: string; descriptionTe: string }>;
   updatedAt?: string;
   updatedBy?: string;
 };
