@@ -1,6 +1,7 @@
 import { initializeApp, getApps } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyCx1URqykD4zlQT3k2m8wNYmrGJ3kL3ex4",
@@ -14,8 +15,6 @@ const firebaseConfig = {
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
-// App Check disabled — enforcement is off in Firebase Console
-// If you need to re-enable App Check, complete reCAPTCHA domain verification first
-
 export const db = getFirestore(app);
 export const auth = getAuth(app);
+export const storage = getStorage(app);

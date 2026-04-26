@@ -31,6 +31,7 @@ import {
 import { ConfigureColorField } from "@/components/ConfigureColorField";
 import { ConfigureFontPresetPicker } from "@/components/ConfigureFontPresetPicker";
 import { POPULAR_BODY_FONTS, POPULAR_HEADING_FONTS } from "@/lib/typographyFontPresets";
+import { uploadImageToStorage } from "@/lib/firebaseStorage";
 
 type Overrides = Record<string, { en: string; te: string }>;
 
@@ -225,7 +226,14 @@ export function ConfigureSection() {
   const [templeHistoryDraft, setTempleHistoryDraft] = useState<TempleHistoryImageConfig[]>(() => templeHistoryImages);
 
   const resolveUploadedFile = useCallback(
-    async (file: File) => {
+    async (file: File): Promise<string> => {
+      // Try Firebase Storage first (returns a public URL, not base64)
+      const result = await uploadImageToStorage(file, "uploads");
+      if (result.ok && result.url) {
+        return result.url;
+      }
+      // Fallback to base64 if Storage upload fails
+      console.warn("Firebase Storage upload failed, falling back to base64:", result.error);
       return readFileAsDataUrl(file);
     },
     []
@@ -1371,21 +1379,16 @@ export function ConfigureSection() {
                               type="file"
                               accept="image/jpeg,image/png,image/webp,image/gif"
                               className="hidden"
-                              onChange={(e) => {
+                              onChange={async (e) => {
                                 const file = e.target.files?.[0];
                                 e.target.value = "";
                                 if (!file) return;
-                                if (file.size > 1.5 * 1024 * 1024) {
-                                  window.alert("File too large. Use an image under 1.5 MB.");
+                                if (file.size > 5 * 1024 * 1024) {
+                                  window.alert("File too large. Use an image under 5 MB.");
                                   return;
                                 }
-                                const reader = new FileReader();
-                                reader.onload = () => {
-                                  if (typeof reader.result === "string") {
-                                    updateActivitiesPhoto(i, { src: reader.result });
-                                  }
-                                };
-                                reader.readAsDataURL(file);
+                                const url = await resolveUploadedFile(file);
+                                updateActivitiesPhoto(i, { src: url });
                               }}
                             />
                             Upload photo
@@ -1497,21 +1500,16 @@ export function ConfigureSection() {
                               type="file"
                               accept="image/jpeg,image/png,image/webp,image/gif"
                               className="hidden"
-                              onChange={(e) => {
+                              onChange={async (e) => {
                                 const file = e.target.files?.[0];
                                 e.target.value = "";
                                 if (!file) return;
-                                if (file.size > 1.5 * 1024 * 1024) {
-                                  window.alert("File too large. Use an image under 1.5 MB.");
+                                if (file.size > 5 * 1024 * 1024) {
+                                  window.alert("File too large. Use an image under 5 MB.");
                                   return;
                                 }
-                                const reader = new FileReader();
-                                reader.onload = () => {
-                                  if (typeof reader.result === "string") {
-                                    updateAnnadanamPhoto(i, { src: reader.result });
-                                  }
-                                };
-                                reader.readAsDataURL(file);
+                                const url = await resolveUploadedFile(file);
+                                updateAnnadanamPhoto(i, { src: url });
                               }}
                             />
                             Upload photo

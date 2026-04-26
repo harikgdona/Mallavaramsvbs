@@ -231,12 +231,33 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     sm: SiteManualConfig
   ): Promise<{ ok: boolean; error?: string }> => {
     if (!authed || !user?.email) return { ok: false, error: "Not authenticated. Please sign in as admin." };
+
+    // Strip base64 data URLs from siteManual — they're too large for Firestore (1MB limit).
+    // Data URLs are stored in localStorage only; Firestore only stores paths/URLs.
+    const smSafe = { ...sm };
+    for (const key of Object.keys(smSafe) as (keyof SiteManualConfig)[]) {
+      const val = smSafe[key];
+      if (typeof val === "string" && val.startsWith("data:")) {
+        (smSafe as Record<string, unknown>)[key] = "";
+      }
+    }
+
+    // Strip base64 data URLs from committeeMembers photo src
+    const cmSafe = cm.map(member =>
+      member.src.startsWith("data:") ? { ...member, src: "" } : member
+    );
+
+    // Strip base64 data URLs from gallerySlots
+    const gsSafe = gs.map(slot =>
+      slot.src.startsWith("data:") ? { ...slot, src: "" } : slot
+    );
+
     return await writeSiteConfig(
       {
         textOverrides: ov,
-        gallerySlots: gs,
-        committeeMembers: cm,
-        siteManual: sm as unknown as Record<string, unknown>,
+        gallerySlots: gsSafe,
+        committeeMembers: cmSafe,
+        siteManual: smSafe as unknown as Record<string, unknown>,
       },
       user.email
     );
@@ -278,27 +299,32 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     const limited = images.slice(0, 5);
     setAboutImagesState(limited);
     if (!authed || !user?.email) return { ok: false, error: "Not authenticated. Please sign in as admin." };
-    return await writeSiteConfig({ aboutImages: limited }, user.email);
+    // Strip base64 — only store paths/URLs in Firestore
+    const safe = limited.map(s => s.startsWith("data:") ? "" : s);
+    return await writeSiteConfig({ aboutImages: safe }, user.email);
   }, [authed, user]);
 
   const setTempleHistoryImages = useCallback(async (images: TempleHistoryImageConfig[]): Promise<{ ok: boolean; error?: string }> => {
     setTempleHistoryImagesState(images);
     if (!authed || !user?.email) return { ok: false, error: "Not authenticated. Please sign in as admin." };
-    return await writeSiteConfig({ templeHistoryImages: images }, user.email);
+    const safe = images.map(img => img.src.startsWith("data:") ? { ...img, src: "" } : img);
+    return await writeSiteConfig({ templeHistoryImages: safe }, user.email);
   }, [authed, user]);
 
   const setActivitiesPhotos = useCallback(async (photos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>): Promise<{ ok: boolean; error?: string }> => {
     const limited = photos.slice(0, 6);
     setActivitiesPhotosState(limited);
     if (!authed || !user?.email) return { ok: false, error: "Not authenticated. Please sign in as admin." };
-    return await writeSiteConfig({ activitiesPhotos: limited }, user.email);
+    const safe = limited.map(p => p.src.startsWith("data:") ? { ...p, src: "" } : p);
+    return await writeSiteConfig({ activitiesPhotos: safe }, user.email);
   }, [authed, user]);
 
   const setAnnadanamPhotos = useCallback(async (photos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>): Promise<{ ok: boolean; error?: string }> => {
     const limited = photos.slice(0, 6);
     setAnnadanamPhotosState(limited);
     if (!authed || !user?.email) return { ok: false, error: "Not authenticated. Please sign in as admin." };
-    return await writeSiteConfig({ annadanamPhotos: limited }, user.email);
+    const safe = limited.map(p => p.src.startsWith("data:") ? { ...p, src: "" } : p);
+    return await writeSiteConfig({ annadanamPhotos: safe }, user.email);
   }, [authed, user]);
 
   const resetOverrides = useCallback(() => {
