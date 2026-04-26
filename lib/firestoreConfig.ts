@@ -43,11 +43,13 @@ export async function writeSiteConfig(
   userEmail: string
 ): Promise<{ ok: boolean; error?: string }> {
   try {
-    await setDoc(doc(db, CONFIG_DOC), {
+    // Sanitize: remove undefined/NaN values that Firestore rejects
+    const sanitized = JSON.parse(JSON.stringify({
       ...data,
       updatedAt: new Date().toISOString(),
       updatedBy: userEmail,
-    }, { merge: true });
+    }));
+    await setDoc(doc(db, CONFIG_DOC), sanitized, { merge: true });
     return { ok: true };
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
