@@ -398,22 +398,38 @@ export function ConfigureSection() {
   }, []);
 
   const saveTempleHistoryImages = useCallback(async () => {
-    setTempleHistoryImages(templeHistoryDraft);
+    const result = await setTempleHistoryImages(templeHistoryDraft);
+    if (!result.ok) {
+      window.alert(`Save failed: ${result.error ?? "Unknown error"}`);
+      return;
+    }
     runFlash("temple-history-images");
   }, [templeHistoryDraft, setTempleHistoryImages, runFlash]);
 
   const saveActivitiesPhotos = useCallback(async () => {
-    await setActivitiesPhotos(activitiesPhotosDraft);
+    const result = await setActivitiesPhotos(activitiesPhotosDraft);
+    if (!result.ok) {
+      window.alert(`Save failed: ${result.error ?? "Unknown error"}`);
+      return;
+    }
     runFlash("activities-photos");
   }, [activitiesPhotosDraft, setActivitiesPhotos, runFlash]);
 
   const saveAnnadanamPhotos = useCallback(async () => {
-    await setAnnadanamPhotos(annadanamPhotosDraft);
+    const result = await setAnnadanamPhotos(annadanamPhotosDraft);
+    if (!result.ok) {
+      window.alert(`Save failed: ${result.error ?? "Unknown error"}`);
+      return;
+    }
     runFlash("annadanam-photos");
   }, [annadanamPhotosDraft, setAnnadanamPhotos, runFlash]);
 
   const saveSiteLayout = useCallback(async () => {
-    setSiteManual(siteManualDraft);
+    const result = await setSiteManual(siteManualDraft);
+    if (!result.ok) {
+      window.alert(`Save failed: ${result.error ?? "Unknown error"}`);
+      return;
+    }
     setSiteLayoutDirty(false);
     runFlash("site-layout");
   }, [siteManualDraft, setSiteManual, runFlash]);
@@ -425,12 +441,24 @@ export function ConfigureSection() {
         const keyStr = String(k);
         updates[keyStr] = getEffective(draft, keyStr);
       }
-      saveOverrides(updates);
+      const r1 = await saveOverrides(updates);
+      if (!r1.ok) {
+        window.alert(`Save failed: ${r1.error ?? "Unknown error"}`);
+        return;
+      }
       if (headerName === "Gallery") {
-        setGallerySlots(galleryDraft);
+        const r2 = await setGallerySlots(galleryDraft);
+        if (!r2.ok) {
+          window.alert(`Save failed: ${r2.error ?? "Unknown error"}`);
+          return;
+        }
       }
       if (headerName === "Committee") {
-        setCommitteeMembers(committeeDraft);
+        const r3 = await setCommitteeMembers(committeeDraft);
+        if (!r3.ok) {
+          window.alert(`Save failed: ${r3.error ?? "Unknown error"}`);
+          return;
+        }
       }
       runFlash(`section-${headerName}`);
     },
@@ -1279,7 +1307,11 @@ export function ConfigureSection() {
                 type="button"
                 onClick={async () => {
                   const filtered = aboutImagesDraft.filter((s) => s.trim() !== "");
-                  await setAboutImages(filtered);
+                  const result = await setAboutImages(filtered);
+                  if (!result.ok) {
+                    window.alert(`Save failed: ${result.error ?? "Unknown error"}`);
+                    return;
+                  }
                   runFlash("about-images");
                 }}
                 className="btn-primary mt-2"

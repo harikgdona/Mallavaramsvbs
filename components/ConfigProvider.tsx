@@ -38,22 +38,22 @@ type Overrides = Record<string, { en: string; te: string }>;
 
 type ConfigContextType = {
   overrides: Overrides;
-  saveOverrides: (updates: Overrides) => void;
+  saveOverrides: (updates: Overrides) => Promise<{ ok: boolean; error?: string }>;
   resetOverrides: () => void;
   gallerySlots: GallerySlotConfig[];
-  setGallerySlots: (slots: GallerySlotConfig[]) => void;
+  setGallerySlots: (slots: GallerySlotConfig[]) => Promise<{ ok: boolean; error?: string }>;
   committeeMembers: CommitteeMemberConfig[];
-  setCommitteeMembers: (rows: CommitteeMemberConfig[]) => void;
+  setCommitteeMembers: (rows: CommitteeMemberConfig[]) => Promise<{ ok: boolean; error?: string }>;
   siteManual: SiteManualConfig;
-  setSiteManual: (next: SiteManualConfig) => void;
+  setSiteManual: (next: SiteManualConfig) => Promise<{ ok: boolean; error?: string }>;
   aboutImages: string[];
-  setAboutImages: (images: string[]) => Promise<void>;
+  setAboutImages: (images: string[]) => Promise<{ ok: boolean; error?: string }>;
   activitiesPhotos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>;
-  setActivitiesPhotos: (photos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>) => Promise<void>;
+  setActivitiesPhotos: (photos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>) => Promise<{ ok: boolean; error?: string }>;
   annadanamPhotos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>;
-  setAnnadanamPhotos: (photos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>) => Promise<void>;
+  setAnnadanamPhotos: (photos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>) => Promise<{ ok: boolean; error?: string }>;
   templeHistoryImages: TempleHistoryImageConfig[];
-  setTempleHistoryImages: (images: TempleHistoryImageConfig[]) => void;
+  setTempleHistoryImages: (images: TempleHistoryImageConfig[]) => Promise<{ ok: boolean; error?: string }>;
 };
 
 const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
@@ -229,9 +229,9 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     gs: GallerySlotConfig[],
     cm: CommitteeMemberConfig[],
     sm: SiteManualConfig
-  ) => {
-    if (!authed || !user?.email) return;
-    await writeSiteConfig(
+  ): Promise<{ ok: boolean; error?: string }> => {
+    if (!authed || !user?.email) return { ok: false, error: "Not authenticated. Please sign in as admin." };
+    return await writeSiteConfig(
       {
         textOverrides: ov,
         gallerySlots: gs,
@@ -242,66 +242,63 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     );
   }, [authed, user]);
 
-  const saveOverrides = useCallback((updates: Overrides) => {
-    setOverrides((prev) => {
-      const next = { ...prev, ...updates };
-      saveToStorage(next);
-      // Sync to Firestore with latest state
-      syncToFirestore(next, gallerySlots, committeeMembers, siteManual);
-      return next;
+  const saveOverrides = useCallback(async (updates: Overrides): Promise<{ ok: boolean; error?: string }> => {
+    return new Promise((resolve) => {
+      setOverrides((prev) => {
+        const next = { ...prev, ...updates };
+        saveToStorage(next);
+        syncToFirestore(next, gallerySlots, committeeMembers, siteManual).then(resolve);
+        return next;
+      });
     });
   }, [syncToFirestore, gallerySlots, committeeMembers, siteManual]);
 
-  const setGallerySlots = useCallback((slots: GallerySlotConfig[]) => {
+  const setGallerySlots = useCallback(async (slots: GallerySlotConfig[]): Promise<{ ok: boolean; error?: string }> => {
     const normalized = normalizeGallerySlots(slots);
     setGallerySlotsState(normalized);
     saveGalleryToStorage(normalized);
-    syncToFirestore(overrides, normalized, committeeMembers, siteManual);
+    return await syncToFirestore(overrides, normalized, committeeMembers, siteManual);
   }, [syncToFirestore, overrides, committeeMembers, siteManual]);
 
-  const setCommitteeMembers = useCallback((rows: CommitteeMemberConfig[]) => {
+  const setCommitteeMembers = useCallback(async (rows: CommitteeMemberConfig[]): Promise<{ ok: boolean; error?: string }> => {
     const normalized = normalizeCommitteeMembers(rows);
     setCommitteeMembersState(normalized);
     saveCommitteeToStorage(normalized);
-    syncToFirestore(overrides, gallerySlots, normalized, siteManual);
+    return await syncToFirestore(overrides, gallerySlots, normalized, siteManual);
   }, [syncToFirestore, overrides, gallerySlots, siteManual]);
 
-  const setSiteManual = useCallback((next: SiteManualConfig) => {
+  const setSiteManual = useCallback(async (next: SiteManualConfig): Promise<{ ok: boolean; error?: string }> => {
     const normalized = mergeSiteManual(next);
     setSiteManualState(normalized);
     saveSiteManualToStorage(normalized);
-    syncToFirestore(overrides, gallerySlots, committeeMembers, normalized);
+    return await syncToFirestore(overrides, gallerySlots, committeeMembers, normalized);
   }, [syncToFirestore, overrides, gallerySlots, committeeMembers]);
 
-  const setAboutImages = useCallback(async (images: string[]) => {
+  const setAboutImages = useCallback(async (images: string[]): Promise<{ ok: boolean; error?: string }> => {
     const limited = images.slice(0, 5);
     setAboutImagesState(limited);
-    if (authed && user?.email) {
-      await writeSiteConfig({ aboutImages: limited }, user.email);
-    }
+    if (!authed || !user?.email) return { ok: false, error: "Not authenticated. Please sign in as admin." };
+    return await writeSiteConfig({ aboutImages: limited }, user.email);
   }, [authed, user]);
 
-  const setTempleHistoryImages = useCallback((images: TempleHistoryImageConfig[]) => {
+  const setTempleHistoryImages = useCallback(async (images: TempleHistoryImageConfig[]): Promise<{ ok: boolean; error?: string }> => {
     setTempleHistoryImagesState(images);
-    if (authed && user?.email) {
-      writeSiteConfig({ templeHistoryImages: images }, user.email);
-    }
+    if (!authed || !user?.email) return { ok: false, error: "Not authenticated. Please sign in as admin." };
+    return await writeSiteConfig({ templeHistoryImages: images }, user.email);
   }, [authed, user]);
 
-  const setActivitiesPhotos = useCallback(async (photos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>) => {
+  const setActivitiesPhotos = useCallback(async (photos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>): Promise<{ ok: boolean; error?: string }> => {
     const limited = photos.slice(0, 6);
     setActivitiesPhotosState(limited);
-    if (authed && user?.email) {
-      await writeSiteConfig({ activitiesPhotos: limited }, user.email);
-    }
+    if (!authed || !user?.email) return { ok: false, error: "Not authenticated. Please sign in as admin." };
+    return await writeSiteConfig({ activitiesPhotos: limited }, user.email);
   }, [authed, user]);
 
-  const setAnnadanamPhotos = useCallback(async (photos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>) => {
+  const setAnnadanamPhotos = useCallback(async (photos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>): Promise<{ ok: boolean; error?: string }> => {
     const limited = photos.slice(0, 6);
     setAnnadanamPhotosState(limited);
-    if (authed && user?.email) {
-      await writeSiteConfig({ annadanamPhotos: limited }, user.email);
-    }
+    if (!authed || !user?.email) return { ok: false, error: "Not authenticated. Please sign in as admin." };
+    return await writeSiteConfig({ annadanamPhotos: limited }, user.email);
   }, [authed, user]);
 
   const resetOverrides = useCallback(() => {
