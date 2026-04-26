@@ -23,7 +23,8 @@ const nextConfig = {
     ...extraDevOrigins
   ],
   env: {
-    NEXT_PUBLIC_BASE_PATH: basePath
+    NEXT_PUBLIC_BASE_PATH: basePath,
+    NEXT_PUBLIC_BUILD_TIME: new Date().toISOString()
   },
   reactStrictMode: true,
   images: {

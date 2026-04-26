@@ -35,10 +35,28 @@ const navItems = navKeys.map((key) => ({
 function SidebarHostCredit({ size = "desktop" }: { size?: "desktop" | "mobile" }) {
   /* ~40% smaller than previous text-xl (1.25rem) / text-lg (1.125rem) */
   const nameClass = size === "mobile" ? "text-[0.675rem]" : "text-[0.75rem]";
+
+  // Format build time as "v DD-Mon-YYYY HH:MM"
+  const buildTime = process.env.NEXT_PUBLIC_BUILD_TIME;
+  let versionLabel = "";
+  if (buildTime) {
+    const d = new Date(buildTime);
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const dd = String(d.getDate()).padStart(2, "0");
+    const mon = months[d.getMonth()];
+    const yyyy = d.getFullYear();
+    const hh = String(d.getHours()).padStart(2, "0");
+    const mm = String(d.getMinutes()).padStart(2, "0");
+    versionLabel = `v ${dd}-${mon}-${yyyy} ${hh}:${mm}`;
+  }
+
   return (
     <div className="mt-4 shrink-0 border-t border-maroon/10 px-2 pt-2 pb-1 text-center">
       <p className="mb-0.5 text-[0.39rem] leading-tight text-text-dark/80">Built and hosted by</p>
       <p className={`${greatVibes.className} text-maroon ${nameClass}`}>Hari Krishna</p>
+      {versionLabel ? (
+        <p className="mt-0.5 text-[0.5rem] leading-tight text-text-dark/50 font-mono">{versionLabel}</p>
+      ) : null}
     </div>
   );
 }
