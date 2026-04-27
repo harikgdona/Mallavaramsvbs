@@ -52,6 +52,8 @@ type ConfigContextType = {
   setActivitiesPhotos: (photos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>) => Promise<{ ok: boolean; error?: string }>;
   annadanamPhotos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>;
   setAnnadanamPhotos: (photos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>) => Promise<{ ok: boolean; error?: string }>;
+  brahmostavam26Photos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>;
+  setBrahmostavam26Photos: (photos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>) => Promise<{ ok: boolean; error?: string }>;
   templeHistoryImages: TempleHistoryImageConfig[];
   setTempleHistoryImages: (images: TempleHistoryImageConfig[]) => Promise<{ ok: boolean; error?: string }>;
 };
@@ -172,6 +174,7 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
   const [templeHistoryImages, setTempleHistoryImagesState] = useState<TempleHistoryImageConfig[]>(() => bakedTempleHistoryImages);
   const [activitiesPhotos, setActivitiesPhotosState] = useState<Array<{ src: string; descriptionEn: string; descriptionTe: string }>>([]);
   const [annadanamPhotos, setAnnadanamPhotosState] = useState<Array<{ src: string; descriptionEn: string; descriptionTe: string }>>([]);
+  const [brahmostavam26Photos, setBrahmostavam26PhotosState] = useState<Array<{ src: string; descriptionEn: string; descriptionTe: string }>>([]);
   const [firebaseLoaded, setFirebaseLoaded] = useState(false);
 
   // Load from Firestore on mount, fall back to localStorage/baked defaults
@@ -208,6 +211,9 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
         }
         if (remote.annadanamPhotos && Array.isArray(remote.annadanamPhotos) && remote.annadanamPhotos.length > 0) {
           setAnnadanamPhotosState(remote.annadanamPhotos as Array<{ src: string; descriptionEn: string; descriptionTe: string }>);
+        }
+        if ((remote as any).brahmostavam26Photos && Array.isArray((remote as any).brahmostavam26Photos) && (remote as any).brahmostavam26Photos.length > 0) {
+          setBrahmostavam26PhotosState((remote as any).brahmostavam26Photos as Array<{ src: string; descriptionEn: string; descriptionTe: string }>);
         }
         setFirebaseLoaded(true);
       } else {
@@ -327,6 +333,14 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     return await writeSiteConfig({ annadanamPhotos: safe }, user.email);
   }, [authed, user]);
 
+  const setBrahmostavam26Photos = useCallback(async (photos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>): Promise<{ ok: boolean; error?: string }> => {
+    const limited = photos.slice(0, 20);
+    setBrahmostavam26PhotosState(limited);
+    if (!authed || !user?.email) return { ok: false, error: "Not authenticated. Please sign in as admin." };
+    const safe = limited.map(p => p.src.startsWith("data:") ? { ...p, src: "" } : p);
+    return await writeSiteConfig({ brahmostavam26Photos: safe } as any, user.email);
+  }, [authed, user]);
+
   const resetOverrides = useCallback(() => {
     if (typeof window !== "undefined") {
       try {
@@ -362,6 +376,8 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
         setActivitiesPhotos,
         annadanamPhotos,
         setAnnadanamPhotos,
+        brahmostavam26Photos,
+        setBrahmostavam26Photos,
         templeHistoryImages,
         setTempleHistoryImages
       }}

@@ -25,6 +25,7 @@ const navKeys = [
   "nav_gallery",
   "nav_committee",
   "nav_contact",
+  "nav_brahmostavam-26",
   "nav_configure"
 ] as const;
 const navItems = navKeys.map((key) => ({

@@ -202,6 +202,8 @@ export function ConfigureSection() {
     setActivitiesPhotos,
     annadanamPhotos,
     setAnnadanamPhotos,
+    brahmostavam26Photos,
+    setBrahmostavam26Photos,
     templeHistoryImages,
     setTempleHistoryImages
   } = useConfig();
@@ -213,6 +215,7 @@ export function ConfigureSection() {
   const [aboutImagesDraft, setAboutImagesDraft] = useState<string[]>(() => aboutImages || []);
   const [activitiesPhotosDraft, setActivitiesPhotosDraft] = useState<Array<{ src: string; descriptionEn: string; descriptionTe: string }>>(() => activitiesPhotos || []);
   const [annadanamPhotosDraft, setAnnadanamPhotosDraft] = useState<Array<{ src: string; descriptionEn: string; descriptionTe: string }>>(() => annadanamPhotos || []);
+  const [brahmostavam26PhotosDraft, setBrahmostavam26PhotosDraft] = useState<Array<{ src: string; descriptionEn: string; descriptionTe: string }>>(() => brahmostavam26Photos || []);
   const [committeeDraft, setCommitteeDraft] = useState<CommitteeMemberConfig[]>(() =>
     defaultCommitteeMembers()
   );
@@ -288,6 +291,10 @@ export function ConfigureSection() {
   useEffect(() => {
     setAnnadanamPhotosDraft(annadanamPhotos);
   }, [annadanamPhotos]);
+
+  useEffect(() => {
+    setBrahmostavam26PhotosDraft(brahmostavam26Photos);
+  }, [brahmostavam26Photos]);
 
   const updateDraft = useCallback((key: string, lang: "en" | "te", value: string) => {
     setDraft((prev) => ({
@@ -370,6 +377,24 @@ export function ConfigureSection() {
     setAnnadanamPhotosDraft((prev) => prev.filter((_, j) => j !== index));
   }, []);
 
+  const updateBrahmostavam26Photo = useCallback((index: number, patch: Partial<{ src: string; descriptionEn: string; descriptionTe: string }>) => {
+    setBrahmostavam26PhotosDraft((prev) =>
+      prev.map((row, j) => (j === index ? { ...row, ...patch } : row))
+    );
+  }, []);
+
+  const addBrahmostavam26Photo = useCallback(() => {
+    setBrahmostavam26PhotosDraft((prev) =>
+      prev.length >= 20
+        ? prev
+        : [...prev, { src: "", descriptionEn: "", descriptionTe: "" }]
+    );
+  }, []);
+
+  const removeBrahmostavam26Photo = useCallback((index: number) => {
+    setBrahmostavam26PhotosDraft((prev) => prev.filter((_, j) => j !== index));
+  }, []);
+
   const updateCommitteeMember = useCallback((index: number, patch: Partial<CommitteeMemberConfig>) => {
     setCommitteeDraft((prev) =>
       prev.map((row, j) => (j === index ? { ...row, ...patch } : row))
@@ -431,6 +456,15 @@ export function ConfigureSection() {
     }
     runFlash("annadanam-photos");
   }, [annadanamPhotosDraft, setAnnadanamPhotos, runFlash]);
+
+  const saveBrahmostavam26Photos = useCallback(async () => {
+    const result = await setBrahmostavam26Photos(brahmostavam26PhotosDraft);
+    if (!result.ok) {
+      window.alert(`Save failed: ${result.error ?? "Unknown error"}`);
+      return;
+    }
+    runFlash("brahmostavam26-photos");
+  }, [brahmostavam26PhotosDraft, setBrahmostavam26Photos, runFlash]);
 
   const saveSiteLayout = useCallback(async () => {
     const result = await setSiteManual(siteManualDraft);
@@ -1566,6 +1600,95 @@ export function ConfigureSection() {
                   className="btn-primary text-sm py-2 px-4"
                 >
                   {saveFlash === "annadanam-photos" ? "Saved" : "Save Annadanam Photos"}
+                </button>
+              </div>
+            </div>
+          </details>
+
+          {/* Brahmostavam-26 Photos (up to 20) */}
+          <details className="border border-maroon/20 rounded-2xl p-4 md:p-5 group">
+            <summary className="font-heading text-lg text-maroon px-2 font-bold cursor-pointer list-none flex items-center justify-between">
+              Brahmostavam-26 Photos (up to 20)
+             <span className="text-xs text-maroon/50 group-open:rotate-90 transition-transform">▶</span></summary>
+            <p className="text-sm text-text-dark/75 mt-2 mb-4">
+              Add photos with descriptions in English and Telugu. Photos display with zoom in the Brahmostavam-26 section.
+            </p>
+            <div className="space-y-4 mt-4">
+              {brahmostavam26PhotosDraft.length === 0 ? (
+                <p className="text-sm text-text-dark/60 italic">No photos yet. Click Add photo to start.</p>
+              ) : (
+                brahmostavam26PhotosDraft.map((photo, i) => (
+                  <div key={i} className="rounded-xl border border-maroon/15 bg-sandal/30 p-3 md:p-4 space-y-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <p className="text-xs font-semibold text-maroon">Photo {i + 1}</p>
+                      <button type="button" className="text-xs text-red-800 underline font-medium" onClick={() => removeBrahmostavam26Photo(i)}>
+                        Remove photo
+                      </button>
+                    </div>
+                    <div className="grid md:grid-cols-[100px_1fr] gap-4 items-start">
+                      <div className="relative h-24 w-24 rounded-lg overflow-hidden border border-maroon/20 bg-white shrink-0 mx-auto md:mx-0">
+                        {photo.src.trim() ? (
+                          <img src={photo.src} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center text-text-dark/30 text-xs">No photo</div>
+                        )}
+                      </div>
+                      <div className="space-y-2 min-w-0">
+                        <label className="text-xs text-text-dark/70 block">Photo URL or path</label>
+                        <input
+                          type="text"
+                          value={photo.src}
+                          onChange={(e) => updateBrahmostavam26Photo(i, { src: e.target.value })}
+                          placeholder="https://... or /images/photo.jpg"
+                          className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-maroon bg-white"
+                        />
+                        <div className="flex flex-wrap items-center gap-2">
+                          <label className="text-xs text-maroon/90 cursor-pointer btn-outline py-1.5 px-3">
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp,image/gif"
+                              className="hidden"
+                              onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                e.target.value = "";
+                                if (!file) return;
+                                if (file.size > 5 * 1024 * 1024) {
+                                  window.alert("File too large. Use an image under 5 MB.");
+                                  return;
+                                }
+                                const url = await resolveUploadedFile(file);
+                                updateBrahmostavam26Photo(i, { src: url });
+                              }}
+                            />
+                            Upload photo
+                          </label>
+                          {photo.src ? (
+                            <button type="button" className="text-xs text-red-800 underline font-medium" onClick={() => updateBrahmostavam26Photo(i, { src: "" })}>
+                              Delete picture
+                            </button>
+                          ) : null}
+                        </div>
+                        <div className="grid sm:grid-cols-2 gap-2 pt-2">
+                          <div>
+                            <span className="text-xs text-maroon/80 block mb-1">Description (English)</span>
+                            <textarea rows={2} value={photo.descriptionEn} onChange={(e) => updateBrahmostavam26Photo(i, { descriptionEn: e.target.value })} placeholder="Caption for this photo..." className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white resize-y" />
+                          </div>
+                          <div>
+                            <span className="text-xs text-maroon/80 block mb-1">Description (Telugu)</span>
+                            <textarea rows={2} value={photo.descriptionTe} onChange={(e) => updateBrahmostavam26Photo(i, { descriptionTe: e.target.value })} placeholder="ఈ ఫోటో వివరణ..." className="w-full rounded-lg border border-maroon/20 px-3 py-2 text-sm bg-white resize-y" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <button type="button" onClick={addBrahmostavam26Photo} disabled={brahmostavam26PhotosDraft.length >= 20} className="btn-primary text-sm py-2 px-4 disabled:opacity-50 disabled:pointer-events-none">
+                  Add photo
+                </button>
+                <button type="button" onClick={() => void saveBrahmostavam26Photos()} className="btn-primary text-sm py-2 px-4">
+                  {saveFlash === "brahmostavam26-photos" ? "Saved" : "Save Brahmostavam-26 Photos"}
                 </button>
               </div>
             </div>

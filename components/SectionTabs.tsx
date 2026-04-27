@@ -13,6 +13,7 @@ const SECTION_IDS = [
   "gallery",
   "committee",
   "contact",
+  "brahmostavam-26",
   "configure"
 ] as const;
 

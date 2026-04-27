@@ -58,6 +58,18 @@ export const tMap: Translations = {
     en: "Configure (Admin only)",
     te: "కాన్ఫిగర్ (నిర్వాహకులు మాత్రమే)"
   },
+  "nav_brahmostavam-26": {
+    en: "Brahmostavam-26",
+    te: "బ్రహ్మోత్సవం-26"
+  },
+  brahmostavam26_title: {
+    en: "Brahmostavam 2026",
+    te: "బ్రహ్మోత్సవం 2026"
+  },
+  brahmostavam26_subtitle: {
+    en: "Sri Prasanna Venkateswara Swamy Vaari Brahmostavam celebrations at Mallavaram.",
+    te: "మల్లవరంలో శ్రీ ప్రసన్న వెంకటేశ్వర స్వామి వారి బ్రహ్మోత్సవ వేడుకలు."
+  },
   donate_now: {
     en: "Donate Now",
     te: "ఇప్పుడే దానం చేయండి"
@@ -212,6 +224,7 @@ export const CONFIG_SECTIONS: Record<string, (keyof typeof tMap)[]> = {
     "nav_volunteer",
     "nav_committee",
     "nav_contact",
+    "nav_brahmostavam-26",
     "nav_configure"
   ],
     "Hero": ["hero_heading", "live_feed_text", "home_brahmotsavam_ticker"],
@@ -239,6 +252,7 @@ export const CONFIG_SECTIONS: Record<string, (keyof typeof tMap)[]> = {
     "committee_table_designation",
     "committee_table_name"
   ],
-  "Contact": ["contact_title"]
+  "Contact": ["contact_title"],
+  "Brahmostavam-26": ["brahmostavam26_title", "brahmostavam26_subtitle"],
 };
 

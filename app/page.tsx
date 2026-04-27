@@ -12,6 +12,7 @@ import { GallerySection } from "@/sections/GallerySection";
 import { CommitteeSection } from "@/sections/CommitteeSection";
 import { ContactSection } from "@/sections/ContactSection";
 import { ConfigureSection } from "@/sections/ConfigureSection";
+import { Brahmostavam26Section } from "@/sections/Brahmostavam26Section";
 
 const sections: Record<SectionId, React.ComponentType> = {
   home: Hero,
@@ -24,6 +25,7 @@ const sections: Record<SectionId, React.ComponentType> = {
   gallery: GallerySection,
   committee: CommitteeSection,
   contact: ContactSection,
+  "brahmostavam-26": Brahmostavam26Section,
   configure: ConfigureSection,
 };
 
