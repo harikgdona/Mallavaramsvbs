@@ -334,7 +334,7 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
   }, [authed, user]);
 
   const setBrahmostavam26Photos = useCallback(async (photos: Array<{ src: string; descriptionEn: string; descriptionTe: string }>): Promise<{ ok: boolean; error?: string }> => {
-    const limited = photos.slice(0, 20);
+    const limited = photos.slice(0, 50);
     setBrahmostavam26PhotosState(limited);
     if (!authed || !user?.email) return { ok: false, error: "Not authenticated. Please sign in as admin." };
     const safe = limited.map(p => p.src.startsWith("data:") ? { ...p, src: "" } : p);

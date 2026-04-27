@@ -385,7 +385,7 @@ export function ConfigureSection() {
 
   const addBrahmostavam26Photo = useCallback(() => {
     setBrahmostavam26PhotosDraft((prev) =>
-      prev.length >= 20
+      prev.length >= 50
         ? prev
         : [...prev, { src: "", descriptionEn: "", descriptionTe: "" }]
     );
@@ -1608,7 +1608,7 @@ export function ConfigureSection() {
           {/* Brahmostavam-26 Photos (up to 20) */}
           <details className="border border-maroon/20 rounded-2xl p-4 md:p-5 group">
             <summary className="font-heading text-lg text-maroon px-2 font-bold cursor-pointer list-none flex items-center justify-between">
-              Brahmostavam-26 Photos (up to 20)
+              Brahmostavam-26 Photos (up to 50)
              <span className="text-xs text-maroon/50 group-open:rotate-90 transition-transform">▶</span></summary>
             <p className="text-sm text-text-dark/75 mt-2 mb-4">
               Add photos with descriptions in English and Telugu. Photos display with zoom in the Brahmostavam-26 section.
@@ -1684,7 +1684,7 @@ export function ConfigureSection() {
                 ))
               )}
               <div className="flex flex-wrap items-center gap-3 pt-2">
-                <button type="button" onClick={addBrahmostavam26Photo} disabled={brahmostavam26PhotosDraft.length >= 20} className="btn-primary text-sm py-2 px-4 disabled:opacity-50 disabled:pointer-events-none">
+                <button type="button" onClick={addBrahmostavam26Photo} disabled={brahmostavam26PhotosDraft.length >= 50} className="btn-primary text-sm py-2 px-4 disabled:opacity-50 disabled:pointer-events-none">
                   Add photo
                 </button>
                 <button type="button" onClick={() => void saveBrahmostavam26Photos()} className="btn-primary text-sm py-2 px-4">

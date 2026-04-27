@@ -25,6 +25,9 @@ export-login-debug.png
 .env.development.local
 .env.test.local
 .env.production.local
+firebase-key.json
+*-service-account*.json
+*adminsdk*.json
 
 # ——— Logs & debug ———
 *.log
